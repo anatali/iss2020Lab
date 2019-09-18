@@ -90,9 +90,27 @@ bc{
     color: #990000;
 	background-color: #fcf8c7;
 }
+k{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #990000;
+	 
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	 
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	 
+}
 pre{
 	font-family: "Helvetica";
-	font-size: 80%;
+	font-size: 60%;
 	background-color: #fcf8c7;
 	border: 1px solid blue;
 }
@@ -134,9 +152,9 @@ table, th, td {
 <div id="top">
 
 <h1>81614 - Laboratory of Software Systems <font size="5"></font> </h1>
- <a href="./LectureBologna1819.html" target="web">LabSS-lectures site</a><br/>
+ <a href="https://www.unibo.it/en/teaching/course-unit-catalogue/course-unit/2017/412677" target="web">SITO WEB di Ateneo</a><br/>
+ <a href="./LectureCesena1920.html" target="web">LabSS-lectures site</a><br/>
  
- <a href="https://www.unibo.it/en/teaching/course-unit-catalogue/course-unit/2017/412677" target="web">SITO WEB di Ateneo</a>
 <!--    CESENA   
 <h1>72939 - LAB0 | Start-up</h1> 
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2019Lab/blob/master/LectureBologna1819.html" target="web">LabISS-lectures site</a></font> 
@@ -166,9 +184,16 @@ from the early stages of system requirements through to maintaining the system a
 </td>
 
 <td>
+<m>
+<a href="https://en.wikipedia.org/wiki/Software_engineering" target="web">https://en.wikipedia.org/wiki/Software_engineering</a> <br/><br/>
+
+
 <a href="http://en.wikipedia.org/wiki/Model-driven_engineering" target="web">http://en.wikipedia.org/wiki/Model-driven_engineering</a> <br/>
 <a href="http://en.wikipedia.org/wiki/Agile_software_development" target="web">http://en.wikipedia.org/wiki/Agile_software_development</a> <br/>
-<a href="http://en.wikipedia.org/wiki/Scrum_(software_development" target="web">http://en.wikipedia.org/wiki/Scrum_(software_development</a> <br/>
+<a href="http://en.wikipedia.org/wiki/Scrum_(software_development" target="web">http://en.wikipedia.org/wiki/Scrum_(software_development</a> <br/><br/>
+
+<a href="https://www.comp.nus.edu.sg/~damithch/pages/SE-quotes.htm" target="web">https://www.comp.nus.edu.sg/~damithch/pages/SE-quotes.htm</a> <br/>
+</m>
 </td>
 </tr>
 
@@ -196,6 +221,19 @@ from the early stages of system requirements through to maintaining the system a
 
 <tr>
 
+<tr>
+<td><h3>Design pattern GOF</h3><img src="./img/gof.png" alt="gof" width="100%"/></td>
+<td><h3>Design pattern POSA4</h3><img src="./img/posa4.png" alt="posa4" width="100%" /> 
+<m>
+Franck Bushmann, Kevin Henney, Douglas C. Schmidt: 
+Pattern-Oriented Software Architecture: Volume 4 
+A Pattern Language for Distributed computing, John Wiley & Sons, 2007
+</m>
+</td>
+</tr>
+
+
+<tr>
  
 
 <td>
@@ -221,6 +259,24 @@ Ad es. : <a href="https://en.wikipedia.org/wiki/Unified_Modeling_Language" targe
 </td>
 <td><img src="./img/slide9.png" alt="slide9" width="100%"/></td>
 </tr>
+
+<tr>
+<td><h3>Requriements and Testing</h3>  
+
+<div class="remark">
+More than the act of testing, the act of <em>designing tests</em> is one of the best bug preventers known. 
+</div>
+
+<m>
+<a href="https://en.wikipedia.org/wiki/Software_testing">https://en.wikipedia.org/wiki/Software_testing</a><br/><br/>
+<a href="http://softwaretestingfundamentals.com/software-testing-quotes/">http://softwaretestingfundamentals.com/software-testing-quotes/</a>
+</m>
+
+</td>
+<td> <img src="./img/topdownprocess.png" alt="topdownprocess" width="100%" />
+</td>
+</tr>
+
 
 <tr>
 <td><img src="./img/slide12.png" alt="slide12" width="100%"/></td>
@@ -286,26 +342,26 @@ Dispatch: "Dispatch" name=ID  ":" msg = STRING  ;
 <h2>Our Goal</h2>
 
 <ol>
-<li>(Learn to) build in a concrete way 
+<li>(Learn to) build in a <k>concrete way</k> 
 	<ul>
-	<li>working individually or in a team </li>
-	<li>following agile and model-centered methodologies</li>
+	<li>working individually or <em>in a team</em> </li>
+	<li>following <em>agile and/or model-centered</em> methodology</li>
 	</ul>
 </li>
-<li>distributed software systems in the domain of <b>IOT (WOT)</b> applications
+<li>distributed software systems in the domain of <k>IOT (WOT)</k> applications
 <center>
 <table style="width:100%" border="1">
 <tr>
 <td><h3>Basic hardware</h3><img src="./img/basicHardware.jpg" alt="basicHardware" width="100%" /></td>
-<td><h3>Real robot</h3><img src="./img/mbot.png" alt="mbot" width="100%" /></td>
-<td><h3>Virtual robot</h3><img src="./img/virtualEnv.png" alt="virtualEnv" width="100%" /></td>
+<td><h3>Real robot (MBOT)</h3><img src="./img/mbot.png" alt="mbot" width="100%" /></td>
+<td><h3>Virtual environment and robot</h3><img src="./img/virtualEnv.png" alt="virtualEnv" width="100%" /></td>
 </tr>
 </table>
-</center> 	
+</center> <br/><br/>	
 	<ul>
-	<li>that must satisfy a set of pre-defined requirements 
+	<li>that must satisfy a set of pre-defined <em>requirements</em> 
 	</li>
-	<li>running on a heterogeneous set of nodes  </li>
+	<li>running on a <em>heterogeneous</em> set of nodes (<k>PC, Arduino, RaspberryPi, Android</k>)<br/><br/> </li>
 	</ul>
 <center>
 <table style="width:100%" border="1">
@@ -314,7 +370,7 @@ Dispatch: "Dispatch" name=ID  ":" msg = STRING  ;
 
 <td>
 <h3>Costruire una sistema software</h3>
-Occoore rispondere a un insieme di domande:
+Occorre rispondere a un insieme di domande:
 <m>
 <ol>
 <li>Cosa deve fare	(committente) </li>
@@ -322,11 +378,11 @@ Occoore rispondere a un insieme di domande:
 Quale struttura-interazione-comportamento sono necessari tenendo conto dei vincoli che sorgono dai requisiti e dal problema  
 
  </li>
-<li>Cosa è opportuno che sia (analisi)
+<li>Cosa è opportuno che sia (analisi)<br/>
 Tenendo conto delle tecnologie, dell’andamento del mercato, delle risorse umane, economiche, temporali, etc.
 
  </li>
-<li>Come è fatto e come funziona (progetto)
+<li>Come è fatto e come funziona (progetto)<br/>
 Quale  struttura-interazione-comportamento ha il sistema finale tenendo conto dei vincoli dall’analisi e 
 dei criteri (pattern) usati per risolvere le forze (anche contrastanti)  in gioco
 
@@ -338,13 +394,13 @@ dei criteri (pattern) usati per risolvere le forze (anche contrastanti)  in gioc
 </td>
 </tr>
 </table>
-</center> 		
+</center> 	<br/><br/>	
 </li>
 <li>using proper available technologies and tools 
 	<ul>
-	<li>in a way that is 'technology aware' but also as much 'technology independent' as possible</li>
-	<li>avoiding adoption of a single 'paradigm' at architecture level
-<center>
+	<li>in a way that is <em>'technology aware'</em> but also as much 'technology independent' as possible</li>
+	<li>focussing on the <k>architecture level</k>
+<center><br/><br/>
 <table style="width:100%" border="1">
 <tr>
 <td><h3>Client-server</h3><img src="./img/webArch.gif" alt="webArch" width="100%" /></td>
@@ -353,11 +409,10 @@ dei criteri (pattern) usati per risolvere le forze (anche contrastanti)  in gioc
 </tr>
 </table>
 </center> 	
-	
 	</li>
-	</ul>
+	</ul><br/><br/>
 </li>
-<li>and using proper custom meta-models (DSL) and platforms
+<li>and using proper custom meta-models (DSL) and platforms<br/><br/>
 <center>
 <table style="width:100%" border="1">
 <tr>
@@ -369,24 +424,25 @@ dei criteri (pattern) usati per risolvere le forze (anche contrastanti)  in gioc
 
 
 </li>
-<li></li>
+ 
 </ol>
 
 <h3>More specifically</h3>
 
 <ol>
-<li>Sviluppiamo l’analisi dei requisiti e l’analisi del problema esprimendo fatti rilevanti attraverso modelli essenziali esegubili
+<li>Sviluppiamo l’analisi dei requisiti e l’analisi del problema esprimendo fatti rilevanti attraverso <k>modelli esegubili</k>
 </li>
 <li>Discutiamo in modo sistematico avvalendoci di modelli basati su meta-modelli custom
 	<ul>
-	<li>Usiamo i modelli come se fossero il nuovo codice sorgente costruendo generatori di codice usando Xtext  </li>
-	<li>Realizziamo in modo automatico parti del sistema vvelendoci dei design pattern per sistemi distribuiti
+	<li>Usiamo i modelli <em>come se fossero il nuovo codice sorgente</em> costruendo generatori di codice usando Xtext  </li>
+	<li>Realizziamo <em>in modo automatico parti del sistema</em> avvelendoci (anche) dei design pattern per sistemi distribuiti
 	</li>
 	</ul>
 </li>
-<li>Impostiamo piani di collaudo ancor prima di avere iniziato la fase di progettazione</li>
-<li>Realizziamo in modo incrementale uno o più prototipi del sistema interagendo con il committente attraverso una serie di SPRINT in stile Scrum</li>
-<li></li>
+<li>Impostiamo <k> piani di collaudo</k>  ancor prima di avere iniziato la fase di progettazione</li>
+<li>Realizziamo in <em>modo incrementale</em> (con nuovi modi di concepire il <em>riuso del software</em>) uno o più prototipi del sistema interagendo con il committente attraverso 
+una successione di <k>SPRINT</k> in stile <em>Scrum</em></li>
+ 
 
 </ol>
 
@@ -400,19 +456,44 @@ in modo da acquisire una retroazione immediata sul lavoro svolto, che potrà ess
 <li>La valutazione  finale consiste nelle presentazione e discussione degli artefatti prodotti in relazione alla costruzione di un sistema software 
 (dello stesso tipo di quello discusso nei CaseStudy proposti durante il corso) che rispetti i requisiti pubblicati l'ultima settimana di lezione. </li>
 <li>Questi artefatti possono essere prodotti in modo individuale oppure, preferibilmente, attraverso un lavoro cooperativo svolto in gruppi di 2/3 studenti.</li>
-<li></li>
-<li></li>
+ 
 </ol>
  
 <h3>Esempi di tema finale</h3>
 
 <ul>
  
-<li> <a href="TemaFinaleLMBO2018.pdf" target="local">TemaFinaleLMBO2018.pdf</a></li>
-<li> <a href="tfCe2018.pdf" target="local">tfCe2018.pdf</a></li>
-<li> <a href="TFBO19ISS.pdf" target="local">TFBO19ISS.pdf</a></li>
-<li></li>
+<li> <a href="TemaFinaleLMBO2018.pdf" target="local">Room cleaner (pdf)</a></li>
+<li> <a href="tfCe2018.pdf" target="local">Bomb detector (pdf)</a></li>
+<li> <a href="TFBO19ISS.pdf" target="local">Room Butler (pdf)</a></li>
 </ul> 
+
+
+<h2>Tools</h2>
+
+<h3>Software</h3>
+
+<ul>
+<li>Git, <a href="https://github.com/anatali/iss2020Lab" target="web">https://github.com/anatali/iss2020Lab</a></li>
+<li>IntelliJ , Eclipse DSL, Arduino IDE, Android Studio</li>
+<li>Gradle</li>
+<li>Java, Kotlin, Python, C++</li>
+<li>XText</li>
+<li>MQTT broker (Mosquitto) </li>
+<li>Jupyter</li>
+</ul>
+
+<h3>Hardware</h3>
+
+<ul>
+<li>Arduinio Uno</li>
+<li>RaspberryPi</li>
+<li>MBOT (o altro) </li>
+<li>GY521, GY271</li>
+
+</ul>
+
+
 	
 </div>  
 <div style="background-color:rgba(86, 56, 253, 0.9); width:100%;text-align:center;font-size:small;color:white">
