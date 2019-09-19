@@ -6,6 +6,7 @@
 -->
 <style type="text/css">
 <!--
+
 body
 {
     margin-left:  30px;
@@ -139,48 +140,61 @@ div.remark{
 table, th, td {
   border: 1px solid black;
   border-collapse: collapse;
-}         
+}     
     
   -->
 </style>
     
 <head>
    
-<title>Lab ...</title></head>
+<title>Lab0 : StartUp</title></head>
     
 <body>
 <div id="top">
-<h1>Lab1_2020 |  Design and build a Robot Commander <font size="5"></font> </h1>
+<h1>Lab0 : StartUp<font size="5"></font> </h1>
  <a href="./LectureCesena1920.html" target="isslm">Lab ISS-lectures site</a><br/>
- <a href="http://www.ingegneriarchitettura.unibo.it/it/corsi/insegnamenti/insegnamento/2017/412677" target="isslm">SITO WEB di Ateneo</a>
+ <a href="http://www.ingegneriarchitettura.unibo.it/it/corsi/insegnamenti/insegnamento/2017/412677" target="web">SITO WEB di Ateneo</a>
 </div>  
 
 
 <div class="body"> 
-<h2>Requirements</h2>
 
-<div class="req">
-Design and build a software system (<em>RobCmd</em>) allowing the remote control of a <i>differential drive robot</i>
-(<em>Robot</em>) by means of a <em>Console</em>. The <em>Robot</em> must be able to execute a set of <i>movement-commands</i>
-sent by the <em>Console</em>:
-<ul>
-<li> <k>w</k>: forward</li>
-<li> <k>s</k>: backward</li>
-<li> <k>h</k>: halt</li>
-<li> <k>a</k>: rotate left</li>
-<li> <k>d</k>: rotate right</li>
-</ul>
+	<h2>GIT : clone the iss2020Lab</h2>
+	<ol>
+	<li>Open a new, <b>empty</b> directory and work in it.</li>
+	<li>Execute <bc>git clone  https://github.com/anatali/iss2020Lab.git </bc></li>
+	<li>Execute <bc>git remote -v</bc>
+	<li>Use the files as a <u>read-only reference</u>: never change them</li>
+	<li>Execute <bc>git pull</bc> when needed</li>
+	</ol>
 
-The <em>Console</em> must run on a computational node different from that of the <em>Robot</em>.
+	
+<h2>Using Gradle and Eclipse</h2>
+
+    <ol>
+		<li>Download <a href="https://gradle.org/">gradle</a>    </li>
+        <li>Download <tt>Eclipse - DSL </tt> </li>
+        <li>Open Eclipse and set gradle to your local version<br/><br/>
+			<img src="./img/eclipseGradle.png" alt="eclipseGradle" width="50%" />
+		</li>
+ 		<li>Add <tt>plugin for Kotlin</tt> </li>
+ 		<li>Add  a <tt>Terminal</tt> </li>
+		<li>Copy into the directory <k>dropins</k>:
+			<ul>
+			<li><tt>it.unibo.issLabStart\resources\plugins\it.unibo.Qactork_1.1.4.jar</tt></li>
+			<li><tt>it.unibo.issLabStart\resources\plugins\it.unibo.Qactork.ide_1.1.4.jar</tt></li>
+			<li><tt>it.unibo.Qactork.ui_1.1.4.jar</tt></li>
+			</ul>
+		</li>
+		<li>restart Eclipse</li>
+    </ol>
+
+	
  
-</div>	    
- 
-	    
- 	
- 	
+	
 </div>  
 <div style="background-color:rgba(86, 56, 253, 0.9); width:100%;text-align:center;font-size:small;color:white">
-By AN Unibo-DISI  
+By AN Unibo-DISI    
 </div> 
 </body>
 </html>
