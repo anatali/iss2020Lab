@@ -20,8 +20,6 @@ class Console ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, sco
 					action { //it:State
 						println("hello from console")
 						forward("cmd", "cmd(w)" ,"robot" ) 
-						delay(1000) 
-						forward("cmd", "cmd(h)" ,"robot" ) 
 					}
 				}	 
 			}

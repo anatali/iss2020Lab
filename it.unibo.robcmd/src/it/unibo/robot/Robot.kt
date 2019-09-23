@@ -18,15 +18,18 @@ class Robot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scope
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						println("hello from robot")
+						println("robot ready")
 					}
 					 transition(edgeName="t00",targetState="handleCmd",cond=whenDispatch("cmd"))
 				}	 
 				state("handleCmd") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
+						if( checkMsgContent( Term.createTerm("cmd(X)"), Term.createTerm("cmd(w)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								itunibo.robcmd.robotState.robotGoingForward(  )
+						}
 					}
-					 transition( edgeName="goto",targetState="s0", cond=doswitch() )
 				}	 
 			}
 		}

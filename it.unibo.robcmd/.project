@@ -5,6 +5,7 @@
 	<projects/>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.jetbrains.kotlin.core.kotlinNature</nature>
 		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
 	</natures>
 	<buildSpec>
@@ -13,10 +14,20 @@
 			<arguments/>
 		</buildCommand>
 		<buildCommand>
+			<name>org.jetbrains.kotlin.ui.kotlinBuilder</name>
+			<arguments/>
+		</buildCommand>
+		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments/>
 		</buildCommand>
 	</buildSpec>
-	<linkedResources/>
+	<linkedResources>
+		<link>
+			<name>kotlin_bin</name>
+			<type>2</type>
+			<locationURI>org.jetbrains.kotlin.core.filesystem:/it.unibo.robcmd/kotlin_bin</locationURI>
+		</link>
+	</linkedResources>
 	<filteredResources/>
 </projectDescription>
