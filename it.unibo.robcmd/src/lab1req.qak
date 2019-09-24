@@ -23,7 +23,7 @@ Context ctxRobcmd ip [ host= "localhost" port= 8020 ]
 QActor console context ctxRobcmd {  
 	State s0 initial {
 		println ( "hello from console" )
-		forward robot -m cmd : cmd( w ) 
+		forward robot -m cmd : cmd( w )   
 //		delay 1000
 //		forward robot -m cmd : cmd( h )   
 	}
