@@ -1,13 +1,13 @@
 /*
- * Questo file descrive una rapprsentazione testuale di un modello del sistema
+ * Questo file descrive UNA rapprsentazione testuale di UN modello del sistema
  * espresso nel linguaggio / metamodello qak
  * come risultato della analisi dei requisiti.
  * 
  * Il modello descrive l'archittura logica del sistema in termini di
  * 
- * struttura
- * interazione
- * comportamento 
+ * 	struttura
+ * 	interazione
+ * 	comportamento 
  * 
  * dei sui componenti
  */
