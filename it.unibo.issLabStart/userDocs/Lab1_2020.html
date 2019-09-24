@@ -175,20 +175,94 @@ The <em>Console</em> must run on a computational node different from that of the
  
 </div>	    
  
+<h2>A first model</h2>
+
+<table style="width:100%" border="1">
+<tr>
+<td style="width:50%"><h3>Structure</h3>
+<m>From the structural point of view, the system is composed by (at least) two components:
+the <em>console</em> and the <em>robot</em>.<br/>
+<ul>
+<li>Each component can be conceived as an autonomous entity that cannot have
+any 'pointer' or 'reference' to the other (the system is distributed).</li>
+<li>Each component  works in its won computational node</li>
+</ul>
+A proper model at this level can be denoted by using the 'custom' language (metamodel) named <k>qak</k>:
+</m>
+<pre>
+System <em>robcmd</em>
+
+Context ctxConsole ip [ host= "localhost" port= 8020 ] 
+Context ctxRobot   ip [ host= "localhost" port= 8030 ] 
+
+QActor <k>console</k> context ctxConsole {  
+	State s0 initial {
+		println ( "hello from console" )
+	}
+}
+
+QActor <k>robot</k> context ctxRobot {
+	State s0 initial {
+		println ( "robot ready" )
+	}
+}
+</pre>
+In the <k>qak</k> metamodel, a system is composed of a set of <k>QActors</k>, each working within a node
+(<k>Context</k>) with a specific IP and an entry 'port number'.
+Two actors can work in the same context.
+</td>
+<td><h3>Structure, interaction, behavior</h3>
+<m>
+In the <k>qak</k> metamodel, two actors can exchage information modeled as a <k>Dispatch</k>.
+<ul>
+<li>The <k>qak</k> language provides a primitive (<k>forward</k>) to send (in asynchronous way) a dispatch
+to an actor (including itself).</li>
+<li>The <k>qak</k> language <k>does not</k> provide any 'receive' operation, neither any 'callback' mechanism.
+Rather it handles input information by structuring its behavior as a Finite State Machine. </li>
+</ul>
+
+
+</m>
+<pre>
+System <em>robcmd</em>
+
+<k>Dispatch cmd : cmd(X)</k> <kc>// X = w | s | a ... </kc>
+
+Context ctxRobcmd ip [ host= "localhost" port= 8020 ] 
+
+QActor console context ctxRobcmd {  
+	State s0 initial {
+		println ( "hello from console" )
+		<k>forward robot -m cmd : cmd( w )</k>
+	}
+}
+
+QActor robot context ctxRobcmd {
+	State s0 initial {
+		println ( "robot ready" )
+	}
+	<k>Transition t0 whenMsg cmd -> handleCmd</k>
+	
+	State handleCmd{
+ 		printCurrentMessage
+	}
+}
+</pre>
+</td>
+</tr>
+</table>
+
+ 
 <div class="remark">
 AVVERTENZA:<br/>
 Per far eseguire un modello qak, CREARE UN KOTLIN PROJECT anzichè un Java project.
-<p>
-WORK TO DO<br/>
-Impostare un piano di testing automatizzabile con JUnit 4
-</p>
 </div>	 
 
 <h2>Towards a test plan</h2>
 The Testing Unit (<kc>TU</kc>) should:
 <ol>
 <li>activate a <em>console</em> that sends to the <em>robot</em> a command (e.g. <tt>'w'</tt>)</li>
-<li>check (in automatic way) that the <em>robot</em> is moving according to the command sent (without using a camera)
+<li>check (in automatic way) that the <em>robot</em> is moving according to the command sent (without using a Camera)
 </li>
 </ol>
 
@@ -201,6 +275,21 @@ Our current goals could be summarized as follows:
 <li>introduce an explicit representation of the state of the robot (<k>robotState</k>). For example: <tt>'robot moving forward'</tt></li>
 <li>make the <k>robotState</k> accessible to the <kc>TU</kc></li>
 </ul>	
+
+<div class="remark">
+WORK TO DO<br/>
+Impostare un piano di testing, automatizzabile con JUnit 4
+</div>	 
+
+
+<h2>A more attractive scenario</h2>	
+Automatic testing is very useful during system development. However, in order to better understand the requirements
+and to stabilize them, we aim at using a real (or a virtual) robot.
+The intent is to show as soon as possible a working prototype to the customer, in order to have proper feedbacks.
+
+<h3>A virtual robot</h3>	
+Let us start from the virtual robot described in <a href=""></a>.
+
 </div>  
 <div style="background-color:rgba(86, 56, 253, 0.9); width:100%;text-align:center;font-size:small;color:white">
 By AN Unibo-DISI  
