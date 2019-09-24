@@ -182,8 +182,25 @@ Per far eseguire un modello qak, CREARE UN KOTLIN PROJECT anzichè un Java proje
 WORK TO DO<br/>
 Impostare un piano di testing automatizzabile con JUnit 4
 </p>
-</div>	 	
- 	
+</div>	 
+
+<h2>Towards a test plan</h2>
+The Testing Unit (<kc>TU</kc>) should:
+<ol>
+<li>activate a <em>console</em> that sends to the <em>robot</em> a command (e.g. <tt>'w'</tt>)</li>
+<li>check (in automatic way) that the <em>robot</em> is moving according to the command sent (without using a camera)
+</li>
+</ol>
+
+<h3>Current goals</h3>	
+Our current goals could be summarized as follows:
+
+<ul> 	
+<li>express the logical interaction between the <em>console</em> and the <em>robot</em></li>
+<li>express the logical behavior of the <em>console</em> (the sender) and the <em>robot</em> (the receiver) </li>
+<li>introduce an explicit representation of the state of the robot (<k>robotState</k>). For example: <tt>'robot moving forward'</tt></li>
+<li>make the <k>robotState</k> accessible to the <kc>TU</kc></li>
+</ul>	
 </div>  
 <div style="background-color:rgba(86, 56, 253, 0.9); width:100%;text-align:center;font-size:small;color:white">
 By AN Unibo-DISI  
