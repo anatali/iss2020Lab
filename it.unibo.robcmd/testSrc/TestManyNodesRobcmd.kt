@@ -5,25 +5,24 @@ import org.junit.Assert.fail
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import alice.tuprolog.SolveInfo
-import it.unibo.kactor.sysUtil
-import it.unibo.kactor.ActorBasic
-import it.unibo.kactor.MsgUtil
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 
-class TestRobcmd {
- 	//var resource : ActorBasic? = null
-	//var resource : it.unibo.robot.Robot? = null
-	
+class TestManyNodesRobcmd {
+ 	
 	@Before
 	fun systemSetUp() {
+//  	 		GlobalScope.launch{
+// 			    println(" %%%%%%% Robot starts   ")
+//				it.unibo.ctxRobot.main()
+// 			}
+// 			delay(1000)		//give the time to start
   	 		GlobalScope.launch{
- 			    println(" %%%%%%% TestRobcmd starts   ")
-				it.unibo.ctxRobcmd.main()
+ 			    println(" %%%%%%% Console starts   ")
+				it.unibo.ctxConsole.main()
  			}
- 			delay(2000)		//give the time to start
+ 			delay(5000)		//give the time to start
  	}
  
 	@After
@@ -35,7 +34,9 @@ class TestRobcmd {
 	fun moveTest() {
 		val finalRobotState = itunibo.robcmd.robotState.stateVal
 		println(" %%%%%%% TestRobcmd  moveTest ${ finalRobotState }")
-		assertTrue("", finalRobotState==itunibo.robcmd.robotState.stateRepForward )
+		//assertTrue("", finalRobotState==itunibo.robcmd.robotState.stateRepForward )
+		assertTrue("", finalRobotState==itunibo.robcmd.logSimple.getFirstLine() )
+		
  	}
 
 

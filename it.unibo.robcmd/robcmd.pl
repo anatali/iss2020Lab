@@ -1,6 +1,7 @@
 %====================================================================================
 % robcmd description   
 %====================================================================================
-context(ctxrobcmd, "localhost",  "TCP", "8020" ).
- qactor( console, ctxrobcmd, "it.unibo.console.Console").
-  qactor( robot, ctxrobcmd, "it.unibo.robot.Robot").
+context(ctxrobot, "localhost",  "TCP", "8020" ).
+context(ctxconsole, "192.168.1.7",  "TCP", "8030" ).
+ qactor( console, ctxconsole, "it.unibo.console.Console").
+  qactor( robot, ctxrobot, "it.unibo.robot.Robot").

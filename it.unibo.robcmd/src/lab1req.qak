@@ -16,11 +16,11 @@ System robcmd
 
 Dispatch cmd : cmd(X) // X = w | s | a ... 
 
-Context ctxRobcmd ip [ host= "localhost" port= 8020 ] 
-//Context ctxRobot   ip [ host= "localhost" port= 8020 ] 
-//Context ctxConsole ip [ host= "192.168.1.7" port= 8030 ] 
+//Context ctxRobcmd ip [ host= "localhost" port= 8020 ] 
+Context ctxRobot   ip [ host= "localhost"   port= 8020 ] 
+Context ctxConsole ip [ host= "192.168.1.7" port= 8030 ] 
 
-QActor console context ctxRobcmd {  
+QActor console context ctxConsole {    
 	State s0 initial {
 		println ( "hello from console" )
 		forward robot -m cmd : cmd( w )   
@@ -29,7 +29,7 @@ QActor console context ctxRobcmd {
 	}
 }
 
-QActor robot context ctxRobcmd {
+QActor robot context ctxRobot {
 	State s0 initial {
 		println ( "robot ready" )
 	}
@@ -37,8 +37,9 @@ QActor robot context ctxRobcmd {
 	
 	State handleCmd{
  		printCurrentMessage
-		onMsg ( cmd : cmd(w) ) { run itunibo.robcmd.robotState.robotGoingForward() }
-		//println( robotState )
+		onMsg ( cmd : cmd(w) ) { 
+			run itunibo.robcmd.robotState.robotGoingForward()			
+		}
 	}
 	//Goto s0
 }

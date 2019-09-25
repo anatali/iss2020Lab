@@ -11,6 +11,10 @@ object robotState {
 	
 	//fun mySetValue( v : String ){ value = v }
 	
-	fun robotGoingForward( ){ stateVal = stateRepForward }
+	fun robotGoingForward( ){
+		stateVal = stateRepForward
+		itunibo.robcmd.logSimple.saveData( stateVal )
+		println("robot state updated to $stateVal")
+	}
 	 
 }
