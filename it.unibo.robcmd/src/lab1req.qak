@@ -20,6 +20,7 @@ Dispatch cmd : cmd(X) // X = w | s | a ...
 Context ctxRobot   ip [ host= "localhost"   port= 8020 ] 
 Context ctxConsole ip [ host= "localhost"   port= 8030 ] 
 
+
 QActor console context ctxConsole {    
 	State s0 initial {
 		println ( "hello from console" )
