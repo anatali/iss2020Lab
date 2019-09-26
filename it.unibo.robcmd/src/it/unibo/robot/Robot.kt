@@ -18,7 +18,6 @@ class Robot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scope
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						println("robot ready")
 					}
 					 transition(edgeName="t00",targetState="handleCmd",cond=whenDispatch("cmd"))
 				}	 
@@ -27,9 +26,10 @@ class Robot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scope
 						println("$name in ${currentState.stateName} | $currentMsg")
 						if( checkMsgContent( Term.createTerm("cmd(X)"), Term.createTerm("cmd(w)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								itunibo.robcmd.robotState.robotGoingForward(  )
+								println("the robot must execute ${payloadArg(0)}")
 						}
 					}
+					 transition( edgeName="goto",targetState="s0", cond=doswitch() )
 				}	 
 			}
 		}
