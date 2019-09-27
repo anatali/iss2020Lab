@@ -26,6 +26,7 @@ class Robot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scope
 						println("$name in ${currentState.stateName} | $currentMsg")
 						if( checkMsgContent( Term.createTerm("cmd(X)"), Term.createTerm("cmd(w)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
+								itunibo.robcmd.robotState.robotGoingForward(  )
 								println("the robot must execute ${payloadArg(0)}")
 						}
 					}

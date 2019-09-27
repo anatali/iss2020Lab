@@ -20,14 +20,13 @@ Dispatch cmd : cmd(X) // X = w | s | a ...
 Context ctxRobot   ip [ host= "localhost"   port= 8020 ] 
 Context ctxConsole ip [ host= "localhost"   port= 8030 ] 
 
-
-QActor console context ctxConsole {    
+QActor console context ctxConsole {       
 	State s0 initial {
 		println ( "hello from console" )
 		forward robot -m cmd : cmd( w )   
  		delay 1000
 		forward robot -m cmd : cmd( h )   
-	} 
+	}   
 }
 
 QActor robot context ctxRobot {
@@ -39,7 +38,7 @@ QActor robot context ctxRobot {
 	State handleCmd{
  		printCurrentMessage
 		onMsg ( cmd : cmd(w) ) { 
-			//run itunibo.robcmd.robotState.robotGoingForward()		
+			run itunibo.robcmd.robotState.robotGoingForward()		
 			println("the robot must execute ${payloadArg(0)}")	 
 		}
  	}

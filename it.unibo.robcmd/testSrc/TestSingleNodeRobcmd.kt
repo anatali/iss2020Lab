@@ -27,17 +27,13 @@ class TestSingleNodeRobcmd {
  
 	@Test
 	fun moveTest() {
-		val finalRobotState = itunibo.robcmd.robotState.stateVal
+		val finalRobotState = itunibo.robcmd.logSimple.getFirstLine()
 		println(" %%%%%%% TestRobcmd  moveTest ${ finalRobotState }")
 		//assertTrue("", finalRobotState==itunibo.robcmd.robotState.stateRepForward )
-		assertTrue("", finalRobotState==itunibo.robcmd.logSimple.getFirstLine() )
-		
+		assertTrue("", finalRobotState==itunibo.robcmd.robotState.stateRepForward  )		
  	}
-
 
 	fun delay( time : Long ){
 		Thread.sleep( time )
 	}
-
-
 }
