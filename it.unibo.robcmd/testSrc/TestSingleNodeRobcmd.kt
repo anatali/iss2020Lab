@@ -17,7 +17,7 @@ class TestSingleNodeRobcmd {
  			    println(" %%%%%%% TestRobcmd starts   ")
 				it.unibo.ctxRobcmd.main()
  			}
- 			delay(2000)		//give the time to start
+ 			delay(4000)		//give the time to execute
  	}
  
 	@After
@@ -27,10 +27,9 @@ class TestSingleNodeRobcmd {
  
 	@Test
 	fun moveTest() {
-		val finalRobotState = itunibo.robcmd.logSimple.getFirstLine()
+		val finalRobotState = itunibo.robcmd.logSimple.getLastLine()
 		println(" %%%%%%% TestRobcmd  moveTest ${ finalRobotState }")
-		//assertTrue("", finalRobotState==itunibo.robcmd.robotState.stateRepForward )
-		assertTrue("", finalRobotState==itunibo.robcmd.robotState.stateRepForward  )		
+ 		assertTrue("", finalRobotState==itunibo.robcmd.robotState.stateRepStopped  )		
  	}
 
 	fun delay( time : Long ){

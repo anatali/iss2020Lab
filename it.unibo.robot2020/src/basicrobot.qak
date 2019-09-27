@@ -1,20 +1,11 @@
 /*
- * Questo file descrive UNA rapprsentazione testuale di UN modello del sistema
- * espresso nel linguaggio / metamodello qak
- * come risultato della analisi dei requisiti.
- * 
- * Il modello descrive l'archittura logica del sistema in termini di
- * 
- * 	struttura
- * 	interazione
- * 	comportamento 
- * 
- * dei sui componenti
  */
 
-System robcmd 
+System basicrobot 
 
 Dispatch cmd : cmd(X) // X = w | s | a ... 
+Event  sonarRobot     : sonar( DISTANCE )	     //from  sonar on robot 
+Event  sonar          : sonar(SONAR, DISTANCE)	 //from sonar in the robot environment   
 
 //Context ctxRobcmd ip [ host= "localhost" port= 8020 ] 
 Context ctxRobot   ip [ host= "localhost"   port= 8020 ] 
@@ -52,3 +43,16 @@ QActor robot context ctxRobot {
 	Goto s0
 }
 
+ QActor sonarhandler context ctxRobot{    
+  	State init initial{
+		println("sonarhandler STARTS ... ")
+	}         
+	Goto waitForEvents 
+	   
+ 	State waitForEvents{  }      
+   	Transition t0 whenEvent sonarRobot -> handleSonar //to test modeReact(model). See mbotSupport
+ 	State handleSonar{
+ 		printCurrentMessage
+  	}
+ 	Goto waitForEvents
+ }
