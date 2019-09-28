@@ -32,7 +32,6 @@ class Robot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scope
 						println("$name in ${currentState.stateName} | $currentMsg")
 						if( checkMsgContent( Term.createTerm("cmd(X)"), Term.createTerm("cmd(X)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								itunibo.robcmd.robotState.robotMove( payloadArg(0)  )
 								itunibo.robotVirtual.clientWenvObjTcp.sendMsg( payloadArg(0)  )
 						}
 					}
