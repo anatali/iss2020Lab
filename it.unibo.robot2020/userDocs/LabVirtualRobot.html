@@ -90,6 +90,24 @@ bc{
     color: #990000;
 	background-color: #fcf8c7;
 }
+k{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #990000;
+	 
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	 
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	 
+}
 pre{
 	font-family: "Helvetica";
 	font-size: 70%;
@@ -224,7 +242,7 @@ const config = {
 export default config;
 </pre>
 
-<h3>INTERACTION</h3> 
+<h3 id="interaction">INTERACTION</h3> 
 	
 The virtual robot accepts commands sent on a <tt>TCP</tt> connection on port <tt>8999</tt>.
 The commands are described in the file <tt>README.md</tt>.
@@ -241,8 +259,8 @@ stop : `{ "type": "alarm" }`
 </pre>
 Moreover, the virtual environment <em>sends</em> to the connected client (via <tt>TCP</tt> on port <tt>8999</tt>):
 <ul>
-<li>Data emitted by the sonars included in the scene when they detect the robot </li>
-<li>Data emitted by the sonars on board of the robot, when they detect an obstacle (fixed or mobile) </li>
+<li>Data emitted by the <em>sonars</em> <k>included in the scene</k> when they detect the robot </li>
+<li>Data emitted by the  <em>sonars</em> <k>on board</k> of the robot, when they detect an obstacle (fixed or mobile) </li>
 </ul>
 
 <pre>
@@ -261,19 +279,32 @@ collision : `{
 
 <h3>USING THE WENV ROBOT</h3>
 
-Let us report an example of a client written in Node.js that sends some command to the robot:
+Examples of clients to send commands to the virtual robot:
 <center><table style="width:95%">
 <tbody>	
 
 <tr>
-<td style="width:40%">
-<a href="../src/clientToWenv.js" target="code">clientToWenv.js</a> (<tt>node clientToWenv.js localhost 8999</tt>)
+<td style="width:33%">
+<m>A client written in Node.js</m><br/>
+<a href="../src/clientToWenv.js" target="code">clientToWenv.js</a> <br/>
+(<tt>node clientToWenv.js localhost 8999</tt>)
 </td>
-<td style="width:40%">
-<a href="../src/clientWenvTcpObj.kt" target="code">clientWenvTcpObj.kt</a>
+
+<td>
+<m>A client written in python</m><br/>
+<a href="../resources/clientToWenv.py" target="code">clientToWenv.py</a><br/>
+See also the <a href="https://jupyter.org/">jupyter notebook</a> named 
+<a href="../../it.unibo.robot2020/userDocs/BasicRobotInteraction.ipynb">BasicRobotInteraction.ipynb</a> 
+in project <tt>it.unibo.robot2020</tt>.  
 </td>
- </tr>
- 
+
+<td style="width:33%">
+<m>A client written in qak</m><br/>
+<a href="../resources/itunibo/robotVirtual/clientWenvObjTcp.kt" target="code">clientWenvObjTcp.kt</a>
+</td>
+</tr>
+
+
 </tbody>	
 </table></center>
 
