@@ -199,11 +199,18 @@ QActor <ks>basicrobot</ks> context ctxBasicRobot {
 </pre>
 </td>
 <td>
-<m>The model is executable and can be used to interact with the customer in order
-to better understand the requirements.
+<m>
+The model describes a single entity (the <em>basicrobot</em>) that is able to receive messages form a <tt>TCP</tt> client.
+Nevertheless, the model is related to a <i>system</i> in which the sender is not specified; the only specification regards the nature
+of information that the <em>basicrobot</em> is able to handle (one <em>dispatch</em> at the time).  
+<br/><br/>
+The model can be executed by using the python <tt>TCP</tt> client
+<a href="../resources/python/basicrobotusage.py" target="code">basicrobotusage.py</a>.
+This allows us to interact in an operation way with the customer in order to better understand the requirements.
 <br/><br/>
 However, up to now, the model is just a <k>skeleton</k>, that aims at describing the basic components mentioned
 in the requirement, with attention to their <ks>logical behavior</ks> and their <ks>interaction</ks>.
+A better model can be defined after <k>problem analysis</k>.
 <br/><br/>
 
 </m>
@@ -212,11 +219,17 @@ in the requirement, with attention to their <ks>logical behavior</ks> and their 
 </table>
 
 <h2>Problem analysis</h2> 
-<h4>The problem of the communication support</h4>
-The 
+<h4>The communication support</h4>
+The model of the requirements assumes that the <em>basicrobot</em> is able to work as a <k>TCP server</k> on port <tt>8020</tt>.
+Thus, it can be viewed as a sort of <a href="https://en.wikipedia.org/wiki/Microservices" target ="web">Microservice</a>
+running on an infrastrcture provided by the <tt>qak</tt> software factory.
+<br/><br/>
+During the analysis phase such a built-in support can be exploited to do fast prototyping; later, we will discuss how to
+<k>change</k> the built-in <tt>qak-infrastructure</tt> according to application needs.
+
 
 <h4>The basicrobot as sender of translated messages</h4>
-From the functional point of view, the <em>basicrobot</em> is a <k>translator</k> of commands expressed in the user-language 
+From the <i>functional</i> point of view, the <em>basicrobot</em> is a <k>translator</k> of commands expressed in the user-language 
 (<tt>w | s | h | a | d</tt>) into commands expressed in the language of the virtual robot, described in 
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.robot2020/userDocs/LabVirtualRobot.html#interactionOutput" target="web">
 LabVirtualRobot | Output</a>. 
