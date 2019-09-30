@@ -360,7 +360,7 @@ In order to make our code less technology-dependent, let us seek help from the
 <a href="https://en.wikipedia.org/wiki/Adapter_pattern"  target="web">adapter</a>
 able to make our model to work with different types of robots without modifying its source code.
 
-<h3>The adapter</h3>
+<h3>The robotSupport adapter</h3>
 Our adapter is defined as an object able to make our models 'technology independent':
 
 
@@ -454,9 +454,12 @@ QActor basicrobot context ctxBasicRobot {
 </table>
 
 <h3>Using knowledge expressed in Prolog</h3>
-To make the code even more invariant, we can describe the type of the robot in a text file, whose content can be read
+To make the model code even more invariant, we can describe the type of the robot in a text file, whose content can be read
 in the initial state of the robot. Such a type of 'knowledge' can be better expressed as a Prolog knowledge-based,
-since the <tt>qak</tt> provides primitive operation to solve Prolog goals.
+since the <tt>qak</tt> provides primitive operation to solve Prolog goals (see 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakintro2020/userDocs/LabQakIntro2020.html#Prolog" target="web">
+LabQakIntro2020.html | Using Prolog</a>
+).
 
 <table style="width:100%" border="1">
 <tr>
