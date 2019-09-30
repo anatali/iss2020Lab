@@ -151,12 +151,161 @@ table, th, td {
 
 <div class="body"> 
 
-<h1>LABQakIntro20202 | Using the QActor (meta)model</h1> 
+<h1>LABQakIntro2020 | The QActor (meta)model</h1> 
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.issLabStart/userDocs/LectureCesena1920.html" target="isslm">LabISS-lectures site</a></font> 
+ 
+<br/><br/>
+<em>QActor</em> is the name given to the custom meta-model inspired to the actor model, as supported by the <bc>Akka</bc> library.
+<br/>
+The leading <em>Q/q</em> in the <tt>QActor</tt> word, means 'quasi' since the <tt>QActor</tt> meta-model does introduce (with respect to <tt>Akka</tt>) 
+its own peculiarities, including reactive actions, even-driven programming concepts and a support for distribution in heterogeneous systems. 
+<br/>
+The addition of a <em>k</em> to the prefix (e.g. <bc>qak, Qak</bc>) means that we are making reference to the version implemented in <bc>Kotlin</bc>,
+without using any <tt>Akka</tt> support.
+
+
+<h2><a id="metamodel"/>Metamodel overview</h2> 
+Let us summarize the main features of a <tt>qa-system</tt>:
+
+<ul>
+<li>A <em>QA-System</em> is a collection of active entities (<tt>QActors</tt>) each working in a computational node (<tt>Context</tt>). 
+A QActor can interact with other <tt>QActors</tt> using <a href="#messages">Messages</a> of different types (<tt>Dispatch,
+Request, Invitation, ...</tt>) and <a href="#events">Events</a>. 
+
+<center><img src="./img/qacontexts.png" alt="qacontexts" width="60%" height="60%"></center>
+ <br/><br/>
+</li>
+ 
+<li>The <em>configuration</em> of a <tt>QA-System</tt> is explicitly represented by a set of 'facts' written in tuProlog syntax
+replicated in each <tt>Context</tt> (<tt>Context Knowledge Base</tt> or simply <em>ContextKB</em>). A <tt>QA-System</tt>
+con be configured in a static or in a dynamic way. In case of dynamic configuration, the knowledge about
+the configuration is dynamically updated in each <tt>Context</tt> of the system (not yet implemented in <bc>qak</bc>).<br/><br/>
+</li>
+
+<li>The <em>start-up</em> of a distributed <tt>QA-System</tt> (i.e. a system made of two or more <tt>Contexts</tt>) is handled by
+the run-time support. In particular, the Application code (i.e. the code written into the actors) begins to
+run only when all the <tt>Contexts</tt> are activated.<br/><br/>
+</li>
+
+<li>The <em>exchange of information</em> among the <tt>QActors</tt> is implemented by the <bc>Qak-Infrastructure</bc>.
+ The <tt>Qak-Infrastructure</tt> supports interaction among <tt>QActors</tt>
+working in the same <tt>Context</tt> and/or in different Contexts. In the latter case, the <tt>Qak-Infrastructure</tt>
+exploits the <tt>ContextKB</tt> in order to deliver a message from the <tt>Context</tt> of the sender to the Context of the
+destination. An event raised in some <tt>Context</tt>, is delivered to all the other <tt>Contexts</tt> of the system.
+
+<center><img src="./img/qactor.jpg" alt="qactor" width="60%" height="60%"></center>
+ <br/><br/>
+
+</li>
+
+<li>To <em>deliver information</em> among the Contexts, the <tt>QA-Infrastructure</tt> can use pairwise <tt>TCP</tt> connections
+between the <tt>Contexts</tt> or a <bc>MQTT</bc> broker (see <a href="#mqtt">Using MQTT</a>). The choice is up to the Application designer.
+<br/><br/>
+</li>
+
+<li>Each <tt>QActor</tt> logically <em>behaves</em> as a (<tt>Moore</tt>'s) Finite State Automaton (<bc>FSM</bc>). 
+While in a state, a <tt>QActor</tt> can execute
+both synchronous and asynchronous actions. An asynchronous action terminates immediately and emits
+an event when it terminates.<br/><br/>
+</li>
+
+<li>A <tt>QKActor</tt> is able to execute a set of pre-defined actions, including:
+<ul>
+<li><pre>forward( msgId : String, msg: String, destActor: ActorBasic)</pre></li>
+<li><pre>forward( msgId : String, msg: String, destName: String)</pre></li>
+<li><pre>emit( msgId : String, msg : String)</pre></li>
+<li><pre>run  &lt; object method> </pre></li>
+<li><pre>machineExec(cmd: String) </pre>
+</li>
+</ul>
+<br/>
+</li>
+
+<li>A <tt>QActor</tt> is associated to a <em>private knowledge-base</em> (<tt>Actor Knowledge Base</tt> or simply <bc>QaKB</bc>) written in <tt>Prolog</tt> that can be
+dynamically extended.
+The Application Designer must remember to provide the prefixed set of rules required by the <tt>qak-infrastructure</tt>. These rule can be found
+in <a href="../sysRules.pl" target="code">sysRules.pl</a>.
+
+<br/><br/>
+
+</li>
+</ul>
+
+<h2 id="messages">Messages</h2>
+In the QActor metamodel, a message is intended as information sent in asynchronous way by some source to
+some specific destination.
+<br/><br/>
+For </bc>asynchronous</bc> transmission we intend that the messages can be 'buffered' by the infrastructure,
+while the 'unbuffered' transmission is said to be <bc>synchronous</bc>.
+ <br/><br/>
+A message does not force the execution of code: a message <tt>m</tt> sent from an actor sender to an actor receiver
+can trigger a state transition in the receiver. If the receiver is not 'waiting' for a
+transition including <tt>m</tt> the message is enqueued in the receiver queue.
+<br/><br/>
+At application-level, we say that a QActor works according to a <bc>message-based</bc> behaviour, while at the
+lower level (in the infrastructure) it works according to the <bc>massage-driven</bc> behaviour.
+ 
+
+<h2 id="events">Events</h2>
+In the QActor metamodel, an event is intended as information emitted by some source without any explicit
+destination. Events can be emitted by the QActors that compose a actor-system or by sources external to the
+system.
+<br/><br/>
+The occurrence of an event can put in execution some code devoted to the management of that event. We
+qualify this kind of behaviour as <bc>event-driven</bc> behaviour, since the event 'forces' the execution of code.
+<br/><br/>
+An event can also trigger state transitions in components, usually working as Finite state machines. We
+qualify this kind of behavior as <bc>event-based</bc> behaviour, since the event is 'lost' if no actor is in a state
+waiting for it.
+<br/><br/>
+Events whose identifier start with the prefix <bc>local_</bc/> are not propagated outside the context in which they are generated.
+
+ 
+<h2>Message-based / Event-based behavior</h2>
+The (meta-)model of actor behavior at the level of the <tt>DSL</tt> is <bc>message/event-based</bc> rather than <bc>message/event-driven</bc>. 
+
+This means that there is a <em>infrastructural layer</em> that implements the behavior of a <bc>Finite State Machine</bc> over the <i>message/event-driven</i>
+basic behavior of the actors. 
+
+<div class="remark">
+The metamodel is supported by the <tt>qak-infrastructure</tt> deployed in <bc>it.unibo.qakactor-1.0.jar</bc>.
+</div>
+
+The logic of the infrastructural layer is summarized in the following figure:
+<br/><br/>
+<center><table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:55%"><img src="./img/actorBasicFsm.png" alt="actorBasicFsm." width="98%" height="40%"/></td>
+ <td><m>
+
+ When a message <tt>msg</tt> is (<i>event-driven</i>) received, the actor checks for a possible transition for that <tt>msg</tt> in the <tt>current state</tt>.
+ <br/> <br/>
+If no transition is possible, the message <tt>msg</tt> is <b>discarded if it is an event</b>; otherwise it us stored in a local queue.
+ <br/> <br/>
+If the transition is possible, the actor goes into the next state related to that transition and then looks at empty moves or to transitions
+related to stored messages. 
+ <br/><br/>
+ The actor attempts to manage <b>all</b> the stored messages before looking to a new message.
+  <br/><br/>
+This behavior is implemented as a 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2019Lab/blob/master/it.unibo.kotlin.dsl/userDocs/LabDsl.html" target="web">Kotlin internal DSL</a>
+ in <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2019Lab/blob/master/it.unibo.qakactor/src/main/kotlin/ActorBasicFsm.kt" target="code">it.unibo.qakactor.ActorBasicFsm.kt</a>.
+</m> 
+ </td>
+</tr>
+</table>
+</center>
+ 
  
  
 
+ 
+ 
+<h1>LABQakIntro2020 | Using the QActor (meta)model</h1> 
+
 <h2><a id=""/>Starting</h2>
+
 
 <ol>
 <li>Download <a href="https://www.eclipse.org/Xtext/download.html" target="web">Eclipse Xtext</a>  and Install Eclipse plugin for Kotlin.</li>
@@ -225,7 +374,7 @@ working in that context.<br/><br/</li>
 
 </ul></m>
 
-For an overvew of Kotlin, tou can look at 
+For an overview of Kotlin, tou can look at 
  </td>
 </tr>
 </table>
@@ -281,49 +430,18 @@ the actor <tt>button</tt>  calls the method <tt>resources.bls.better.buttonEvent
 a button-GUI (the code can be found  in <a href="../src/resources/bls/better/buttonEventEmitter.kt" target="code">buttonEventEmitter.kt</a>).
 
 
-<h2>Message-based / Event-based behavior</h2>
-The (meta-)model of actor behavior at the level of the <tt>DSL</tt> is <bc>message/event-based</bc> rather than <bc>message/event-driven</bc>. 
-
-This means that there is a <em>new  infrastructural layer</em> that implements the behavior of a <bc>Finite State Machine</bc> over the <i>message/event-driven</i>
-basic behavior of the actors. 
-<br/><br/>
-The logic of such a new layer is summarized in the following figure:
-<br/><br/>
-<center><table style="width:98%">
-<tbody>	
-<tr>
-<td style="width:55%"><img src="./img/actorBasicFsm.png" alt="actorBasicFsm." width="98%" height="40%"/></td>
- <td><m>
-
- When a message <tt>msg</tt> is (<i>event-driven</i>) received, the actor checks for a possible transition for that <tt>msg</tt> in the <tt>current state</tt>.
- <br/> <br/>
-If no transition is possible, the message <tt>msg</tt> is <b>discarded if it is an event</b>; otherwise it us stored in a local queue.
- <br/> <br/>
-If the transition is possible, the actor goes into the next state related to that transition and then looks at empty moves or to transitions
-related to stored messages. 
- <br/><br/>
- The actor attempts to manage <b>all</b> the stored messages before looking to a new message.
-  <br/><br/>
-This behavior is implemented as a 
-<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2019Lab/blob/master/it.unibo.kotlin.dsl/userDocs/LabDsl.html" target="web">Kotlin internal DSL</a>
- in <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2019Lab/blob/master/it.unibo.qakactor/src/main/kotlin/ActorBasicFsm.kt" target="code">it.unibo.qakactor.ActorBasicFsm.kt</a>.
-</m> 
- </td>
-</tr>
-</table>
-</center>
  
 <h3>Firing a transition</h3>
 A <bc>Transition</bc> can be 'fired' if the related condition (<bc>whenTime</bc>, <bc>whenEvent</bc>, <bc>whenMsg</bc>)  is true.
 The condition can be extended by a user-defined Kotlin code working as a <em>guard</em>. 
 
 <h4>Guarded transitions</h4>
-To give an example of guarded transitions, let us replace the old <tt>Led</tt> with the following actor:<br/><br/>
+To give an example of guarded transitions, let us consider the following actor:<br/><br/>
  
 <center><table style="width:98%">
 <tbody>	
 <tr>
-<td style="width:65%"><img src="./ledGuarded.png" alt="ledGuarded." width="98%" height="40%"/></td>
+<td style="width:65%"><img src="./img/ledGuarded.png" alt="ledGuarded." width="98%" height="40%"/></td>
  <td><m>The guard is the sentence
 <pre> <font size="2">
  and { "counter++ < 5 || counter > 8"  }
@@ -333,6 +451,11 @@ To give an example of guarded transitions, let us replace the old <tt>Led</tt> w
  <em>Prolog-unified</em>
  with the <tt>ledCmd</tt> template defined in <bc>Event</bc> declaration 
  and with the template specified in <bc>onMsg</bc>.
+ 
+ <div class="remark">
+<b>WARNING</b>: the possibility to augment the model with user-defined <tt>Kotlin</tt> code is still experimental and must be used with care.<br/>
+It is preferable to <bc>run</bc> custom objects.
+</div> 
 </m> 
 </td>
  
@@ -344,10 +467,7 @@ This <tt>Led</tt> executes a <tt>ledCmd</tt> only when a local <tt>counter</tt> 
 otherwise, the <tt>ledCmd</tt> message is stored in the local <tt>msgQueueStore</tt>.
 When the counter becomes higher than <tt>8</tt>, the actor handles all the stored messages before handling new messages.
  
-<div class="remark">
-<b>WARNING</b>: the possibility to augment the model with user-defined <tt>Kotlin</tt> code is still experimental and must be used with care.
-It is preferable to <bc>run</bc> custom objects.
-</div> 
+
 
  
 <h3 id="whenTine">About whenTine</h3>
@@ -355,7 +475,9 @@ It is preferable to <bc>run</bc> custom objects.
 The transition-condition <bc>whenTine</bc> is implemented by creating in dynamic way a <bc>TimerActor</bc>. 
 When the given time expires, the timer that emits a system-event  with a name that starts with the prefix <bc>local_tout</bc>; afterwards it terminates.
 Th event is <em>not emitted</em> if a message can be handled before that the timer time expires.
- 
+
+
+<!--
 <h3>From local to distributed</h3>
 
 It is quite easy to change the configuration of the system, so to move one or more actors in different nodes.
@@ -383,16 +505,11 @@ qactor( led, ctxled, "it.unibo.bls19d.qak.LedActork").
 qactor( control, ctxbls, "it.unibo.bls19d.qak.ControlActork").
 qactor( button, ctxbls, "it.unibo.bls19d.qak.ButtonActork").
 </pre>
+-->
 
-<h2 id="Prolog">Prolog</h2>
-A <tt>QActor</tt> is associated to a <em>private knowledge-base</em> (<tt>Actor Knowledge Base</tt> or simply <bc>QaKB</bc>) written in <tt>Prolog</tt> that can be
-dynamically extended.
-
-The <i>Application Designer</i> must remember to provide the prefixed set of rules required by the <tt>qak-infrastructure</tt>. These rule can be found
-in <a href="../sysRules.pl" target="code">sysRules.pl</a>.
-<br/><br/>
+<h2 id="Prolog">Using Prolog</h2>
 Let us recall here the fundamental aspects of <tt>Prolog</tt>, by means of a set of examples. The code can be found in
-<a href="../src/prologUsage.qak" target="code">prologUsage.qak</a>
+<a href="../src/prologusage.qak" target="code">prologusage.qak</a>
 <center><table style="width:98%">
 <tbody>	
 
@@ -426,7 +543,7 @@ allHLines(P1,HL):-
 
  <m>
 
- The two complex <em>Terms</em> representing a <bc>point</bc> are bundled together as the two arguments of another complex 
+Two complex <em>Terms</em> representing a <bc>point</bc> are bundled together as the two arguments of another complex 
  <em>Term</em> with the functor <bc>line</bc>.
 <br/>
 In effect, we represent a <bc> line</bc>  by a complex term which has two arguments which are complex terms themselves and represent points. 
@@ -517,7 +634,7 @@ ifSolved println( "all lines=${getCurSol(\"L\")} " )
 </pre>
  <td>
   <h3>Examples of usage</h3>
-  The code is in <a href="../src/prologUsage.qak" target="code">prologUsage.qak</a>
+  The code is in <a href="../src/prologusage.qak" target="code">prologusage.qak</a>
  <m>
 
 </m> 
@@ -579,8 +696,134 @@ used to access a logic variable
 </center>
 
  
+<h2 id="Executable">Executable jars</h2>
 
 
+<center><table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:45%">
+<pre>
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.21'
+    id 'application'
+}
+...
+mainClassName = 'it.unibo.qak.sonar.SonarShowKt'
+
+jar {
+    println("executing jar")
+    manifest {
+        attributes 'Main-Class': "it.unibo.qak.sonar.SonarShowKt"
+    }
+}
+</pre>
+</td>
+<td><m>The build file is in 
+<a href="../build.gradle" target="code">build.gradle</a> 
+<br/><br/>
+The main we use for this example is in 
+<a href="../src/main/kotlin/it/unibo/qak/prodCons/mainProdConsLocal.kt" target="code">mainProdConsLocal.kt</a>
+<br/><br/>
+<b><tt>Note that</tt></b> the main class is named <bc>it.unibo.qak.prodCons.MainProdConsLocalKt</bc>
+</m> 
+</td>
+</tr>
+
+<tr>
+<td>
+<pre>
+context(ctxProducer,"localhost",    "TCP", 8010).
+context(ctxConsumer,"localhost", "TCP", 8020).
+
+qactor( button,   ctxProducer, "it.unibo.qak.producer.ButtonGuiActork").
+qactor( producer, ctxProducer, "it.unibo.qak.producer.Producer").
+qactor( consumer, ctxConsumer, "it.unibo.qak.consumer.Consumer").
+</pre>
+</td>
+<td><m>The system description is now written in in the main directory of the project:
+<a href="../sysDescr.pl" target="code">sysDescr.pl</a>
+</m>
+</td>
+</tr>
+
+<tr>
+<td>
+<pre>
+gradle build jar
+</pre>
+</td>
+<td><m>Generates the <em>distribution file</em> is the directory <bc>build/distributions</bc> 
+<!--<a href="../build/distributions" target="code">it.unibo.bls19d-1.0.zip</a> -->
+</m>
+</td>
+</tr>
+
+<tr>
+<td><m>
+<ol>
+<li>unzip the distribution file in some dir</li>
+<li>work in the <bc>bin</bc> directory</li>
+<li><bc>copy</bc> in this directory the files <a href="../sysDescr.pl" target="code">sysDescr.pl</a> and 
+<a href="../sysRules.pl" target="code">sysRules.pl</a></li>
+
+</ol>
+</m>
+</td>
+<td><m>Activate the system by running: <bc>it.unibo.xxx.bat</bc><br/><br/>
+ On RaspberryPi : <bc>bash it.unibo.xxx</bc>
+</m>
+</td>
+</tr>
+
+
+</tbody>	
+</table></center>
+
+
+<h1 id="actorasstream">LABQakIntro2020 |  Observable Actors</h1>
+
+  
+<em>Reactive programming</em> is a combination of the best ideas from the <bc>Observer</bc> pattern, 
+the <bc>Iterator</bc> pattern, and <bc>functional programming</bc>.
+<br/>
+In <tt>reactive programming</tt>, the consumer reacts to the data as it comes in. 
+This is the reason why asynchronous programming is also called reactive programming. 
+Reactive programming allows to <i>propagates event changes</i> to registered observers.
+<br/><br/>
+Let us add the following properties to our <tt>ActorBasic</tt>:
+<pre>
+abstract class  ActorBasic( ... ) {
+protected val subscribers = mutableListOf<ActorBasic>()
+
+    fun subscribe( a : ActorBasic) : ActorBasic {
+        subscribers.add(a)
+        return a
+    }
+    fun unsubscribe( a : ActorBasic) {
+        subscribers.remove(a)
+    }
+
+    suspend fun emitLocalStreamEvent(v: ApplMessage ){
+        subscribers.forEach { it.actor.send(v) }
+    }
+</pre>
+
+From now on, we can use an <tt>ActorBasic</tt> as an <bc>observable producer</bc> of data; it can be observed by other actors
+subscribed to it. Each subscriber will process the data 'in parallel' with the others and can work as an observable in its turn.
+
+<div class="remark"> 
+<a href="https://www.vogella.com/tutorials/RxJava/article.html">Reactive Extensions (Rx) in Java</a> (<bc>RxJava</bc>)
+ is based on the same principles and allows us to compose components into <bc>pipelines</bc>  
+ according to the <a href="https://en.wikipedia.org/wiki/Stream_(computing)">Stream computing</a> paradigm.<br/>
+ See also 
+ <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2019Lab/blob/master/it.unibo.qak.streams/userDocs/LabStreams.html" 
+target="lecture">LabStreams | Using streams</a>)
+</div>
+
+ 
+ 
 
 
 

@@ -18,7 +18,8 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						itunibo.robotVirtual.clientWenvObjTcp.initClientConn(myself)
+						solve("consult('basicRobotConfig.pl')","") //set resVar	
+						itunibo.robot.robotSupport.create(myself ,"virtual", "8999" )
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
@@ -34,7 +35,7 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						println("$name in ${currentState.stateName} | $currentMsg")
 						if( checkMsgContent( Term.createTerm("cmd(X)"), Term.createTerm("cmd(X)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								itunibo.robotVirtual.clientWenvObjTcp.sendMsg( payloadArg(0)  )
+								itunibo.robot.robotSupport.move( payloadArg(0)  )
 						}
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
@@ -42,7 +43,7 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 				state("handleObstacle") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						itunibo.robotVirtual.clientWenvObjTcp.sendMsg( "h"  )
+						itunibo.robot.robotSupport.move( "h"  )
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
