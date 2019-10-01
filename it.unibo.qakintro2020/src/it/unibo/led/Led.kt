@@ -38,12 +38,6 @@ class Led ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scope){
 					}
 					 transition( edgeName="goto",targetState="waitCmd", cond=doswitch() )
 				}	 
-				state("tooLate") { //this:State
-					action { //it:State
-						println("Be faster, please ... ")
-					}
-					 transition( edgeName="goto",targetState="waitCmd", cond=doswitch() )
-				}	 
 			}
 		}
 }

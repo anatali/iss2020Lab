@@ -206,7 +206,58 @@ between the <tt>Contexts</tt> or a <bc>MQTT</bc> broker (see <a href="#mqtt">Usi
 <li>Each <tt>QActor</tt> logically <em>behaves</em> as a (<tt>Moore</tt>'s) Finite State Automaton (<bc>FSM</bc>). 
 While in a state, a <tt>QActor</tt> can execute
 both synchronous and asynchronous actions. An asynchronous action terminates immediately and emits
-an event when it terminates.<br/><br/>
+an event when it terminates.
+
+ <table style="width:100%">
+<tr>
+<td width="20%">
+<center><img src="./img/ActorBasic.png" alt="ActorBasic" width="130" height="100"></center> 
+</td>
+<td width="40%">
+<center><img src="./img/ActorBasicCode.png" alt="ActorBasicCode" width="450" height="400"></center> 
+ 
+</td>
+<td width="40%">
+<a href="../src/main/kotlin/it/unibo/kactor/ActorBasic.kt" target="code">ActorBasic.kt</a><br/><br/>
+An abstract class  that provides an actor. <br/> <br/>
+The application designer must write the <tt>actorBody</tt>
+method to  handle:
+<li>
+with the help of <a href="../src/main/kotlin/it/unibo/kactor/MsgUtil.kt" target="code">MsgUtil.kt</a></li>
+<li>the received message of type 
+<a href="../src/main/kotlin/it/unibo/kactor/ApplMessage.kt" target="code">ApplMessage.kt</a> (requires
+<a href="http://tuprolog.sourceforge.net/doc/2p-guide.pdf">tuProlog</a> )</li>
+
+</td>
+</tr>
+</table>
+</center>
+
+<br/><br/>
+
+<center><table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%"> 
+ <pre>
+ abstract class ActorBasicFsm( ... ) : ActorBasic( ... ){ ... }
+ </pre>
+<m>
+<em>ActorBasicFsm</em>
+
+</m> 
+ </td>
+ <td>
+ <pre>
+ abstract class ActorBasic ( ... ) : MqttCallback{ ... }
+ </pre>
+ </td>
+</tr>
+</table>
+</center>
+
+
+<br/><br/>
 </li>
 
 <li>A <tt>QKActor</tt> is able to execute a set of pre-defined actions, including:
@@ -215,7 +266,7 @@ an event when it terminates.<br/><br/>
 <li><pre>forward( msgId : String, msg: String, destName: String)</pre></li>
 <li><pre>emit( msgId : String, msg : String)</pre></li>
 <li><pre>run  &lt; object method> </pre></li>
-<li><pre>machineExec(cmd: String) </pre>
+<li><pre>machineExec(cmd: String)     //cmd is a machine-executable command</pre> 
 </li>
 </ul>
 <br/>
@@ -321,7 +372,8 @@ When the counter becomes higher than <tt>8</tt>, the actor handles all the store
  <em>Prolog-unified</em>
  with the <tt>ledCmd</tt> template defined in <bc>Event</bc> declaration 
  and with the template specified in <bc>onMsg</bc>.
- 
+ <br/><br/>
+ The payloadArg is described later, in <a href="#shortcut">shortcut</a>
 </m> 
 </td>
  
@@ -329,11 +381,12 @@ When the counter becomes higher than <tt>8</tt>, the actor handles all the store
 </table>
 </center>
  <br/> 
+ <m>
   <div class="remark">
-<b>WARNING</b>: the possibility to augment the model with user-defined <tt>Kotlin</tt> code is still experimental and must be used with care.<br/>
+<b>WARNING</b>: the possibility to augment the model with user-defined <tt>Kotlin</tt> code is still experimental and must be used with care. 
 It is preferable to <bc>run</bc> custom objects.
 </div> 
-
+</m>
  
 
 
@@ -344,7 +397,49 @@ The transition-condition <bc>whenTime</bc> is implemented by creating in dynamic
 When the given time expires, the timer that emits a <em>system-event</em>  with a name that starts with the prefix <bc>local_tout</bc>; afterwards it terminates.
 The system event is <em>not emitted</em> if a message can be handled before that the timer-time expires.
 
- 
+
+<h2 id="actorasstream">Observable Actors</h2>
+
+  
+<em>Reactive programming</em> is a combination of the best ideas from the <bc>Observer</bc> pattern, 
+the <bc>Iterator</bc> pattern, and <bc>functional programming</bc>.
+<br/>
+In <tt>reactive programming</tt>, the consumer reacts to the data as it comes in. 
+This is the reason why asynchronous programming is also called reactive programming. 
+Reactive programming allows to <i>propagates event changes</i> to registered observers.
+<br/><br/>
+Let us add the following properties to our <tt>ActorBasic</tt>:
+<pre>
+abstract class  ActorBasic( ... ) {
+protected val subscribers = mutableListOf<ActorBasic>()
+
+    fun subscribe( a : ActorBasic) : ActorBasic {
+        subscribers.add(a)
+        return a
+    }
+    fun unsubscribe( a : ActorBasic) {
+        subscribers.remove(a)
+    }
+
+    suspend fun emitLocalStreamEvent(v: ApplMessage ){
+        subscribers.forEach { it.actor.send(v) }
+    }
+</pre>
+
+From now on, we can use an <tt>ActorBasic</tt> as an <bc>observable producer</bc> of data; it can be observed by other actors
+subscribed to it. Each subscriber will process the data 'in parallel' with the others and can work as an observable in its turn.
+
+<m>
+<div class="remark"> 
+<a href="https://www.vogella.com/tutorials/RxJava/article.html">Reactive Extensions (Rx) in Java</a> (<bc>RxJava</bc>)
+ is based on the same principles and allows us to compose components into <bc>pipelines</bc>  
+ according to the <a href="https://en.wikipedia.org/wiki/Stream_(computing)">Stream computing</a> paradigm. 
+ <!-- See also 
+ <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2019Lab/blob/master/it.unibo.qak.streams/userDocs/LabStreams.html" 
+target="lecture">LabStreams | Using streams</a>) -->
+</div>
+</m>
+
  
 <h1>LABQakIntro2020 | Using the QActor (meta)model</h1> 
 
@@ -433,8 +528,9 @@ To this end, open a terminal and write the command:
 gradle build eclipse	
 </pre>
 </li>
-<li>Now the code should compile. If a <k>!</k> symbol appears on the project, open <tt>Project-> Properties->JavaBuidPath->src</tt> and 
-eliminate the <tt>src</tt> duplicate.
+<li>Now the code should compile. If a <k>!</k> symbol appears on the project, open <br/>
+<tt>Project-> Properties->JavaBuidPath->src</tt> and 
+<b>eliminate</b> the <tt>src</tt> duplicate.
 </li>
 <li>
 At this point you can run the <tt>Main</tt> (in our case <bc>it.unibo.ctxBls.MainCtxBls.kt</bc>) and look at the result.
@@ -472,7 +568,7 @@ intercepts <tt>local_buttonCmd</tt> events with a minimum delay
 
 
 
-<h2>Coded actors</h2> 
+<h2>Coded and External actors</h2> 
 A qak model  cam include actors written in Koltin by the application designer, as extensions of the <k>ActorBasic</k> class
 provided by the qak-infrastructure. For example:
 <center><table style="width:98%">
@@ -512,37 +608,119 @@ The code of <em>ActorBasic</em> is defined in <br/>
 </table>
 </center>
 
-<h2>External actors</h2> 
+<br/>
+Moreover, a qak model  cam make reference to qak actors already running on a different node. 
+<br/>
 
-<!--
-<h3>From local to distributed</h3>
+Let us consider the following example:<br/><br/>
 
-It is quite easy to change the configuration of the system, so to move one or more actors in different nodes.
-For example, let us move the <tt>Led</tt> in another node:
+<center><table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%"> 
+
 <pre>
-System bls
- 
-Context ctxBls ip [host="localhost" port=8090]
-Context ctxLed ip [host="localhost" port=8095]
+System sysexample
 
-QActor welcome context ctxBls{ ... }
+Dispatch cmd    : cmd(X)
+Dispatch ledCmd : ledCmd(X)  
 
-CodedQActor ctxLed context ctxBls className "it.unibo.bls19d.qak.LedActork"        //FIRST
+Context ctxSysExample ip [host="localhost"    port=8072]
+Context ctxBls ip [host="192.168.1.8"  port=8075]	<k>//DO NOT USE localhost</k>
 
-CodedQActor control context ctxBls className "it.unibo.bls19d.qak.ControlActork" 
-CodedQActor button context ctxBls className "it.unibo.bls19d.qak.ButtonActork"   //LAST
+QActor qa0 context ctxSysExample{   
+
+	State s0 initial{  
+	  <kc>println("qa0 sends w to qacoded") </kc>
+	  forward <em> qacoded</em> -m cmd : cmd(w)
+	  delay 500 
+	  
+	  <kc>println("qa0 sends  ledCmd : ledCmd( on )  to the external led") </kc>
+	  forward <em>led</em>  -m ledCmd : ledCmd( on )
+	  delay 1000 
+	  
+	  <kc>println("qa0 sends  ledCmd : ledCmd( off ) to the external led")  </kc>
+	  forward <em>led</em>  -m ledCmd : ledCmd( off )
+	}
+} 
+
+<k>CodedQActor</k> <em>qacoded</em>  context ctxSysExample 
+							className "resources.qacoded" 
+
+<k>ExternalQActor</k> <em>led</em>  context ctxBls
 </pre>
-In this case, the generated description (in file <tt>bls.pl</tt> ) becomes:
+<m>
+The code is in <a href="../src/sysexample.qak" target="code">sysexample.qak</a> in project <tt>it.unibo.qakintro2020</tt>
+</m>
+</td>
+
+<td>
 <pre>
-context(ctxbls, "localhost",  "TCP", "8090" ).
-context(ctxled, "localhost",  "TCP", "8095" ).
+System bls   
+Event    local_buttonCmd : local_buttonCmd(X) 
+Dispatch ledCmd : ledCmd(X)  
+Context ctxBls ip [host="192.168.1.8" port=8075] 		 
+QActor <em>button</em> context ctxBls {	//generates local_buttonCmd 
+	State s0 initial { 
+		emit local_buttonCmd : local_buttonCmd( click ) 
+		delay 1000
+		emit local_buttonCmd : local_buttonCmd( click ) 
+	}    
+}   
+QActor <em>blscontrol</em> context ctxBls {
+	State s0 initial { 	}
+	Transition t0  whenEvent local_buttonCmd -> turnOn 	
+	State turnOn{  forward led -m ledCmd : ledCmd(on) }
+	Transition t1 whenEvent local_buttonCmd -> turnOff	
+	State turnOff{ forward led -m ledCmd : ledCmd(off) }
+	Transition t1   whenEvent local_buttonCmd -> s0
+}	
+QActor <em>led</em> context ctxBls {  
+<ks>["var counter = 0"]   </ks> 
+	State s0 initial {   println("led started") } 
+	Goto waitCmd   	
+	State waitCmd{  println("led waits ...") }   
+	Transition t0     
+		whenMsg ledCmd and <ks> "counter++ < 5 || counter > 8"</ks>  
+				-> handleLedCmd	  
+	State  handleLedCmd{  onMsg ( ledCmd : ledCmd(X) ) { 	
+		println( "led handleLedCmd: ${payloadArg(0)} counter=$counter" ) }
+ 	}	
+	Goto waitCmd       
+}
+</pre> 
+<m>
+The code is in <a href="../src/bls.qak" target="code">bls.qak</a> in project <tt>it.unibo.qakintro2020</tt>
+</m> 
+</td>
+</tr>
+</table>
+</center>
 
-qactor( welcome, ctxbls, "it.unibo.welcome.Welcome").
-qactor( led, ctxled, "it.unibo.bls19d.qak.LedActork").
-qactor( control, ctxbls, "it.unibo.bls19d.qak.ControlActork").
-qactor( button, ctxbls, "it.unibo.bls19d.qak.ButtonActork").
+<m>
+To run the system:
+<ol>
+<li>Activate <ks>MainCtxBls.kt</ks></li>
+<li>Activate <ks>MainCtxSysExample.kt</ks></li>
+</ol>
+The output of the <em>led</em> is:
+</m> 
+<pre>
+led started
+led waits ...
+				<kc>caused by messages sent by button</bc>
+led handleLedCmd: on counter=1
+led waits ...
+led handleLedCmd: off counter=2
+led waits ...
+				<kc>caused by messages sent by qa0</bc>
+led handleLedCmd: on counter=3
+led waits ...
+led handleLedCmd: off counter=4
+led waits ...
 </pre>
--->
+
+
 
 <h2 id="Prolog">Using Prolog</h2>
 Let us recall here the fundamental aspects of <tt>Prolog</tt>, by means of a set of examples. 
@@ -731,7 +909,7 @@ See <a href="../src/prologusage.qak" target="code">prologusage.qak</a>.
 
 
  <td>
-  <h3>Shortcut</h3>
+  <h3 id="shortcut">Shortcut</h3>
 <pre> 
  "<k>payloadArg(N)</k> 
 gives (as String)  the argument <kc>N (0<=N<=arity)</kc> of a msg payload 
@@ -778,18 +956,19 @@ plugins {
     id 'application'
 }
 ...
-mainClassName = 'it.unibo.qak.sonar.SonarShowKt'
+mainClassName = 'it.unibo.ctxBls.MainCtxBls<k>Kt</k>'
 
 jar {
     println("executing jar")
+    from sourceSets.main.allSource
     manifest {
-        attributes 'Main-Class': "it.unibo.ctxPrologExample.MainCtxPrologExample<k>Kt</k>"
+        attributes 'Main-Class': "$mainClassName"
     }
 }
 </pre>
 </td>
-<td><m>The code on the left is part of the file 
-<a href="../build.gradle" target="code">build.gradle</a> 
+<td><m>The code on the left is part of the file (properly edit by the Application designer)
+<a href="../build_ctxBls.gradle" target="code">build_ctxBls.gradle</a> 
 <br/><br/>
 <!-- The main we use for this example is in 
 <a href="../src/main/kotlin/it/unibo/qak/prodCons/mainProdConsLocal.kt" target="code">mainProdConsLocal.kt</a>
@@ -799,27 +978,11 @@ jar {
 </td>
 </tr>
 
-<tr>
-<td>
-<pre>
-context(ctxProducer,"localhost",    "TCP", 8010).
-context(ctxConsumer,"localhost", "TCP", 8020).
-
-qactor( button,   ctxProducer, "it.unibo.qak.producer.ButtonGuiActork").
-qactor( producer, ctxProducer, "it.unibo.qak.producer.Producer").
-qactor( consumer, ctxConsumer, "it.unibo.qak.consumer.Consumer").
-</pre>
-</td>
-<td><m>The system description is now written in in the main directory of the project:
-<a href="../sysDescr.pl" target="code">sysDescr.pl</a>
-</m>
-</td>
-</tr>
 
 <tr>
 <td>
 <pre>
-gradle build jar
+gradle -b build_ctxBls.gradle distZip
 </pre>
 </td>
 <td><m>Generates the <em>distribution file</em> is the directory <bc>build/distributions</bc> 
@@ -833,14 +996,16 @@ gradle build jar
 <ol>
 <li>unzip the distribution file in some dir</li>
 <li>work in the <bc>bin</bc> directory</li>
-<li><bc>copy</bc> in this directory the files <a href="../sysDescr.pl" target="code">sysDescr.pl</a> and 
+<li><bc>copy</bc> in this directory the files <a href="../bls.pl" target="code">bls.pl</a> and 
 <a href="../sysRules.pl" target="code">sysRules.pl</a></li>
-
+<li>then (read on the right)... </li>
 </ol>
 </m>
 </td>
-<td><m>Activate the system by running: <bc>it.unibo.xxx.bat</bc><br/><br/>
- On RaspberryPi : <bc>bash it.unibo.xxx</bc>
+<td><m>
+...<br/>
+On the PC: activate the system by running: <bc>it.unibo.qakintro2020.bat</bc><br/><br/>
+On RaspberryPi : <bc>bash it.unibo.qakintro2020</bc>
 </m>
 </td>
 </tr>
@@ -849,46 +1014,6 @@ gradle build jar
 </tbody>	
 </table></center>
 
-
-<h1 id="actorasstream">LABQakIntro2020 |  Observable Actors</h1>
-
-  
-<em>Reactive programming</em> is a combination of the best ideas from the <bc>Observer</bc> pattern, 
-the <bc>Iterator</bc> pattern, and <bc>functional programming</bc>.
-<br/>
-In <tt>reactive programming</tt>, the consumer reacts to the data as it comes in. 
-This is the reason why asynchronous programming is also called reactive programming. 
-Reactive programming allows to <i>propagates event changes</i> to registered observers.
-<br/><br/>
-Let us add the following properties to our <tt>ActorBasic</tt>:
-<pre>
-abstract class  ActorBasic( ... ) {
-protected val subscribers = mutableListOf<ActorBasic>()
-
-    fun subscribe( a : ActorBasic) : ActorBasic {
-        subscribers.add(a)
-        return a
-    }
-    fun unsubscribe( a : ActorBasic) {
-        subscribers.remove(a)
-    }
-
-    suspend fun emitLocalStreamEvent(v: ApplMessage ){
-        subscribers.forEach { it.actor.send(v) }
-    }
-</pre>
-
-From now on, we can use an <tt>ActorBasic</tt> as an <bc>observable producer</bc> of data; it can be observed by other actors
-subscribed to it. Each subscriber will process the data 'in parallel' with the others and can work as an observable in its turn.
-
-<div class="remark"> 
-<a href="https://www.vogella.com/tutorials/RxJava/article.html">Reactive Extensions (Rx) in Java</a> (<bc>RxJava</bc>)
- is based on the same principles and allows us to compose components into <bc>pipelines</bc>  
- according to the <a href="https://en.wikipedia.org/wiki/Stream_(computing)">Stream computing</a> paradigm.<br/>
- See also 
- <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2019Lab/blob/master/it.unibo.qak.streams/userDocs/LabStreams.html" 
-target="lecture">LabStreams | Using streams</a>)
-</div>
 
  
  

@@ -3,7 +3,7 @@ import it.unibo.kactor.*
 
 class qacoded( name : String ) : ActorBasic( name ){
  
-    init{
+    init{ 
 		println("	$name starts ")
     }
 	

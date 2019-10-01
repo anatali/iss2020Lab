@@ -6,7 +6,7 @@
  * The model is EXECUTABLE
  */
 
-System bls  
+System bls   
  
 Event    local_buttonCmd : local_buttonCmd(X) 
 Dispatch ledCmd : ledCmd(X)  
@@ -52,7 +52,7 @@ QActor led context ctxBls {
 	}   
 	Transition t0     
 	    //whenTime 5000 -> tooLate  
-		whenMsg ledCmd and   "counter++ < 5 || counter > 8"   -> handleLedCmd
+		whenMsg ledCmd and "counter++ < 5 || counter > 8" -> handleLedCmd
  	  
 	State  handleLedCmd{  
 		//printCurrentMessage   
@@ -60,9 +60,9 @@ QActor led context ctxBls {
 		//onMsg ( ledCmd : ledCmd(on) ) { run resources.myLedSegm.turnOn( )	}
 		//onMsg ( ledCmd : ledCmd(off) ){ run resources.myLedSegm.turnOff( )	}
 	}	
-	Goto waitCmd       
+	Goto waitCmd        
 	
-	State tooLate{ println( "Be faster, please ... ")	} Goto waitCmd
+	//State tooLate{ println( "Be faster, please ... ")	} Goto waitCmd
 }
 
  
