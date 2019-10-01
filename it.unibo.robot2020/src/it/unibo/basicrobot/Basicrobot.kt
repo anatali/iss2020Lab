@@ -19,7 +19,10 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 				state("s0") { //this:State
 					action { //it:State
 						solve("consult('basicRobotConfig.pl')","") //set resVar	
-						itunibo.robot.robotSupport.create(myself ,"virtual", "8999" )
+						solve("robot(R,PORT)","") //set resVar	
+						if(currentSolution.isSuccess()) { println("USING:${getCurSol("R")},port=${getCurSol("PORT")}")
+						itunibo.robot.robotSupport.create(myself ,getCurSol("R").toString(), getCurSol("PORT").toString() )
+						 }
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 

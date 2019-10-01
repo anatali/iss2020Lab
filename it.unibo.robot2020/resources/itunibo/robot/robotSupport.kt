@@ -11,7 +11,7 @@ object robotSupport{
 		println( "CREATE ROBOT SUPPORT for $robotKind" )
 		when( robotKind ){
 			"virtual"    ->  { clientWenvObjTcp.initClientConn( actor, "localhost", port) }
-			//"realmbot"   ->  { itunibo.robotMbot.mbotSupport.create( actor, port, filter ) }  //port="/dev/ttyUSB0"   "COM6"
+			"realmbot"   ->  { itunibo.robotMbot.mbotSupport.create( actor, port  ) }  //port="/dev/ttyUSB0"   "COM6"
 			//"realnano" ->    { it.unibo.robotRaspOnly.nanoSupport.create(actor, true ) }
 			else -> println( "robot unknown" )
 		}
@@ -21,7 +21,7 @@ object robotSupport{
 		//println("robotSupport move cmd=$cmd robotKind=$robotKind" )
 		when( robotKind ){
 			"virtual"  -> { clientWenvObjTcp.sendMsg(  cmd ) }	
-			//"realmbot" -> { itunibo.robotMbot.mbotSupport.move( cmd ) }
+			"realmbot" -> { itunibo.robotMbot.mbotSupport.move( cmd ) }
 			//"realnano" -> { it.unibo.robotRaspOnly.nanoSupport.move( cmd ) }
 			else       -> println( "robot unknown" )
 		}
