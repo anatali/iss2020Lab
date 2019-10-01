@@ -204,57 +204,19 @@ between the <tt>Contexts</tt> or a <bc>MQTT</bc> broker (see <a href="#mqtt">Usi
 </li>
 
 <li>Each <tt>QActor</tt> logically <em>behaves</em> as a (<tt>Moore</tt>'s) Finite State Automaton (<bc>FSM</bc>). 
+
+In other words, the (meta-)model of actor behavior at the level of the <tt>DSL</tt> is 
+<bc>message/event-based</bc> rather than <bc>message/event-driven</bc>. <br/>
+
+This means that there is a <em>infrastructural layer</em> (see <a href="#impl">About implementation</a>) 
+that implements the behavior of a <bc>Finite State Machine</bc> over the <i>message/event-driven</i>
+basic behavior of the actors. <br/>
+
+
 While in a state, a <tt>QActor</tt> can execute
 both synchronous and asynchronous actions. An asynchronous action terminates immediately and emits
 an event when it terminates.
 
- <table style="width:100%">
-<tr>
-<td width="20%">
-<center><img src="./img/ActorBasic.png" alt="ActorBasic" width="130" height="100"></center> 
-</td>
-<td width="40%">
-<center><img src="./img/ActorBasicCode.png" alt="ActorBasicCode" width="450" height="400"></center> 
- 
-</td>
-<td width="40%">
-<a href="../src/main/kotlin/it/unibo/kactor/ActorBasic.kt" target="code">ActorBasic.kt</a><br/><br/>
-An abstract class  that provides an actor. <br/> <br/>
-The application designer must write the <tt>actorBody</tt>
-method to  handle:
-<li>
-with the help of <a href="../src/main/kotlin/it/unibo/kactor/MsgUtil.kt" target="code">MsgUtil.kt</a></li>
-<li>the received message of type 
-<a href="../src/main/kotlin/it/unibo/kactor/ApplMessage.kt" target="code">ApplMessage.kt</a> (requires
-<a href="http://tuprolog.sourceforge.net/doc/2p-guide.pdf">tuProlog</a> )</li>
-
-</td>
-</tr>
-</table>
-</center>
-
-<br/><br/>
-
-<center><table style="width:98%">
-<tbody>	
-<tr>
-<td style="width:50%"> 
- <pre>
- abstract class ActorBasicFsm( ... ) : ActorBasic( ... ){ ... }
- </pre>
-<m>
-<em>ActorBasicFsm</em>
-
-</m> 
- </td>
- <td>
- <pre>
- abstract class ActorBasic ( ... ) : MqttCallback{ ... }
- </pre>
- </td>
-</tr>
-</table>
-</center>
 
 
 <br/><br/>
@@ -312,41 +274,7 @@ waiting for it.
 Events whose identifier start with the prefix <bc>local_</bc/> are not propagated outside the context in which they are generated.
 
  
-<h2>Message-based / Event-based behavior</h2>
-The (meta-)model of actor behavior at the level of the <tt>DSL</tt> is <bc>message/event-based</bc> rather than <bc>message/event-driven</bc>. 
-
-This means that there is a <em>infrastructural layer</em> that implements the behavior of a <bc>Finite State Machine</bc> over the <i>message/event-driven</i>
-basic behavior of the actors. 
-
-<div class="remark">
-The metamodel is supported by the <tt>qak-infrastructure</tt> deployed in <bc>it.unibo.qakactor-1.0.jar</bc>.
-</div>
-
-The logic of the infrastructural layer is summarized in the following figure:
-<br/><br/>
-<center><table style="width:98%">
-<tbody>	
-<tr>
-<td style="width:55%"><img src="./img/actorBasicFsm.png" alt="actorBasicFsm." width="98%" height="40%"/></td>
- <td><m>
-
- When a message <tt>msg</tt> is (<i>event-driven</i>) received, the actor checks for a possible transition for that <tt>msg</tt> in the <tt>current state</tt>.
- <br/> <br/>
-If no transition is possible, the message <tt>msg</tt> is <b>discarded if it is an event</b>; otherwise it us stored in a local queue.
- <br/> <br/>
-If the transition is possible, the actor goes into the next state related to that transition and then looks at empty moves or to transitions
-related to stored messages. 
- <br/><br/>
- The actor attempts to manage <b>all</b> the stored messages before looking to a new message.
-  <br/><br/>
-This behavior is implemented as a 
-<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2019Lab/blob/master/it.unibo.kotlin.dsl/userDocs/LabDsl.html" target="web">Kotlin internal DSL</a>
- in <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2019Lab/blob/master/it.unibo.qakactor/src/main/kotlin/ActorBasicFsm.kt" target="code">it.unibo.qakactor.ActorBasicFsm.kt</a>.
-</m> 
- </td>
-</tr>
-</table>
-</center>
+ 
  
  
  <h2>Firing a transition</h2>
@@ -397,6 +325,149 @@ The transition-condition <bc>whenTime</bc> is implemented by creating in dynamic
 When the given time expires, the timer that emits a <em>system-event</em>  with a name that starts with the prefix <bc>local_tout</bc>; afterwards it terminates.
 The system event is <em>not emitted</em> if a message can be handled before that the timer-time expires.
 
+
+
+
+
+<h2 id="impl">About implementation</h2>
+The metamodel is supported by the <tt>qak-infrastructure</tt> deployed in <bc>it.unibo.qakactor-1.0.jar</bc> 
+and defined in the project <k>it.unibo.qakactor</k>. This project includes a set
+kotlin classes developed under <tt>IntelliJ IDEA Community Edition</tt>. Among them, there are:
+<ol>
+<li> <a href="../../it.unibo.qakactor/src/main/kotlin/ActorBasic.kt" target="code">ActorBasic.kt</a> is
+an abstract class  that implements the concept of qakactor as a message-driven entity that
+handles messages by delegating the work to the abstract the method <tt>actorBody</tt>.
+
+</li>
+<li> <a href="../../it.unibo.qakactor/src/main/kotlin/ActorBasicFsm.kt" target="code">ActorBasicFsm.kt</a> is
+an abstract class  that extends <a href="../../it.unibo.qakactor/src/main/kotlin/ActorBasic.kt" target="code">ActorBasic.kt</a> 
+by defining the  method <k>actorBody</k> ao to implement the behavior of a <tt>FSM</tt>.  
+</li>
+<li><a href="../../it.unibo.qakactor/src/main/kotlin/ApplMessage.kt" target="code">ApplMessage.kt</a> (that requires
+<a href="http://tuprolog.sourceforge.net/doc/2p-guide.pdf">tuProlog</a> )</li>
+<li><a href="../../it.unibo.qakactor/src/main/kotlin/MsgUtil.kt" target="code">MsgUtil.kt</a></li>
+</ol>
+
+<h3>ActorBasic</h3>
+
+ <table style="width:100%">
+<tr>
+<td width="20%">
+<center>
+<img src="./img/ActorBasic.png" alt="ActorBasic" width="130" height="100"></center> 
+</td>
+<td width="40%">
+
+ <pre>
+ <center><img src="./img/ActorBasicCode.png" alt="ActorBasicCode" width="450" height="400"></center> 
+
+</td>
+<td width="40%">
+<m>
+The application designer must write the <tt>actorBody</tt> method to  handle:
+<li>the received message of type 
+<a href="../../it.unibo.qakactor/src/main/kotlin/ApplMessage.kt" target="code">ApplMessage.kt</a> (that requires
+<a href="http://tuprolog.sourceforge.net/doc/2p-guide.pdf">tuProlog</a> )</li>
+<li>with the help of <a href="../../it.unibo.qakactor/src/main/kotlin/MsgUtil.kt" target="code">MsgUtil.kt</a></li>
+</m>
+</td>
+</tr>
+</table>
+</center>
+
+<br/><br/>
+
+<h3>ActorBasicFsm</h3>
+
+The behavior of a <tt>Qakactor</tt> as a
+<a href="https://en.wikipedia.org/wiki/Finite-state_machine" target="web">Finite State Machine</a> (<bc>FSM</bc>) based on the following
+concepts:
+
+<ol>
+<li>A fsm-actor can be described as a 5-tuple:
+<div class="remark">
+(States, Inputs, Outputs, Transitions, InitialState)
+</div>
+
+<ul>
+<li><em>States</em>: Set of possible states (called state space)</li>
+<li><em>Inputs</em>: Set of possible input elements (called <tt>input alphabet</tt>; in our case <i>messages</i>)</li>
+<li><em>Outputs</em>: Set of possible output elements (called <tt>output alphabet</tt>; in our case <i>actions</i> ) </li>
+<li><em>InitialState</em>: The initial state</li>
+<li><em>Transition</em>: A <tt>Transition</tt> defines the new state and output given the current state and input.
+It is often expressed by two functions:
+<pre>
+nextState:      States x Inputs -> States
+output:         States x Inputs -> Outputs
+</pre>
+</li>
+</ul>
+ 
+
+</li>
+<li>A fsm-actor is a <bc>Moore FSM</bc>, that generates output while it is in a particular state (output depends on state only).
+Thus, when the fsm-actor is in state, it first executes a sequence of <bc>terminating Actions</bc> and then  checks 
+for the possibility to 'fire' a transition among the set of the active transitions related to that state. </li>
+</ol>
+
+The logic of the infrastructural layer is summarized in the following figure:
+<br/><br/>
+<center><table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:55%"><img src="./img/actorBasicFsm.png" alt="actorBasicFsm." width="98%" height="40%"/></td>
+ <td><m>
+
+ When a message <tt>msg</tt> is (<i>event-driven</i>) received, the actor checks for a possible transition for that <tt>msg</tt> in the <tt>current state</tt>.
+ <br/> <br/>
+If no transition is possible, the message <tt>msg</tt> is <b>discarded if it is an event</b>; otherwise it us stored in a local queue.
+ <br/> <br/>
+If the transition is possible, the actor goes into the next state related to that transition and then looks at empty moves or to transitions
+related to stored messages. 
+ <br/><br/>
+ The actor attempts to manage <b>all</b> the stored messages before looking to a new message.
+  <br/><br/>
+This behavior is implemented as a 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2019Lab/blob/master/it.unibo.kotlin.dsl/userDocs/LabDsl.html" target="web">Kotlin internal DSL</a>
+(see <a href="#impl">About implementation</a>)
+<!-- in <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2019Lab/blob/master/it.unibo.qakactor/src/main/kotlin/ActorBasicFsm.kt" target="code">
+it.unibo.qakactor.ActorBasicFsm.kt</a>. -->
+</m> 
+ </td>
+</tr>
+</table>
+</center>
+
+<h2 id="mqtt">Using MQTT</h2>
+In several situations, it could be preferable to manage the interaction among the actors working on different nodes by using the
+publish-subscribe <a href="https://it.wikipedia.org/wiki/MQTT" target="web">MQTT</a> (<i>Message Queue Telemetry Transport</i>) 
+protocol rather than the built-in <tt>qak-infrastructure</tt>.
+
+<br/><br/>
+This goal is achieved by adding the following properties to the <tt>ActorBasic</tt>:
+<pre>
+abstract class  ActorBasic( ... ) : MqttCallback {
+    fun checkMqtt(){
+        if( context!!.mqttAddr.length > 0  ){
+            mqtt.connect(name,context!!.mqttAddr)
+            mqttConnected = true
+            mqtt.subscribe(this, "unibo/qak/$name")
+            mqtt.subscribe(this, "unibo/qak/events")
+        }
+    }
+
+    override fun messageArrived(topic: String, msg: MqttMessage) {
+        val m = ApplMessage( msg.toString() )
+        this.scope.launch{ actor.send( m ) }
+
+    }
+    override fun connectionLost(cause: Throwable?) {
+        println("       ActorBasic $name | connectionLost $cause " )
+    }
+    override fun deliveryComplete(token: IMqttDeliveryToken?) {
+		//println("       ActorBasic $name |  deliveryComplete token= "+ token );
+    }
+</pre>
 
 <h2 id="actorasstream">Observable Actors</h2>
 
