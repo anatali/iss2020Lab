@@ -354,6 +354,18 @@ virtual robot server; meanwhile (state <tt>work</tt>), it can 'react' to the eve
 </table>
 
 
+<h2>Test plan</h2>  
+A Testing Unit (<kc>TU</kc>) should check in automatic way that the <em>basicrobot</em> is moving according to the command sent to it.
+<br/><br/>
+As done in 
+
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.issLabStart/userDocs/Lab1_2020.html#testpla" target="web">
+Lab1_2020.html | testplan</a> we could introduce an explicit representation of the state of the robot (<k>robotState</k>) and
+make such a representation accessible to the <kc>TU</kc>.
+The <k>robotState</k> can be implemented in several ways; for example as a log file, as a conventional Kotlin object or as a Prolog theory.
+<br/><br/>
+The reader should attempt the implementation based on a Prolog theory tha can be consulted and updated by the  <em>basicrobot</em>.
+
 <h2>Project</h2>  
 In order to make our code less technology-dependent, let us seek help from the 
 <a href="https://en.wikipedia.org/wiki/Design_Patterns"  target="web">GOF design patterns</a>  by introducing an
@@ -403,6 +415,7 @@ See <a href="../resources/itunibo/robot/robotSupport.kt"  target="code">robotSup
 </td>
 </tr>
 </table>
+
 
 
 <h3>The project model</h3>
