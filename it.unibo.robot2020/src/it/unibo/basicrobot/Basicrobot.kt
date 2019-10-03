@@ -18,11 +18,7 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						solve("consult('basicRobotConfig.pl')","") //set resVar	
-						solve("robot(R,PORT)","") //set resVar	
-						if(currentSolution.isSuccess()) { println("USING:${getCurSol("R")},port=${getCurSol("PORT")}")
-						itunibo.robot.robotSupport.create(myself ,getCurSol("R").toString(), getCurSol("PORT").toString() )
-						 }
+						itunibo.robotVirtual.clientWenvObjTcp.initClientConn(myself)
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
@@ -38,7 +34,7 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						println("$name in ${currentState.stateName} | $currentMsg")
 						if( checkMsgContent( Term.createTerm("cmd(X)"), Term.createTerm("cmd(X)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								itunibo.robot.robotSupport.move( payloadArg(0)  )
+								itunibo.robotVirtual.clientWenvObjTcp.sendMsg( payloadArg(0)  )
 						}
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
@@ -46,7 +42,7 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 				state("handleObstacle") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						itunibo.robot.robotSupport.move( "h"  )
+						itunibo.robotVirtual.clientWenvObjTcp.sendMsg( "h"  )
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
