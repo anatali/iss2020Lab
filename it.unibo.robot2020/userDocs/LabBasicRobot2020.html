@@ -317,7 +317,6 @@ QActor basicrobot context ctxBasicRobot {
 	
 	State work{	}	
 	<k>Transition t0 
-		whenEvent sonarRobot -> handleObstacle 
 		whenMsg cmd -> handleCmd
 		</k>
  		
@@ -442,7 +441,6 @@ QActor basicrobot context ctxBasicRobot {
 	}	
 	Transition t0   
 		whenMsg   cmd        -> handleCmd
-		whenEvent sonarRobot -> handleObstacle 
  		 
 	State handleCmd{ 
  		printCurrentMessage  
