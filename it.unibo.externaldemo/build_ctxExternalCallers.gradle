@@ -1,16 +1,16 @@
 /*
 ================================================================================
-build_ctxRobotMind.gradle
+build_ctxExternalCallers.gradle
 GENERATED ONLY ONCE
 USAGE:	 
 	gradle build eclipse		//to set the dependency on the library
-	gradle   -b build_ctxRobotMind.gradle distZip //for executable jar and distribution
+	gradle   -b build_ctxExternalCallers.gradle distZip //for executable jar and distribution
 	
-	gradle   -b build_ctxRobotMind.gradle qawrapper
-	gradlew  -b build_ctxRobotMind.gradle eclipse		//to set the dependency on the library
-	gradlew  -b build_ctxRobotMind.gradle build
-	gradlew  -b build_ctxRobotMind.gradle -q tasks --all
-	gradlew  -b build_ctxRobotMind.gradle cleanDistDir	//to clean the src directory
+	gradle   -b build_ctxExternalCallers.gradle qawrapper
+	gradlew  -b build_ctxExternalCallers.gradle eclipse		//to set the dependency on the library
+	gradlew  -b build_ctxExternalCallers.gradle build
+	gradlew  -b build_ctxExternalCallers.gradle -q tasks --all
+	gradlew  -b build_ctxExternalCallers.gradle cleanDistDir	//to clean the src directory
 ================================================================================
 */
 plugins {

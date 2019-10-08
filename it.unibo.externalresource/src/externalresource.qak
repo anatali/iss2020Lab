@@ -1,6 +1,6 @@
 System externalresource
  
-mqttBroker "localhost" : 1883
+mqttBroker "localhost" : 1883 
 
 Dispatch userCmd    : userCmd(X)
 
@@ -9,7 +9,7 @@ Reply   replytocmd  : replytocmd(X)
 Request info        : info(X)
 Reply   replytoinfo : replytoinfo(X)
      
-Context ctxExternalResource  ip [ host= "localhost"    port= 8018 ]  -mqtt
+Context ctxExternalResource  ip [ host= "localhost"    port= 8018 ]  //-mqtt
 Context ctxLocalUser         ip [ host= "localhost"    port= 8013 ]  //-mqtt
 
 QActor resource context ctxExternalResource {
@@ -56,7 +56,7 @@ QActor resource context ctxExternalResource {
 		println("       --- handleReplyInfo ")
 		replyTo cmd with replytocmd : replytocmd( uuuuuuuuuu ) 
 	}
-	Goto s0	
+	Goto s0	  
 }
 
 QActor localcaller1 context ctxLocalUser {

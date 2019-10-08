@@ -1,0 +1,108 @@
+System onestepnaive
+
+Dispatch cmd 		 : cmd(X) // X =  w | s | a | d | h
+Dispatch onestep     : onestep(DURATION)
+ 
+Event  sonarRobot    : sonar( DISTANCE )	     //from  sonar on robot 
+Event  obstacle      : obstacle( DISTANCE )
+  
+Context ctxRobotMind   ip [ host= "localhost"    port= 8035 ]
+Context ctxBasicRobot  ip [ host= "localhost"    port= 8020 ]    
+ 
+ 
+ 
+/* 
+ * onestepahead: performs the command onestep
+ */ 
+QActor onestepahead context ctxRobotMind { 
+[" 
+var StepTime = 1000L;  
+var Duration=0 
+"]    
+	State s0 initial {	  
+		println("onestepahead ready to go ...")  
+ 	} 
+	Transition t0 
+		whenMsg onestep -> doStep
+	
+	State doStep{
+ 		printCurrentMessage 
+		onMsg( onestep : onestep( T ) ){
+			["StepTime = payloadArg(0).toLong()"]
+			["startTimer()"]
+			forward basicrobot -m cmd : cmd(w)
+		}
+	} 
+	Transition t0 
+		whenTimeVar StepTime  -> endStep	
+		whenEvent obstacle -> stepFail
+ 	
+	State endStep{  
+		forward basicrobot -m cmd : cmd(h) 
+		println("onestepahead: onestep DONE")
+  	}
+	Goto s0
+	 
+	State stepFail{ 
+		["Duration=getDuration()"]  //getDuration is built-in in the actor
+		println("onestepahead stepFail Duration=$Duration ")
+ 	}
+	Goto s0  	
+}
+ 
+
+QActor onestpcaller context ctxRobotMind { 
+	State s0 initial {	  
+		delay 500
+		println("onestpcaller STARTED")  
+		forward onestepahead  -m onestep : onestep(1000)
+ 	} 
+ 	
+}
+
+/*
+ * basicrobot: executes basic command  w | s | a | d | h
+*/
+QActor basicrobot context ctxBasicRobot {
+	State s0 initial {
+		run itunibo.robotVirtual.clientWenvObjTcp.initClientConn( myself )
+	}
+	Goto work
+	
+	State work{	println ( "robot waiting" ) 		
+	}	
+	Transition t0   
+		whenMsg   cmd -> handleCmd
+		 
+	State handleCmd{ 
+ 		printCurrentMessage
+		onMsg ( cmd : cmd(X) ) { 
+			run itunibo.robotVirtual.clientWenvObjTcp.sendMsg( payloadArg(0 )   )	//move the virtual robot
+		}
+ 	}
+ 	Goto work
+ 	 
+}   
+
+
+
+/* 
+ * sonarhandler: looks at the sonar and generates the event obstacle
+*/
+ QActor sonarhandler context ctxBasicRobot{    
+  	State init initial{
+		println("sonarhandler STARTS ... ")
+	}         
+	Goto waitForEvents 
+	   
+ 	State waitForEvents{  }      
+   	Transition t0 whenEvent sonarRobot -> handleSonar  
+ 	
+ 	State handleSonar{
+ 		printCurrentMessage
+ 		emit obstacle : obstacle(5)
+  	}
+ 	Goto waitForEvents
+ } 
+
+ 
