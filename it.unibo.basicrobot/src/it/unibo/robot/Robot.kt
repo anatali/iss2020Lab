@@ -28,7 +28,7 @@ class Robot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scope
 						println("robot waiting ...")
 					}
 					 transition(edgeName="s00",targetState="handleCmd",cond=whenDispatch("cmd"))
-					transition(edgeName="s01",targetState="handleStep",cond=whenDispatch("step"))
+					transition(edgeName="s01",targetState="doStep",cond=whenDispatch("step"))
 				}	 
 				state("handleCmd") { //this:State
 					action { //it:State
@@ -39,9 +39,10 @@ class Robot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scope
 								itunibo.robotVirtual.clientWenvObjTcp.sendMsg( MoveToDo  )
 						}
 					}
-					 transition( edgeName="goto",targetState="work", cond=doswitch() )
+					 transition( edgeName="goto",targetState="work", cond=doswitchGuarded({goon}) )
+					transition( edgeName="goto",targetState="s0", cond=doswitchGuarded({! goon}) )
 				}	 
-				state("handleStep") { //this:State
+				state("doStep") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 					}
