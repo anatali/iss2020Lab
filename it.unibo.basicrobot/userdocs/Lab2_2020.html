@@ -146,7 +146,7 @@ table, th, td {
     
 <head>
    
-<title>Lab ...</title></head>
+<title>Lab2_2020</title></head>
     
 <body>
 <div id="top">
@@ -173,7 +173,7 @@ in textual form), so that:
 <k>forward | backward | stop | left | right</k>  (<ks>req-cmd</ks>).  </li>
 <li>the command <k>step</k>  moves the <em>robot</em> forward for a prefixed time (e.g. <tt>2</tt> secs) (<ks>req-step</ks>).</li>
 </ul>
-Moreover, the robot must be always able to react 'immediately' to the <k>stop</k> command, by stopping 
+Moreover, the <em>robot</em> must be always able to react 'immediately' to the <k>stop</k> command, by stopping 
 any ongoing movement (<ks>req-stop</ks>) .
  
 </div>	    
@@ -268,17 +268,14 @@ whenTime</a> primitive gives us the required expressive power:
 <m>A model 'wired' on  <tt>2-second</tt>  specification:</m>
 <pre>
 	State doStep{
- 		onMsg(  step :  step( T ) ){
-			["StepTime = payloadArg(0).toLong()"]
- 			forward basicrobot -m cmd : cmd(w)
-		}
-	}
+		run itunibo.robotVirtual.clientWenvObjTcp.sendMsg("w")
+ 	}
 	Transition t0 
 		<k>whenTime</k>   2000 -> endStep		//<ks>req-step</ks>
 		whenMsg stop    -> endStep		//<ks>req-stop</ks>
 		
 	State endStep{ 
-		forward basicrobot -m cmd : cmd(h) 
+		run itunibo.robotVirtual.clientWenvObjTcp.sendMsg("h")
  	}
 	Goto work		
 </pre>
@@ -296,7 +293,7 @@ var StepTime = 0L;
 	State doStep{
  		onMsg(  step :  step( T ) ){
 			<ks> ["StepTime = payloadArg(0).toLong()"]</ks> 
- 			forward basicrobot -m cmd : cmd(w)
+ 			run itunibo.robotVirtual.clientWenvObjTcp.sendMsg("w")
 		}
 	}
 	Transition t0 
@@ -304,7 +301,7 @@ var StepTime = 0L;
 		whenMsg stop          -> endStep	//<ks>req-stop</ks>
 		
 	State endStep{ 
-		forward basicrobot -m cmd : cmd(h) 
+		run itunibo.robotVirtual.clientWenvObjTcp.sendMsg("h") 
  	}
 	Goto work		
 </pre>

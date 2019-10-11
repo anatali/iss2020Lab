@@ -13,9 +13,8 @@ System basicrobot
 
 Dispatch cmd  : cmd(X)
 Dispatch step : step(DURATION)
-//Event cmd : cmd(X)
-
-
+Dispatch stop : stop(X)
+ 
 Context ctxRobot ip [ host= "localhost"   port= 8018 ]
 
 QActor robot context ctxRobot{
@@ -31,6 +30,7 @@ QActor robot context ctxRobot{
 	Transition s0 
 			whenMsg cmd  -> handleCmd
 			whenMsg step -> doStep
+			whenMsg stop -> doStop
  /*
   * REQUIREMENT req-cmd
   */
@@ -43,7 +43,7 @@ QActor robot context ctxRobot{
 	
 		}
 	}
-	Goto work if "goon" else s0
+	Goto work
 
  /*
   * REQUIREMENT req-step
@@ -54,6 +54,14 @@ QActor robot context ctxRobot{
 	}
 	Goto work
 
+ /*
+  * REQUIREMENT req-stop
+  */
+  	State doStop {
+  		printCurrentMessage
+  		run itunibo.robotVirtual.clientWenvObjTcp.sendMsg("h")
+  	}
+	Goto work
 }
 
 /*
@@ -66,21 +74,15 @@ QActor robotcallersimulator context ctxRobot{
 		println("robotCallerSimulator start")
 		forward robot -m cmd : cmd(w)
  		delay 1000
- 		forward robot -m cmd : cmd(h)
+		forward robot -m cmd : cmd(d)
  		delay 1000
-		forward robot -m step : step(1000)
+		forward robot -m cmd : cmd(d)
+ 		delay 1000
+ 		forward robot -m cmd : cmd(w)
+  		delay 1000
+ 		forward robot -m cmd : cmd(h)
+//		forward robot -m step : step(1000)
 	}
 }
 
-/* 
-QActor eventperceiver context ctxRobot{
-	State s0 initial{
-	}
-	Transition s0 whenEvent cmd -> handleCmd
-	
-	State handleCmd {
-		printCurrentMessage
-	}
-	Goto s0
-}
-*/
+ 

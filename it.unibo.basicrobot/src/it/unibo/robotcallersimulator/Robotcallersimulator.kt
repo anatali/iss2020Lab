@@ -21,9 +21,13 @@ class Robotcallersimulator ( name: String, scope: CoroutineScope ) : ActorBasicF
 						println("robotCallerSimulator start")
 						forward("cmd", "cmd(w)" ,"robot" ) 
 						delay(1000) 
-						forward("cmd", "cmd(h)" ,"robot" ) 
+						forward("cmd", "cmd(d)" ,"robot" ) 
 						delay(1000) 
-						forward("step", "step(1000)" ,"robot" ) 
+						forward("cmd", "cmd(d)" ,"robot" ) 
+						delay(1000) 
+						forward("cmd", "cmd(w)" ,"robot" ) 
+						delay(1000) 
+						forward("cmd", "cmd(h)" ,"robot" ) 
 					}
 				}	 
 			}
