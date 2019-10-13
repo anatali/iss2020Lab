@@ -1,16 +1,16 @@
 /*
 ================================================================================
-build_ctxRobot.gradle
+build_ctxSmartRobot.gradle
 GENERATED ONLY ONCE
 USAGE:	 
 	gradle build eclipse		//to set the dependency on the library
-	gradle   -b build_ctxRobot.gradle distZip //for executable jar and distribution
+	gradle   -b build_ctxSmartRobot.gradle distZip //for executable jar and distribution
 	
-	gradle   -b build_ctxRobot.gradle qawrapper
-	gradlew  -b build_ctxRobot.gradle eclipse		//to set the dependency on the library
-	gradlew  -b build_ctxRobot.gradle build
-	gradlew  -b build_ctxRobot.gradle -q tasks --all
-	gradlew  -b build_ctxRobot.gradle cleanDistDir	//to clean the src directory
+	gradle   -b build_ctxSmartRobot.gradle qawrapper
+	gradlew  -b build_ctxSmartRobot.gradle eclipse		//to set the dependency on the library
+	gradlew  -b build_ctxSmartRobot.gradle build
+	gradlew  -b build_ctxSmartRobot.gradle -q tasks --all
+	gradlew  -b build_ctxSmartRobot.gradle cleanDistDir	//to clean the src directory
 ================================================================================
 */
 plugins {
