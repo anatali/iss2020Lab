@@ -77,7 +77,7 @@ import alice.tuprolog.*
                                 val jsonArg = jsonObject.getJSONObject("arg")
                                 val objectName = jsonArg.getString("objectName")
                                 //println("		--- clientWenvObjTcp | collision objectName=$objectName")
-                                val m = MsgUtil.buildEvent( "tcp", "local_obstacle","local_obstacle($objectName)")
+                                val m = MsgUtil.buildEvent( "tcp", "obstacle","obstacle($objectName)")
 								//println("clientWenvObjTcp | emit $m")
                                 //emitLocalStreamEvent( m )
 								actor.emit(m)

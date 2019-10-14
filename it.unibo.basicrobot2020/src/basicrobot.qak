@@ -6,50 +6,43 @@
  * 
  * ================================================================
  */
-System -trace basicrobot 
+System  basicrobot 
 
 Dispatch cmd  : cmd(X)
-Dispatch step : step(DURATION)
-Dispatch stop : stop(X)
- 
-Event  sonarRobot     : sonar( DISTANCE )	     //from  sonar on robot 
-Event  local_obstacle : local_obstacle( TARGET )
-Event  collsion       : collsion( OBSTACLE )
+
 Event  obstacle       : obstacle( DISTANCE )
-  
-Event tick            : tick(N)
+Event  temperature    : temperature( VALUE )  
+Event  help           : help( REASON )	//REASON :  reduce_temperature | ...
+
+Event  tick           : tick(N)
 
 Context ctxBasicRobot ip [ host= "localhost"   port= 8018 ]
 
-CodedQActor virtualRobotQa context ctxBasicRobot className "itunibo.robotVirtual.virtualRobotQa"
+CodedQActor virtualrobotqa context ctxBasicRobot className "itunibo.robotVirtual.virtualRobotQa"
 
 QActor basicrobot context ctxBasicRobot{
+[" var tooHot = false "]
 	State s0 initial{
-		println("basicrobot | start")
-//	    solve( consult("basicRobotConfig.pl") ) 
-// 		solve( robot(R, PORT) )  //R = virtual | ... 
-//  		ifSolved { 
-//			//println( "USING:${getCurSol(\"R\")},port=${getCurSol(\"PORT\")}")
-//  			run itunibo.robot.robotSupport.create( myself, @R, @PORT )	//@ is a shortcut
-//  		} 		
+		println("basicrobot | start (together with virtualrobotqa in the same context ...)")
 	}
 	Goto work
 	
 	State work{
 		//println("basicrobot | waiting ...")
 	}
-	Transition s0 
-			whenMsg cmd              -> handleCmd
-			whenEvent local_obstacle -> handleObstacle
+	Transition t0 
+			whenMsg cmd           -> handleCmd
+			whenEvent obstacle    -> handleObstacle
+			whenEvent temperature -> handleTemperature
    
  /*
   * REQUIREMENT req-cmd
   */
 	State handleCmd {
-		//printCurrentMessage 
+		//println("basicrobot | handleCmd ")
+		printCurrentMessage 
 		onMsg( cmd : cmd(X) ){
-			[" val MoveToDo = payloadArg(0) "]
- 			run itunibo.robot.robotSupport.move( payloadArg(0 )   )		
+ 			forward virtualrobotqa -m cmd : cmd( $payloadArg(0 ) )
 		}
 	}
 	Goto work
@@ -58,40 +51,33 @@ QActor basicrobot context ctxBasicRobot{
  * Introduced after problem analysis
  */	
 	State handleObstacle{
-		run itunibo.robot.robotSupport.move( "h" )		
+		forward virtualrobotqa -m cmd : cmd( h )
 		println("basicrobot | stops (for safety) since  obstacle ")
-		emit obstacle : obstacle(5)
 	}
 	Goto work 
+	
+/*
+ * New requirements
+ */	
+	State handleTemperature{
+		onMsg( temperature : temperature(V) ){
+			[" tooHot = payloadArg(0).toInt() > 40 "]
+			if "tooHot" { //stop the robot and ask help
+				println("Temperature too hot !!! ")
+				forward virtualrobotqa -m cmd : cmd( h )
+				emit help : help( reduce_temperature )
+			}
+		}
+	}
+    Goto waitForHelp if "tooHot" else work  //Guarded transition
+	
+	State waitForHelp{
+		println("I hope that the temperature will diminish ... ")
+	}
+	Transition t0 
+ 		whenEvent temperature -> handleTemperature
 }  
-
-/* 
- * ---------------------------------------------------------------------------
- * sonarhandler: looks at the sonar and generates the event obstacle
- * ---------------------------------------------------------------------------
-
- QActor sonarhandler context ctxBasicRobot{   
- ["var obstacleFound = false"] 
-  	State init initial{
-		println("sonarhandler STARTS ... ")
-	}         
-	Goto waitForEvents 
-	   
- 	State waitForEvents{  }      
-   	Transition t0 
-   		whenEvent sonarRobot -> handleSonar  
- 	
- 	State handleSonar{
- 		//printCurrentMessage    
- 		onMsg( sonarRobot : sonar(DISTANCE)){
- 			["	if( payloadArg(0).toInt() < 10 ) obstacleFound=true
-			"]
- 			if "obstacleFound"{ emit local_obstacle : local_obstacle( $payloadArg(0) )}
- 		}
-   	}
- 	Goto waitForEvents
- } 
-*/
+ 
 
 
 /*
@@ -104,8 +90,8 @@ QActor basicrobot context ctxBasicRobot{
 QActor robotcaller context ctxBasicRobot{
 ["var Counter = 0"]	
 	State s0 initial{
-		println("robotcaller start")
-//		forward basicrobot -m cmd : cmd(w) 
+//		println("robotcaller start")
+//  		forward basicrobot -m cmd : cmd(w) 
 //  		delay 1000  
 // 		forward basicrobot -m cmd  : cmd(h)
 // 		delay 500
@@ -119,25 +105,21 @@ QActor robotcaller context ctxBasicRobot{
 //		delay 1400
 // 		forward basicrobot -m cmd : cmd(h)
 	}
-	Goto eventEmit
+	//Goto eventEmit
 	
 	/*
 	 * Test that events emitted by any actor in the context of basicrobot
 	 * can be perceived by any actor working in the context 
 	 * of a caller of basicrobot
-	 */
+	 */ 
 	State eventEmit{
-		delay 2000
+		delay 30000
 		["Counter++"]
 		println("robotcaller emits tick $Counter")
 		emit tick : tick($Counter)		  
 	}
-	//Goto eventEmit	//WARNING: this saturates the msgqueue of robotcaller if send the event to the emitter
-	Goto continueEmit
-	
-	State continueEmit{
- 	}
-	Goto eventEmit	//WARNING: thi saturates the msgqueue of robotcaller
+	Goto eventEmit	
+	//WARNING: this could saturate  the msgqueue, but the event IS NOT SENT to the emitter
 
 }
 

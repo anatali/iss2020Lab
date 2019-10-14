@@ -1,5 +1,6 @@
 package itunibo.robotVirtual
 import it.unibo.kactor.*
+import alice.tuprolog.*
 
 class virtualRobotQa( name : String ) : ActorBasic( name ){
     
@@ -21,9 +22,8 @@ class virtualRobotQa( name : String ) : ActorBasic( name ){
     }
 
     override suspend fun actorBody(msg : ApplMessage){
-        println("		--- virtualRobotQa | received  msg= $msg "  )
-//        when( msg.msgContent() ){
-//        	else -> println("   virtualRobotQak $name | UNKNOWN $msg")
-//        }
+        //println("		--- virtualRobotQa | received  msg= $msg "  ) //msg.msgContent()=cmd(X)
+		val move = (Term.createTerm(msg.msgContent()) as Struct).getArg(0).toString()
+		itunibo.robot.robotSupport.move( move  )
     }
 }

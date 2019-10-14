@@ -20,27 +20,44 @@ class Robotusage ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 					action { //it:State
 						println("robotusage start")
 					}
-					 transition( edgeName="goto",targetState="work", cond=doswitch() )
+					 transition( edgeName="goto",targetState="simulateTemperature", cond=doswitch() )
 				}	 
-				state("work") { //this:State
+				state("simulateTemperature") { //this:State
 					action { //it:State
 						delay(1000) 
+						println("robotusage send w")
 						forward("cmd", "cmd(w)" ,"basicrobot" ) 
-						delay(1000) 
-						forward("cmd", "cmd(h)" ,"basicrobot" ) 
-						delay(1000) 
+						delay(1500) 
+						println("robotusage simulates temperature(42)")
+						emit("temperature", "temperature(42)" ) 
+					}
+					 transition(edgeName="t00",targetState="handleObstacle",cond=whenEvent("obstacle"))
+					transition(edgeName="t01",targetState="handleHelp",cond=whenEvent("help"))
+				}	 
+				state("handleHelp") { //this:State
+					action { //it:State
+						println("robotusage handles help (from basicrobot)")
+						println("$name in ${currentState.stateName} | $currentMsg")
+						if( checkMsgContent( Term.createTerm("help(REASON)"), Term.createTerm("help(reduce_temperature)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								delay(1500) 
+								println("robotusage simulates temperature(25)")
+								emit("temperature", "temperature(25)" ) 
+						}
+						delay(1500) 
+						println("robotusage move the robot")
 						forward("cmd", "cmd(a)" ,"basicrobot" ) 
-						delay(1000) 
-						forward("cmd", "cmd(h)" ,"basicrobot" ) 
-						delay(1000) 
+						delay(600) 
 						forward("cmd", "cmd(d)" ,"basicrobot" ) 
-						delay(1000) 
-						forward("cmd", "cmd(h)" ,"basicrobot" ) 
-						delay(1000) 
-						forward("cmd", "cmd(s)" ,"basicrobot" ) 
-						delay(1000) 
+						delay(600) 
 						forward("cmd", "cmd(h)" ,"basicrobot" ) 
 					}
+				}	 
+				state("handleObstacle") { //this:State
+					action { //it:State
+						println("robotusage handleObstacle ... but looses help???")
+					}
+					 transition(edgeName="t02",targetState="handleHelp",cond=whenEvent("help"))
 				}	 
 			}
 		}

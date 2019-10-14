@@ -19,21 +19,14 @@ class Robotcaller ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name,
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						println("robotcaller start")
 					}
-					 transition( edgeName="goto",targetState="eventEmit", cond=doswitch() )
 				}	 
 				state("eventEmit") { //this:State
 					action { //it:State
-						delay(2000) 
+						delay(30000) 
 						Counter++
 						println("robotcaller emits tick $Counter")
 						emit("tick", "tick($Counter)" ) 
-					}
-					 transition( edgeName="goto",targetState="continueEmit", cond=doswitch() )
-				}	 
-				state("continueEmit") { //this:State
-					action { //it:State
 					}
 					 transition( edgeName="goto",targetState="eventEmit", cond=doswitch() )
 				}	 

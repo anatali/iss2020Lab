@@ -20,10 +20,10 @@ Event  obstacle    : obstacle( DISTANCE )
 
 Event tick         : tick(N)
 
-Context ctxSmartRobot ip [ host= "localhost"      port= 8020 ]
-Context ctxBasicRobot ip [ host= "192.168.1.12"   port= 8018 ]
+Context ctxSmartRobot ip [ host= "localhost"     port= 8020 ]
+Context ctxBasicRobot ip [ host= "192.168.1.6"   port= 8018 ]
 
-ExternalQActor basicrobot context ctxBasicRobot 
+ExternalQActor basicrobot context ctxBasicRobot  
 
 /*
  * ---------------------------------------------------------------------------
