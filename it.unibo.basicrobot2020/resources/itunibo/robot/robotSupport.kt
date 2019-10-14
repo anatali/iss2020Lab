@@ -6,7 +6,7 @@ import itunibo.robotVirtual.clientWenvObjTcp
 object robotSupport{
 	lateinit var robotKind : String
 	
-	fun create( actor: ActorBasicFsm, robot : String, port: String   ){
+	fun create( actor: ActorBasic, robot : String, port: String   ){
 		robotKind = robot
 		println( "CREATE ROBOT SUPPORT for $robotKind" )
 		when( robotKind ){

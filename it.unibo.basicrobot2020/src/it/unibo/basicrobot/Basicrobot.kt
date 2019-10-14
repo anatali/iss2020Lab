@@ -19,10 +19,6 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 				state("s0") { //this:State
 					action { //it:State
 						println("basicrobot | start")
-						solve("consult('basicRobotConfig.pl')","") //set resVar	
-						solve("robot(R,PORT)","") //set resVar	
-						if(currentSolution.isSuccess()) { itunibo.robot.robotSupport.create(myself ,getCurSol("R").toString(), getCurSol("PORT").toString() )
-						 }
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 

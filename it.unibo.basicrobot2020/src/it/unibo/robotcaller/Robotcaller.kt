@@ -20,19 +20,6 @@ class Robotcaller ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name,
 				state("s0") { //this:State
 					action { //it:State
 						println("robotcaller start")
-						forward("cmd", "cmd(w)" ,"basicrobot" ) 
-						delay(1000) 
-						forward("cmd", "cmd(h)" ,"basicrobot" ) 
-						delay(500) 
-						forward("cmd", "cmd(a)" ,"basicrobot" ) 
-						delay(500) 
-						forward("cmd", "cmd(d)" ,"basicrobot" ) 
-						delay(500) 
-						forward("cmd", "cmd(w)" ,"basicrobot" ) 
-						delay(1000) 
-						forward("cmd", "cmd(s)" ,"basicrobot" ) 
-						delay(1400) 
-						forward("cmd", "cmd(h)" ,"basicrobot" ) 
 					}
 					 transition( edgeName="goto",targetState="eventEmit", cond=doswitch() )
 				}	 
