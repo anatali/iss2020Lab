@@ -15,11 +15,10 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 	}
 		
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
-		 var tooHot = false 
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						println("basicrobot | start (together with virtualrobotqa in the same context ...)")
+						println("basicrobot | starts (with robotadapter in the same context)")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
@@ -28,44 +27,23 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 					}
 					 transition(edgeName="t00",targetState="handleCmd",cond=whenDispatch("cmd"))
 					transition(edgeName="t01",targetState="handleObstacle",cond=whenEvent("obstacle"))
-					transition(edgeName="t02",targetState="handleTemperature",cond=whenEvent("temperature"))
 				}	 
 				state("handleCmd") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 						if( checkMsgContent( Term.createTerm("cmd(X)"), Term.createTerm("cmd(X)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								forward("cmd", "cmd(${payloadArg(0)})" ,"virtualrobotqa" ) 
+								forward("cmd", "cmd(${payloadArg(0)})" ,"robotadapter" ) 
 						}
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
 				state("handleObstacle") { //this:State
 					action { //it:State
-						forward("cmd", "cmd(h)" ,"virtualrobotqa" ) 
+						forward("cmd", "cmd(h)" ,"robotadapter" ) 
 						println("basicrobot | stops (for safety) since  obstacle ")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
-				}	 
-				state("handleTemperature") { //this:State
-					action { //it:State
-						if( checkMsgContent( Term.createTerm("temperature(VALUE)"), Term.createTerm("temperature(V)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								 tooHot = payloadArg(0).toInt() > 40 
-								if(tooHot){ println("Temperature too hot !!! ")
-								forward("cmd", "cmd(h)" ,"virtualrobotqa" ) 
-								emit("help", "help(reduce_temperature)" ) 
-								 }
-						}
-					}
-					 transition( edgeName="goto",targetState="waitForHelp", cond=doswitchGuarded({tooHot}) )
-					transition( edgeName="goto",targetState="work", cond=doswitchGuarded({! tooHot}) )
-				}	 
-				state("waitForHelp") { //this:State
-					action { //it:State
-						println("I hope that the temperature will diminish ... ")
-					}
-					 transition(edgeName="t03",targetState="handleTemperature",cond=whenEvent("temperature"))
 				}	 
 			}
 		}

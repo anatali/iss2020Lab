@@ -81,13 +81,9 @@ import alice.tuprolog.*
 								//println("clientWenvObjTcp | emit $m")
                                 //emitLocalStreamEvent( m )
 								actor.emit(m)
-// 							     actor.emit("sonarRobot","sonar(5)"
-//									.replace("TARGET", objectName
-//									.replace("-", "")));
                            }
                         }
                     } catch (e: IOException) {
-                        //e.printStackTrace()
 						println("		--- clientWenvObjTcp | ERROR $e   ")
 						System.exit(1)
                     }
