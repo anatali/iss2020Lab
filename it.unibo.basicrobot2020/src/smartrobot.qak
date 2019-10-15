@@ -29,6 +29,11 @@ var Duration=0
 "]  	
 	State s0 initial{
 		println("smartrobot start")
+		delay 500
+		forward basicrobot -m cmd : cmd( a )
+		delay 500
+		forward basicrobot -m cmd : cmd( d )
+		delay 500
 	}
 	Goto work
 	

@@ -366,7 +366,7 @@ Thus, it can be logically delegated to an 'application-layer' rather than to a b
 The idea of leaving unchanged the current model <a href="../src/basicrobot.qak"  target="code">basicrobot.qak</a> is supported by the motto
 <i>"never change a winning team"</i>. Moreover, by following the motto <i>"divide at impera"</i>,
  we can embed the <ks>responsibility</ks> of the <ks>req-step</ks> requirement to another
-another robot layer, called here <em>smartrobot</em> implemented in a new project (e.g. <tt>it.unibo.smartrobot2020</tt>).
+another robot layer, called here <em>smartrobot</em>.
 
 <br/><br/>
 <table style="width:100%" border="1"> 
@@ -387,7 +387,7 @@ another robot layer, called here <em>smartrobot</em> implemented in a new projec
 
 <br/><br/>
 
-<m>The <em>smartrobot</em> looks at the <em>smartrobot</em> as an 
+<m>The <em>smartrobot</em> looks at the <em>basicrobot</em> as an 
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakintro2020/userDocs/LabQakIntro2020.html#external" target="web">
 External actor</a>
 </m>
@@ -395,9 +395,36 @@ External actor</a>
 </tr>
 </table>
 
+<center><img src="./img/basicrobot2020.png" alt="basicrobot2020" width="60%" height="60%"></center>
+
+
+<h4>Code a little,  test a little ...</h4>
+<ol>
+<li>As done in <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.robot2020/userDocs/LabBasicRobot2020.html#deploy" target="web">
+LabBasicRobot2020.html | Deployment</a>, create the distribution file <m><ks>it.unibo.basicrobot2020-1.0.jar</ks></m>;
+
+</li>
+<li>Unzip the file, copy the required knowledge (files <ks>*.pl</ks>) into the <k>bin</k> directory and execute  <m><ks>it.unibo.basicrobot2020.bat</ks></m>;</li>
+<li>Execute the <tt>Main</tt> related to the <a href="../src/smartrobot.qak" target="code">smartrobot.qak</a>.</li>
+</ol>
+
+
+<h3>About the <k>External actors</k></h3>
+In this version, the  <a href="../src/smartrobot.qak" target="code">smartrobot.qak</a>  uses the <a href="../src/basicrobot.qak"  target="code">basicrobot.qak</a>
+in order to show how a <tt>QActor</tt> can reuse another  <tt>QActor</tt> - already deployed - as it were a running 'microservice'.
  
+<br/><br/>
+Note that the event <k>obstacle</k> emitted by the <em>basicrobot</em> can be perceived by the caller actor  <em>smartrobot</em>  and 
+by any other QActor working in the same context of the caller. 
 
+<!--
+For another example, you can see the project <m><ks>it.unibo.basicrobotusage</ks></m>.
+<br/><br/>
 
+A more advanced version of <em>smartrobot</em> can be found in the project <m><ks>it.unibo.smartrobot2020</ks></m>.
+-->
+
+ 
 
 <h2>Test plans</h2> 
 
@@ -408,8 +435,9 @@ The <em>basicrobot</em> works as a basic resource
 <h2>Testing</h2> 
 
 <h2>Deployment</h2> 
-Following the same steps described in <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.robot2020/userDocs/LabBasicRobot2020.html" target="web">
-LabBasicRobot2020.html</a>, build the file <tt>it.unibo.basicrobot-1.0.zip</tt> (command <tt>gradle -b build_ctxBasicRobot.gradle distZip</tt>) 
+Following the same steps described in 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.robot2020/userDocs/LabBasicRobot2020.html#deploy" target="web">
+LabBasicRobot2020.html | Deployment</a>, build the file <tt>it.unibo.basicrobot-1.0.zip</tt> (command <tt>gradle -b build_ctxBasicRobot.gradle distZip</tt>) 
 and then execute <k>it.unibo.basicrobot.bat</k>.
 <h2>Maintenance</h2> 
 	      	
