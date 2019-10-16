@@ -1,7 +1,7 @@
 %====================================================================================
 % basicrobot description   
 %====================================================================================
-context(ctxsmartrobot, "localhost",  "TCP", "8020").
-context(ctxbasicrobot, "192.168.1.6",  "TCP", "8018").
- qactor( basicrobot, ctxbasicrobot, "external").
-  qactor( smartrobot, ctxsmartrobot, "it.unibo.smartrobot.Smartrobot").
+context(ctxbasicrobot, "localhost",  "TCP", "8018").
+ qactor( robotadapter, ctxbasicrobot, "itunibo.robot.robotAdapterQa").
+  qactor( basicrobot, ctxbasicrobot, "it.unibo.basicrobot.Basicrobot").
+  qactor( sentinel, ctxbasicrobot, "it.unibo.sentinel.Sentinel").

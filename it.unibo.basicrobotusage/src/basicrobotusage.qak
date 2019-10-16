@@ -7,15 +7,19 @@
  * in the context of the caller.
  * ================================================================
  */
-System basicrobotusage
+System -trace basicrobotusage
 
-Dispatch cmd          : cmd(X)
-Event  obstacle       : obstacle( DISTANCE )
-  
-Context ctxRobotUsage  ip [ host= "localhost"      port= 8048 ]
+Dispatch cmd       : cmd(X)
+Event  obstacle    : obstacle( DISTANCE )
+Event  alarm       : alarm(V)  
+
+
+Context ctxRobotUsage  ip [ host= "localhost"     port= 8048 ]
 Context ctxBasicRobot  ip [ host= "192.168.1.6"   port= 8018 ] 
+Context ctxSmartRobot  ip [ host= "192.168.1.6"   port= 8020 ] 
  
 ExternalQActor basicrobot context ctxBasicRobot
+ExternalQActor smartrobot context ctxSmartRobot
 
 QActor robotusage context ctxRobotUsage{
 	State s0 initial{ 
@@ -24,15 +28,22 @@ QActor robotusage context ctxRobotUsage{
 	Goto work
  
  	State work{
+		delay 1000   
+		forward basicrobot -m cmd : cmd( a )
 		delay 1000  
-		println("robotusage send w")
-		forward basicrobot -m cmd : cmd( w )
+		forward smartrobot -m cmd : cmd( d )
+		delay 1000  
+		println("robotusage send w to smartrobot")
+		forward smartrobot -m cmd : cmd( w )
+		delay 1000  
+		forward smartrobot -m cmd : cmd( h )
+		delay 1000  
   	}
 	Transition t0 
 		whenEvent obstacle -> handleObstacle
 			
 	State handleObstacle{
-		printCurrentMessage
+		printCurrentMessage 
 		println("robotusage handleObstacle ")
 	}
  }
@@ -47,7 +58,10 @@ QActor robotusage context ctxRobotUsage{
 	State handleObstacle{
 		printCurrentMessage
 		println("callerfriend handleObstacle ")
+		emit alarm : alarm(obstacle)
 	}
+ 	Transition t0 
+		whenEvent obstacle -> handleObstacle
  }
 
  

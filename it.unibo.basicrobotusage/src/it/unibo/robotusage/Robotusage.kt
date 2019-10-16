@@ -25,8 +25,15 @@ class Robotusage ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 				state("work") { //this:State
 					action { //it:State
 						delay(1000) 
-						println("robotusage send w")
-						forward("cmd", "cmd(w)" ,"basicrobot" ) 
+						forward("cmd", "cmd(a)" ,"basicrobot" ) 
+						delay(1000) 
+						forward("cmd", "cmd(d)" ,"smartrobot" ) 
+						delay(1000) 
+						println("robotusage send w to smartrobot")
+						forward("cmd", "cmd(w)" ,"smartrobot" ) 
+						delay(1000) 
+						forward("cmd", "cmd(h)" ,"smartrobot" ) 
+						delay(1000) 
 					}
 					 transition(edgeName="t00",targetState="handleObstacle",cond=whenEvent("obstacle"))
 				}	 
