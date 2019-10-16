@@ -159,8 +159,12 @@ This case-study is related to:
 <ul>
 <li>abstraction gap and conceptual spaces</li>
 <li>the design of proactive-reactive components</li>
-<li>the problem of putting the requirements into a ordered list and the definition of a product-backlog</li>
+<li>the problem of defining a 'priority list' for the requirements and the definition of a product-backlog</li>
 <li>the problem of finding proper subsystems and their related models </li>
+<li>introduce the <i>qak concepts</i> of  
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakintro2020/userDocs/LabQakIntro2020.html#coded" target="web">
+Coded actors</a> and of<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakintro2020/userDocs/LabQakIntro2020.html#external" target="web">
+External actors</a></li>
 </ul>
 
  
@@ -220,51 +224,65 @@ qak metamodel</a>, in which the components of a software system are 'actors' abl
 </m>
 <hr/>
 
-<kc>After a discussion with the customer</kc>, we can define the logical architecture of the system as follows: 
+<kc>After a discussion with the customer</kc>, we can define the logical architecture of the system through the following qak specification: 
 <br/><br/>
 <a href="../modelsOld/requirements/basicrobotreq.txt" target="code">basicrobotreq.qak</a>
 
 <h3>Notes</h3>
 In this model:
 <ul>
-<li>the <em>basicrobot</em> works as a sort of <a href="https://en.wikipedia.org/wiki/Microservices" target ="web">Microservice</a>
+<li>the <em>basicrobot</em> works as a service 
+<!-- sort of <a href="https://en.wikipedia.org/wiki/Microservices" target ="web">Microservice</a> -->
 on the TCP-port <tt>8018</tt>, exploiting the <tt>qak-infrastructure</tt>. 
 This is useful for fast prototyping; however, the final infrastructural support has to be defined later, by the project designer;
 </li>
 <li>each state is associated with a specific, named requirement. This is very useful for <kc>requirement traceability</kc>;</li>
 <li>we exploit the 
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.robot2020/userDocs/LabVirtualRobot.html" target="code">
-Virtual Robot</a> available in our company, in order to show a working (<k>mock</k>) prototype to the customer;</li>
-<li>we leave the <k>doStep</k> state still under-specified, since the <ks>req-step</ks> seems 'more demanding' than the <ks>req-cmd</ks>.</li>
+Virtual Robot</a> available in our company, in order to show a working (<a href="https://en.wikipedia.org/wiki/Mock_object"  target="web">mock</a>) prototype to the customer;</li>
+
 </ul>
 
- 
+Moreover, in this model, the <k>doStep</k> state still under-specified, since the <ks>req-step</ks> seems 'more demanding' than the <ks>req-cmd</ks>.
+In fact, we have  agreed with the customer upon the following requirement priority:
+
+<ol>
+<li><ks>req-cmd</ks> first</li>
+<li><ks>req-step/stop</ks> second</li>
+</ol>
+
+<h1>The requirement  <ks>req-cmd</ks></h1>
 
 <h2>Problem analysis</h2>
 
-<h3>The requirement  <ks>req-cmd</ks></h3>
 From the <i>functional</i> point of view, the <em>basicrobot</em> is a <k>translator</k> of commands expressed in the user-language 
-(<tt>w | s | h | a | d</tt>) into commands expressed in the language of the concrete <em>robot</em> to be used. 
-<br/><br/>
+(<tt>w | s | h | a | d</tt>) into commands expressed in the language of the concrete <em>robot</em> to be used. <br/>
+During the execution of a basic-command, we will assume that the robot is moving on a flat 
+(<a href="https://en.wikipedia.org/wiki/Euclidean_space" target="web">euclidean</a>) space.
+<!--
 During the execution of a command expressed in the <i>user-language</i>, the  <em>basicrobot</em>  
 could hit an <k>obstacle</k> (either fixed or moving). Since no specification is given in the requirements about this problematic,
-at the moment we assume <k>absence of obtacles</k>.
+at the moment we assume <k>absence of obtacles</k>.-->
 <br/><br/>
-Moreover, we can assume that the robot is moving on a flat 
-(<a href="https://en.wikipedia.org/wiki/Euclidean_space" target="web">euclidean</a>) space.
-<br/><br/>
-Under these assumptions, we can use the logical model defined in the requirement-analysis phase as it is.
-However, as analysts we know that the <k>quality of our software product</k> will improve and the
-<k>production process will be better set up</k>, by avoiding any direct technology-dependent reference in the logical model related to the problem.
+Under these assumptions, we can use the logical model defined in the requirement-analysis phase as it is.<br/><br/>
 
+However, we known that, during the execution of a <i>movement command</i>, the  <em>basicrobot</em>  could hit an <k>obstacle</k> (either fixed or moving).
+Thus, it is important to foresee some obstacle-handling facility in order to avoid damaging of the robot.<br/><br/>
+
+<hr/><m>
+As an important premise before starting the project phase, we observe that the <k>quality of our software product</k> will improve and the
+<k>production process will be better set up</k>, by avoiding any direct technology-dependent reference in the logical model related to the problem.
+Thus, our next step will be focused on the goal of improving the independence of our model from technological details
+</m><hr
+/>
 <h3>Improving the independence from technology using a <k>CodedQActor</k></h3>
 
 As done in <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.robot2020/userDocs/LabBasicRobot2020.html#project" target="web">
-LabBasicRobot2020.html#project</a>, we can make our model-code less technology-dependent by introducing an object-support 
-<a href="../resources/itunibo/robot/robotSupport.kt"  target="code">robotSupport.kt</a>
-that works like a <i>factory</i> and as an <i>adapter</i>.
+LabBasicRobot2020.html#project</a>, we can make our model-code less technology-dependent by introducing an object 
+(<a href="../resources/itunibo/robot/robotSupport.kt"  target="code">robotSupport.kt</a>) working as a support that
+provides a <i>factory</i> and as an <i>adapter</i>.
 <br/><br/>
-In this project however, we do will introduce such a support as a new actor written in <tt>Kotlin</tt> 
+In this case however, we will introduce such a support as a new actor written in <tt>Kotlin</tt> 
 (see <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakintro2020/userDocs/LabQakIntro2020.html#coded" target="web">
 Coded actors</a>) that includes (and hides) the 
 <a href="../resources/itunibo/robot/robotSupport.kt"  target="code">robotSupport.kt</a> that, in its turns, uses technology-specific support objects, like
@@ -274,11 +292,13 @@ The code of this <k>CodedQActor</k> can be found in: <br/><br/>
 
 <a href="../resources/itunibo/robot/robotAdapterQa.kt"  target="code">robotAdapterQa.kt</a>,
 
+<h2>Project</h2>
+
 <h4 id="obstacles">Obstacles </h4>
 
 During the execution of a <i>movement command</i>, the  <em>basicrobot</em>  could hit an <k>obstacle</k> (either fixed or moving).
 From now on we suppose that the actor <a href="../resources/itunibo/robot/robotAdapterQa.kt"  target="code">robotAdapterQa.kt</a> works also
-as an emitter of events of the form
+as an emitter of <k>qak  events</k> of the form
 
 <pre>
 
@@ -286,13 +306,13 @@ Event  obstacle  : obstacle( DISTANCE )
 
 </pre>
  
-This kind of events is generated by each  technology-specific support and propagated by using the
+This kind of events is generated by the technology-specific support and propagated by using the
 <a href="../resources/itunibo/robot/robotAdapterQa.kt"  target="code">robotAdapterQa.kt</a> passed to it. 
 For example, the kotlin object 
 <a href="../resources/itunibo.robotVirtual/clientWenvObjTcp.kt" target="code">clientWenvObjTcp.kt</a>
 activates a coroutine (see the function <tt>startTheReader</tt>) that
 transforms  data coming from the <em>virtualrobot</em> 
-into the <k>qak event</k> <b><tt>obstacle</tt></b>.
+into the qak event <b><tt>obstacle</tt></b>.
 
 <h4>Code a little,  test a little ...</h4>
 The code of the model at this stage of the project can be found in: <br/><br/>
@@ -306,16 +326,25 @@ LabBasicRobot2020.html</a>, the model can be executed by using a python client i
 a jupyter notebook (e.g. <a href="./BasicRobotInteraction.ipynb">BasicRobotInteraction.ipynb</a> 
 in project <tt>it.unibo.basicrobot2020</tt>).  
 
-<h3>The requirement  <ks>req-step</k></h3>
+<h2>Test plans</h2> 
+
+<h2>Deployment</h2> 
+Following the same steps described in 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.robot2020/userDocs/LabBasicRobot2020.html#deploy" target="web">
+LabBasicRobot2020.html | Deployment</a>, build the file <tt>it.unibo.basicrobot-1.0.zip</tt> (command <tt>gradle -b build_ctxBasicRobot.gradle distZip</tt>) 
+and then execute <k>it.unibo.basicrobot.bat</k>.
+
+<h1>The requirement  <ks>req-step</ks></h1>
+ 
 The <ks>req-step</ks> entails the 'problematic' to define a <kc>proactive</kc> behavior (for a given time), without loosing the 
 capability to be <kc>reactive</kc> to the <k>stop</k> command according to the <ks>req-stop</ks>.
-<br/><br/>
+<br/> 
 <hr/>
-The 'problematic' to define a <kc>proactive</kc> behavior for a given time implies the need to 'react' to an event sent by
+<m>The 'problematic' to define a <kc>proactive</kc> behavior for a given time implies the need to 'react' to an event sent by
 a timer. The 
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakintro2020/userDocs/LabQakIntro2020.html#whenTime" target="web">
-whenTime</a> primitive gives us the required expressive power:
-<hr/>
+whenTime</a> qak-primitive gives us the required expressive power:</m>
+
 <table style="width:100%" border="1">
 <tr>
 <td style="width:50%">
@@ -357,7 +386,12 @@ QActor robot context ctxRobot{
 </tr> 
 </table>
 
-<h4>On the different nature of the requirements</h4>
+<hr/>
+
+
+
+
+<h3>On the different nature of the requirements</h3>
 
 The <k>step</k> is not a 'primitive' command, since it can be implemented by using the  <i>basic-commands</i> mentioned in the <ks>req-cmd</ks>. 
 Thus, it can be logically delegated to an 'application-layer' rather than to a basic-robot layer.  
@@ -425,22 +459,17 @@ For another example, you can see the project <m><ks>it.unibo.basicrobotusage</ks
 A more advanced version of <em>smartrobot</em> can be found in the project <m><ks>it.unibo.smartrobot2020</ks></m>.
 -->
 
+<h2>Test plans</h2>  
+
+
+
  
 
-<h2>Test plans</h2> 
+ 
 
-<h2>Project</h2> 
+<h1>Testing</h1> 
 
-The <em>basicrobot</em> works as a basic resource
-
-<h2>Testing</h2> 
-
-<h2>Deployment</h2> 
-Following the same steps described in 
-<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.robot2020/userDocs/LabBasicRobot2020.html#deploy" target="web">
-LabBasicRobot2020.html | Deployment</a>, build the file <tt>it.unibo.basicrobot-1.0.zip</tt> (command <tt>gradle -b build_ctxBasicRobot.gradle distZip</tt>) 
-and then execute <k>it.unibo.basicrobot.bat</k>.
-<h2>Maintenance</h2> 
+<h1>Maintenance</h1> 
 	      	
 <br/><br/> 	
 </div>  
