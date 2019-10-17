@@ -22,16 +22,11 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 				state("s0") { //this:State
 					action { //it:State
 						println("smartrobot start")
-						delay(1000) 
-						forward("cmd", "cmd(a)" ,"basicrobot" ) 
-						delay(1000) 
-						forward("cmd", "cmd(d)" ,"basicrobot" ) 
-						delay(1000) 
 					}
-					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
 				state("work") { //this:State
 					action { //it:State
+						println("smartrobot waiting ...")
 					}
 					 transition(edgeName="s00",targetState="handleCmd",cond=whenDispatch("cmd"))
 					transition(edgeName="s01",targetState="doStep",cond=whenRequest("step"))
@@ -39,7 +34,7 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 				}	 
 				state("handleStopNotExpected") { //this:State
 					action { //it:State
-						println("smartrobot | WARNING: the stop command should not be sent here")
+						println("smartrobot WARNING: the stop command should not be sent here")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
@@ -48,7 +43,7 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						println("$name in ${currentState.stateName} | $currentMsg")
 						if( checkMsgContent( Term.createTerm("cmd(X)"), Term.createTerm("cmd(X)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								forward("cmd", "cmd(${payloadArg(0)})" ,"basicrobot" ) 
+								forward("cmd", "cmd("${payloadArg(0)}")" ,"basicrobot" ) 
 						}
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
@@ -60,29 +55,20 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								StepTime = payloadArg(0).toLong()
 								startTimer()
-								forward("cmd", "cmd(w)" ,"basicrobot" ) 
+								forward("cmd", "cmd("w")" ,"basicrobot" ) 
 						}
 						stateTimer = TimerActor("timer_doStep", 
 							scope, context!!, "local_tout_smartrobot_doStep", StepTime )
 					}
 					 transition(edgeName="t03",targetState="endStep",cond=whenTimeout("local_tout_smartrobot_doStep"))   
-					transition(edgeName="t04",targetState="stepStop",cond=whenDispatch("stop"))
+					transition(edgeName="t04",targetState="stepFail",cond=whenDispatch("stop"))
 					transition(edgeName="t05",targetState="stepFail",cond=whenEvent("obstacle"))
 				}	 
 				state("endStep") { //this:State
 					action { //it:State
-						forward("cmd", "cmd(h)" ,"basicrobot" ) 
-						println("smartrobot | step DONE")
+						forward("cmd", "cmd("h")" ,"basicrobot" ) 
 						answer("step", "stepdone", "stepdone"   )  
-					}
-					 transition( edgeName="goto",targetState="work", cond=doswitch() )
-				}	 
-				state("stepStop") { //this:State
-					action { //it:State
-						Duration=getDuration()
-						forward("cmd", "cmd(h)" ,"basicrobot" ) 
-						answer("step", "stepfail", "stepfail($Duration)"   )  
-						println("smartrobot | stepStop Duration=$Duration ")
+						println("step DONE")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
@@ -90,7 +76,7 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 					action { //it:State
 						Duration=getDuration()
 						answer("step", "stepfail", "stepfail($Duration)"   )  
-						println("smartrobot | stepFail Duration=$Duration ")
+						println("stepFail Duration=$Duration ")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
