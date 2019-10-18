@@ -1,0 +1,62 @@
+System smartrobot  
+
+Dispatch cmd  : cmd(X)
+ 
+Request  step      :  step(DURATION)
+Reply    stepdone  :  stepdone
+Reply    stepfail  :  stepfail(DURATION)
+Dispatch stop      :  stop 
+ 
+Event  sonarRobot  : sonar( DISTANCE )	     //from  sonar on robot 
+Event  obstacle    : obstacle( DISTANCE )
+Event  alarm       : alarm(V)
+
+Context ctxSmartRobotCaller ip [ host= "localhost"     port= 8023 ]
+Context ctxSmartRobot       ip [ host= "192.168.1.4"   port= 8020 ]  
+
+ExternalQActor smartrobot context ctxSmartRobot  
+  
+QActor smartrobotcaller context ctxSmartRobotCaller { 
+	State s0 initial {	   
+		delay 1000
+		println("smartrobotcaller | doing a step")  
+		request  smartrobot  -m  step :  step(1500)
+  	} 
+  	Goto work
+  	
+  	State work{}  
+	Transition t0 
+		whenReply  stepdone  -> anotherStep
+		whenReply  stepfail  -> stepFailed 
+		whenEvent  obstacle  -> perceiveObstacle	//just to see that events are propagated ...
+
+	State anotherStep{
+		println("smartrobotcaller | doing another step")  
+		request  smartrobot  -m  step :  step(2000)		
+//		delay 500
+//		forward smartrobot -m stop : stop
+	} 
+	Transition t0 
+		whenReply  stepdone  -> endOfStep
+		whenReply  stepfail  -> stepFailed
+	 
+	State endOfStep{ 
+ 		println("smartrobotcaller |  step DONE")
+   	}
+   	
+ 	
+	State stepFailed{ 
+		onMsg(  stepfail : stepfail(DURATION)  ) {
+			println("smartrobotcaller | step request failed after Duration=${payloadArg(0)} ")
+		}		
+ 	}
+  	
+ 	State perceiveObstacle{
+ 		onMsg ( obstacle : obstacle(D) ){
+ 			println("smartrobotcaller | perceives obstacle at Distance=${payloadArg(0)} ")
+ 		}
+ 	} 
+    Goto work
+  
+
+} 

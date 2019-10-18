@@ -27,23 +27,22 @@ class Smartrobotcaller ( name: String, scope: CoroutineScope ) : ActorBasicFsm( 
 				state("work") { //this:State
 					action { //it:State
 					}
-					 transition(edgeName="t06",targetState="anotherStep",cond=whenReply("stepdone"))
-					transition(edgeName="t07",targetState="stepFailed",cond=whenReply("stepfail"))
-					transition(edgeName="t08",targetState="perceiveObstacle",cond=whenEvent("obstacle"))
+					 transition(edgeName="t00",targetState="anotherStep",cond=whenReply("stepdone"))
+					transition(edgeName="t01",targetState="stepFailed",cond=whenReply("stepfail"))
+					transition(edgeName="t02",targetState="perceiveObstacle",cond=whenEvent("obstacle"))
 				}	 
 				state("anotherStep") { //this:State
 					action { //it:State
 						println("smartrobotcaller | doing another step")
 						request("step", "step(2000)" ,"smartrobot" )  
 					}
-					 transition(edgeName="t09",targetState="endOfStep",cond=whenReply("stepdone"))
-					transition(edgeName="t010",targetState="stepFailed",cond=whenReply("stepfail"))
+					 transition(edgeName="t03",targetState="endOfStep",cond=whenReply("stepdone"))
+					transition(edgeName="t04",targetState="stepFailed",cond=whenReply("stepfail"))
 				}	 
 				state("endOfStep") { //this:State
 					action { //it:State
 						println("smartrobotcaller |  step DONE")
 					}
-					 transition(edgeName="t011",targetState="perceiveTick",cond=whenEvent("tick"))
 				}	 
 				state("stepFailed") { //this:State
 					action { //it:State
@@ -52,7 +51,6 @@ class Smartrobotcaller ( name: String, scope: CoroutineScope ) : ActorBasicFsm( 
 								println("smartrobotcaller | step request failed after Duration=${payloadArg(0)} ")
 						}
 					}
-					 transition(edgeName="t012",targetState="perceiveTick",cond=whenEvent("tick"))
 				}	 
 				state("perceiveObstacle") { //this:State
 					action { //it:State
@@ -62,15 +60,6 @@ class Smartrobotcaller ( name: String, scope: CoroutineScope ) : ActorBasicFsm( 
 						}
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
-				}	 
-				state("perceiveTick") { //this:State
-					action { //it:State
-						if( checkMsgContent( Term.createTerm("tick(N)"), Term.createTerm("tick(N)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								println("smartrobotcaller | perceives tick ${payloadArg(0)}")
-						}
-					}
-					 transition(edgeName="t013",targetState="perceiveTick",cond=whenEvent("tick"))
 				}	 
 			}
 		}
