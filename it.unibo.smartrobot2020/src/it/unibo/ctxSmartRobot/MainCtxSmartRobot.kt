@@ -6,7 +6,7 @@ import kotlinx.coroutines.runBlocking
 
 fun main() = runBlocking {
 	QakContext.createContexts(
-	        "localhost", this, "smartrobot.pl", "sysRules.pl"
+	        "192.168.1.4", this, "smartrobot.pl", "sysRules.pl"
 	)
 }
 

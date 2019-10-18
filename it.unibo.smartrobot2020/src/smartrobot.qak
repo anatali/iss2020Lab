@@ -21,8 +21,13 @@ Event  alarm       : alarm(V)
 
 Event tick         : tick(N) 
 
+<<<<<<< HEAD
 Context ctxSmartRobot ip [ host= "localhost"     port= 8020 ] 
 Context ctxBasicRobot ip [ host= "192.168.1.6"   port= 8018 ]
+=======
+Context ctxSmartRobot ip [ host= "localhost"     port= 8020 ]
+Context ctxBasicRobot ip [ host= "192.168.1.6"   port= 8018 ]  
+>>>>>>> 34d7120980a947fea5bf2bab6dd2d5aaa1b24dd9
 
 ExternalQActor basicrobot context ctxBasicRobot  
 

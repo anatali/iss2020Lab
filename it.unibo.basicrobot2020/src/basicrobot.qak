@@ -35,7 +35,7 @@ QActor basicrobot context ctxBasicRobot{
  /*
   * REQUIREMENT req-cmd 
   */
-	State handleCmd {
+	State handleCmd {    
 		//println("basicrobot | handleCmd ")
 		printCurrentMessage 
 		onMsg( cmd : cmd(X) ){  //redirect the command to the robotadapter
