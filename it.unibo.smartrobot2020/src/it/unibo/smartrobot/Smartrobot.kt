@@ -27,10 +27,7 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						delay(1000) 
 						forward("cmd", "cmd(d)" ,"basicrobot" ) 
 						delay(1000) 
-<<<<<<< HEAD
 						forward("cmd", "cmd(h)" ,"basicrobot" ) 
-=======
->>>>>>> 34d7120980a947fea5bf2bab6dd2d5aaa1b24dd9
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 

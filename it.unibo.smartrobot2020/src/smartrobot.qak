@@ -18,16 +18,9 @@ Dispatch stop      :  stop
 Event  sonarRobot  : sonar( DISTANCE )	     //from  sonar on robot 
 Event  obstacle    : obstacle( DISTANCE )
 Event  alarm       : alarm(V)
-
-Event tick         : tick(N) 
-
-<<<<<<< HEAD
+ 
 Context ctxSmartRobot ip [ host= "localhost"     port= 8020 ] 
-Context ctxBasicRobot ip [ host= "192.168.1.6"   port= 8018 ]
-=======
-Context ctxSmartRobot ip [ host= "localhost"     port= 8020 ]
-Context ctxBasicRobot ip [ host= "192.168.1.6"   port= 8018 ]  
->>>>>>> 34d7120980a947fea5bf2bab6dd2d5aaa1b24dd9
+Context ctxBasicRobot ip [ host= "192.168.1.6"   port= 8018 ] 
 
 ExternalQActor basicrobot context ctxBasicRobot  
 
@@ -128,83 +121,3 @@ var Duration=0
 	
 }
  
- QActor smartperceiver context ctxSmartRobot{
-	State s0 initial{ 
-		println("perceiver start")
-	}
-	Transition t0 
-		whenEvent obstacle -> handleEvent
-		whenEvent alarm    -> handleEvent
- 	
-	State handleEvent{
-		println("perceiver handleEvent ")
-		printCurrentMessage
-	}
- 	Transition t0 
-		whenEvent obstacle -> handleEvent
-		whenEvent alarm    -> handleEvent
- }
- 
-/*
- * ---------------------------------------------------------------------------
- * This actor is not part of the system.
- * It is introduced to make testing easier.
- * ---------------------------------------------------------------------------
-
-QActor smartrobotcaller context ctxSmartRobot { 
-	State s0 initial {	   
-		delay 1000
-		println("smartrobotcaller | doing a step")  
-		request  smartrobot  -m  step :  step(1500)
-  	} 
-  	Goto work
-  	
-  	State work{}
-	Transition t0 
-		whenReply  stepdone  -> anotherStep
-		whenReply  stepfail  -> stepFailed 
-		whenEvent  obstacle  -> perceiveObstacle	//just to see that events are propagated ...
-
-	State anotherStep{
-		println("smartrobotcaller | doing another step")  
-		request  smartrobot  -m  step :  step(2000)		
-//		delay 500
-//		forward smartrobot -m stop : stop
-	} 
-	Transition t0 
-		whenReply  stepdone  -> endOfStep
-		whenReply  stepfail  -> stepFailed
-	 
-	State endOfStep{ 
- 		println("smartrobotcaller |  step DONE")
-   	}
-   	Transition t0 
-   			whenEvent  tick      -> perceiveTick     	//just to see that events are propagated ...
-   	
- 	
-	State stepFailed{ 
-		onMsg(  stepfail : stepfail(DURATION)  ) {
-			println("smartrobotcaller | step request failed after Duration=${payloadArg(0)} ")
-		}		
- 	}
-   	Transition t0 
-   			whenEvent  tick      -> perceiveTick     	//just to see that events are propagated ...
- 	
- 	State perceiveObstacle{
- 		onMsg ( obstacle : obstacle(D) ){
- 			println("smartrobotcaller | perceives obstacle at Distance=${payloadArg(0)} ")
- 		}
- 	} 
-    Goto work
-  
-
- 	State perceiveTick{  
- 		onMsg ( tick : tick(N) ){
- 			println("smartrobotcaller | perceives tick ${payloadArg(0)}")
- 		}
- 	}
-   	Transition t0 
-   			whenEvent  tick      -> perceiveTick     	//just to see that events are propagated ...
-} 
- */
-
