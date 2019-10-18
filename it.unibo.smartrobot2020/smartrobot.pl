@@ -2,6 +2,7 @@
 % smartrobot description   
 %====================================================================================
 context(ctxsmartrobot, "localhost",  "TCP", "8020").
- qactor( smartrobot, ctxsmartrobot, "it.unibo.smartrobot.Smartrobot").
-  qactor( basicrobot, ctxsmartrobot, "it.unibo.basicrobot.Basicrobot").
-  qactor( onestpcaller, ctxsmartrobot, "it.unibo.onestpcaller.Onestpcaller").
+context(ctxbasicrobot, "192.168.1.6",  "TCP", "8018").
+ qactor( basicrobot, ctxbasicrobot, "external").
+  qactor( smartrobot, ctxsmartrobot, "it.unibo.smartrobot.Smartrobot").
+  qactor( smartperceiver, ctxsmartrobot, "it.unibo.smartperceiver.Smartperceiver").

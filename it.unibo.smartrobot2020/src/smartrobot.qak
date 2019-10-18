@@ -21,7 +21,7 @@ Event  alarm       : alarm(V)
 
 Event tick         : tick(N) 
 
-Context ctxSmartRobot ip [ host= "localhost"     port= 8020 ]
+Context ctxSmartRobot ip [ host= "localhost"     port= 8020 ] 
 Context ctxBasicRobot ip [ host= "192.168.1.6"   port= 8018 ]
 
 ExternalQActor basicrobot context ctxBasicRobot  
@@ -44,6 +44,7 @@ var Duration=0
 		delay 1000
 		forward basicrobot -m cmd : cmd( d )
 		delay 1000
+		forward basicrobot -m cmd : cmd( h )
 	}
 	Goto work
 	
