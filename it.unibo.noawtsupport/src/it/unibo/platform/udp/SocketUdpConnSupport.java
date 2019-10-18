@@ -44,7 +44,7 @@ public void closeConnection() throws Exception {
 public boolean isTwoWay() {
  	return false;
 }
-public void sendALine( String msg ) throws Exception {
+public synchronized void sendALine( String msg ) throws Exception {
  	if( isAReceiver ) sendAReplyLine( msg );
 	else
  	try {
