@@ -18,19 +18,6 @@ class User ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scope)
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						println("user forward userCmd ")
-						forward("userCmd", "userCmd(1)" ,"resource" ) 
-						delay(1000) 
-						println("user request cmd ")
-						request("cmd", "cmd(a)" ,"resource" )  
-					}
-					 transition(edgeName="t00",targetState="handleReply",cond=whenReply("replytocmd"))
-				}	 
-				state("handleReply") { //this:State
-					action { //it:State
-						println("       --- handleReply ")
-						println("$name in ${currentState.stateName} | $currentMsg")
-						println("       --- handleReply ")
 					}
 				}	 
 			}

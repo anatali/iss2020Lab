@@ -25,7 +25,7 @@ QActor basicrobot context ctxBasicRobot{
 	State s0 initial{
 		println("basicrobot | starts (with robotadapter in the same context)")
 	}
-	Goto work   
+	Goto work    
 	
 	State work{ }
 	Transition t0 
@@ -59,14 +59,23 @@ QActor basicrobot context ctxBasicRobot{
  */
  QActor sentinel context ctxBasicRobot{
 	State s0 initial{ 
-		println("sentinel start")
+		println("sentinel waits ..")
 	}
 	Transition t0 
-		whenEvent alarm -> handleAlarm
- 	
+		whenEvent obstacle -> handleObstacle
+		whenEvent alarm    -> handleAlarm
+
+	State handleObstacle{
+		printCurrentMessage
+		println("sentinel handleObstacle ")
+		emit alarm : alarm(obstacle)
+	}
+ 	Goto s0
+ 	 	
 	State handleAlarm{
 		printCurrentMessage
 		println("sentinel handleAlarm ")
+		emit obstacle : obstacle(10)
 	}
  	Transition t0 
 		whenEvent alarm -> handleAlarm

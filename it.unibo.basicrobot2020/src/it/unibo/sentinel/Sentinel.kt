@@ -18,16 +18,26 @@ class Sentinel ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, sc
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						println("sentinel start")
+						println("sentinel waits ..")
 					}
-					 transition(edgeName="t02",targetState="handleAlarm",cond=whenEvent("alarm"))
+					 transition(edgeName="t02",targetState="handleObstacle",cond=whenEvent("obstacle"))
+					transition(edgeName="t03",targetState="handleAlarm",cond=whenEvent("alarm"))
+				}	 
+				state("handleObstacle") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+						println("sentinel handleObstacle ")
+						emit("alarm", "alarm(obstacle)" ) 
+					}
+					 transition( edgeName="goto",targetState="s0", cond=doswitch() )
 				}	 
 				state("handleAlarm") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("sentinel handleAlarm ")
+						emit("obstacle", "obstacle(10)" ) 
 					}
-					 transition(edgeName="t03",targetState="handleAlarm",cond=whenEvent("alarm"))
+					 transition(edgeName="t04",targetState="handleAlarm",cond=whenEvent("alarm"))
 				}	 
 			}
 		}
