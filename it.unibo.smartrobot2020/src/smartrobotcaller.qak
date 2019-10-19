@@ -35,7 +35,7 @@ QActor smartrobotcaller context ctxSmartRobotCaller {
 		request  smartrobot  -m  step :  step(2000)		
 //		delay 500
 //		forward smartrobot -m stop : stop
-	} 
+	}  
 	Transition t0 
 		whenReply  stepdone  -> endOfStep
 		whenReply  stepfail  -> stepFailed
