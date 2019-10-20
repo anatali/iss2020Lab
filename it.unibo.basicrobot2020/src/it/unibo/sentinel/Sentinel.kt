@@ -35,7 +35,6 @@ class Sentinel ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, sc
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("sentinel handleAlarm ")
-						emit("obstacle", "obstacle(10)" ) 
 					}
 					 transition(edgeName="t04",targetState="handleAlarm",cond=whenEvent("alarm"))
 				}	 

@@ -50,6 +50,7 @@ var Duration=0
 		//println("smartrobot waiting ...")
 	}
 	Transition s0 
+			whenEvent alarm  -> handleAlarm
 			whenMsg cmd      -> handleCmd
 			whenRequest step -> doStep
 			whenMsg stop     -> handleStopNotExpected		 
@@ -107,6 +108,7 @@ var Duration=0
 		["Duration=getDuration()"]  //getDuration is built-in in the actor (with ref. to startTimer)
 		replyTo step with stepfail : stepfail($Duration)
 		println("smartrobot | stepFail Duration=$Duration ")
+		emit alarm : alarm( obstacle )  //towards the others ...
  	}
 	Goto work  	
 
@@ -119,5 +121,14 @@ var Duration=0
   	}
 	Goto work
 	
+	
+/*
+ * Facing alarms
+ */	
+   State handleAlarm{
+ 		println("smartrobot | handle alarm ")   	
+ 		printCurrentMessage  
+   }
+   Goto work
 }
  

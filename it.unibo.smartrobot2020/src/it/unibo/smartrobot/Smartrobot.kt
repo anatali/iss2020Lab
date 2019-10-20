@@ -34,9 +34,10 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 				state("work") { //this:State
 					action { //it:State
 					}
-					 transition(edgeName="s00",targetState="handleCmd",cond=whenDispatch("cmd"))
-					transition(edgeName="s01",targetState="doStep",cond=whenRequest("step"))
-					transition(edgeName="s02",targetState="handleStopNotExpected",cond=whenDispatch("stop"))
+					 transition(edgeName="s00",targetState="handleAlarm",cond=whenEvent("alarm"))
+					transition(edgeName="s01",targetState="handleCmd",cond=whenDispatch("cmd"))
+					transition(edgeName="s02",targetState="doStep",cond=whenRequest("step"))
+					transition(edgeName="s03",targetState="handleStopNotExpected",cond=whenDispatch("stop"))
 				}	 
 				state("handleStopNotExpected") { //this:State
 					action { //it:State
@@ -66,9 +67,9 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						stateTimer = TimerActor("timer_doStep", 
 							scope, context!!, "local_tout_smartrobot_doStep", StepTime )
 					}
-					 transition(edgeName="t03",targetState="endStep",cond=whenTimeout("local_tout_smartrobot_doStep"))   
-					transition(edgeName="t04",targetState="stepStop",cond=whenDispatch("stop"))
-					transition(edgeName="t05",targetState="stepFail",cond=whenEvent("obstacle"))
+					 transition(edgeName="t04",targetState="endStep",cond=whenTimeout("local_tout_smartrobot_doStep"))   
+					transition(edgeName="t05",targetState="stepStop",cond=whenDispatch("stop"))
+					transition(edgeName="t06",targetState="stepFail",cond=whenEvent("obstacle"))
 				}	 
 				state("endStep") { //this:State
 					action { //it:State
@@ -92,11 +93,19 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						Duration=getDuration()
 						answer("step", "stepfail", "stepfail($Duration)"   )  
 						println("smartrobot | stepFail Duration=$Duration ")
+						emit("alarm", "alarm(obstacle)" ) 
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
 				state("doStop") { //this:State
 					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+					}
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
+				}	 
+				state("handleAlarm") { //this:State
+					action { //it:State
+						println("smartrobot | handle alarm ")
 						println("$name in ${currentState.stateName} | $currentMsg")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
