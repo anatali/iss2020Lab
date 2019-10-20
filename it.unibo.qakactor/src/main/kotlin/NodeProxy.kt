@@ -34,7 +34,7 @@ class NodeProxy( name: String, val ctx: QakContext, val protocol: Protocol,
 
     //Routes each message to the connected server
     override suspend fun actorBody(msg: ApplMessage) {
-        println("       NodeProxy $name receives $msg conn=$conn ") // conn=$conn"
+        sysUtil.traceprintln("                %%% NodeProxy $name  | receives $msg conn=$conn ") // conn=$conn"
         try {
             conn!!.sendALine("$msg")
         } catch (e: Exception) {
@@ -50,7 +50,7 @@ class NodeProxy( name: String, val ctx: QakContext, val protocol: Protocol,
                 //sysUtil.traceprintln("               %%% NodeProxy $name  | handling new input from :$conn")
                 while (true) {
                     val msg = conn.receiveALine()       //BLOCKING ???
-                    println("               %%% NodeProxy $name  | receives: $msg ")
+                    //sysUtil.traceprintln("               %%% NodeProxy $name  | receives: $msg ")
                     if( msg == null ){
                         break
                     }

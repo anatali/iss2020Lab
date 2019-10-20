@@ -67,7 +67,7 @@ QActor basicrobot context ctxBasicRobot{
 
 	State handleObstacle{
 		printCurrentMessage
-		println("sentinel handleObstacle ")
+		println("sentinel handleObstacle: emits alarm(obstacle) ")
 		emit alarm : alarm(obstacle)
 	}
  	Goto s0

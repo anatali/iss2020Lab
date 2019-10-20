@@ -26,7 +26,7 @@ class Sentinel ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, sc
 				state("handleObstacle") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("sentinel handleObstacle ")
+						println("sentinel handleObstacle: emits alarm(obstacle) ")
 						emit("alarm", "alarm(obstacle)" ) 
 					}
 					 transition( edgeName="goto",targetState="s0", cond=doswitch() )

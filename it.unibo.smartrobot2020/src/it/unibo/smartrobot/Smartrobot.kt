@@ -38,10 +38,24 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 					transition(edgeName="s01",targetState="handleCmd",cond=whenDispatch("cmd"))
 					transition(edgeName="s02",targetState="doStep",cond=whenRequest("step"))
 					transition(edgeName="s03",targetState="handleStopNotExpected",cond=whenDispatch("stop"))
+					transition(edgeName="s04",targetState="ignoreObstacle",cond=whenEvent("obstacle"))
+				}	 
+				state("handleAlarm") { //this:State
+					action { //it:State
+						println("smartrobot | handle alarm ")
+						println("$name in ${currentState.stateName} | $currentMsg")
+					}
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
 				state("handleStopNotExpected") { //this:State
 					action { //it:State
 						println("smartrobot | WARNING: the stop command should not be sent here")
+					}
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
+				}	 
+				state("ignoreObstacle") { //this:State
+					action { //it:State
+						println("smartrobot | IGNORE obstacle event in normal work ")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
@@ -67,9 +81,9 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						stateTimer = TimerActor("timer_doStep", 
 							scope, context!!, "local_tout_smartrobot_doStep", StepTime )
 					}
-					 transition(edgeName="t04",targetState="endStep",cond=whenTimeout("local_tout_smartrobot_doStep"))   
-					transition(edgeName="t05",targetState="stepStop",cond=whenDispatch("stop"))
-					transition(edgeName="t06",targetState="stepFail",cond=whenEvent("obstacle"))
+					 transition(edgeName="t05",targetState="endStep",cond=whenTimeout("local_tout_smartrobot_doStep"))   
+					transition(edgeName="t06",targetState="stepStop",cond=whenDispatch("stop"))
+					transition(edgeName="t07",targetState="stepFail",cond=whenEvent("obstacle"))
 				}	 
 				state("endStep") { //this:State
 					action { //it:State
@@ -93,19 +107,12 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						Duration=getDuration()
 						answer("step", "stepfail", "stepfail($Duration)"   )  
 						println("smartrobot | stepFail Duration=$Duration ")
-						emit("alarm", "alarm(obstacle)" ) 
+						emit("alarm", "alarm(stepobstacle)" ) 
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
 				state("doStop") { //this:State
 					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-					}
-					 transition( edgeName="goto",targetState="work", cond=doswitch() )
-				}	 
-				state("handleAlarm") { //this:State
-					action { //it:State
-						println("smartrobot | handle alarm ")
 						println("$name in ${currentState.stateName} | $currentMsg")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )

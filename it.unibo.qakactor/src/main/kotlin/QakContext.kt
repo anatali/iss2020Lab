@@ -28,11 +28,11 @@ open class QakContext(name: String, val hostAddr: String, val portNum: Int, var 
                 val ip = InetAddress.getLocalHost().getHostAddress()
                 sysUtil.traceprintln("               %%% QakContext | CREATING NO ACTORS on $hostName ip=${ip.toString()}")
             }
-            else println("               %%% QakContext | CREATING THE ACTORS on $hostName ")
+            else sysUtil.traceprintln("               %%% QakContext | CREATING THE ACTORS on $hostName ")
             sysUtil.ctxOnHost.forEach { ctx -> sysUtil.createTheActors(ctx, scope)  }
             //Avoid premature termination
             scope.launch{
-                println("               %%% QakContext |  $hostName CREATED. I will terminate after $workTime msec")
+                println("               %%% QakContext | $hostName CREATED. I will terminate after $workTime msec")
                 delay( workTime )
             }
         }

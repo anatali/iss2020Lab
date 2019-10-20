@@ -90,7 +90,7 @@ Messaging
 
     //Oct2019
     suspend fun sendMessageToActor( msg : ApplMessage , destName: String, conn : IConnInteraction? = null ) {
-        println("   %%% ActorBasic sendMessageToActor | destName=$destName  ")
+        sysUtil.traceprintln("   %%% ActorBasic sendMessageToActor | destName=$destName  ")
         if( context == null ){  //Defensive programming
             sysUtil.traceprintln("$tt ActorBasic sendMessageToActor |  no QakContext for the current actor")
             return
@@ -105,9 +105,9 @@ Messaging
         val ctx = sysUtil.getActorContext(destName)
         if( ctx == null ) { //IS IT POSSIBLE   ?????
 //DESTINATION REMOTE but no context known (e.g. destName is External)
-            println("$tt ActorBasic sendMessageToActor | ${msg.msgId()} dest=$destName REMOTE no context known " )
+            sysUtil.traceprintln("$tt ActorBasic sendMessageToActor | ${msg.msgId()} dest=$destName REMOTE no context known " )
             if( conn != null ){ //we are sending an answer
-                println("              %%% ActorBasic sendMessageToActor | dest=$destName sending answer  ${msg.msgId()} using $conn ")
+                sysUtil.traceprintln("              %%% ActorBasic sendMessageToActor | dest=$destName sending answer  ${msg.msgId()} using $conn ")
                 conn.sendALine( "$msg" )
                 return
             }else{ //attempt to send the reply via mqtt hoping that the destName is mqtt-connected
@@ -209,13 +209,14 @@ Messaging
                 }
             }
         }
-        //PROPAGATE TO REMOTE ACTORS
         if( event.msgId().startsWith("local")) return       //local_ => no propagation
-        //sysUtil.traceprintln("               %%% ActorBasic $name | ctxsMap SIZE = ${sysUtil.ctxsMap.size}")
+
+        //PROPAGATE TO REMOTE ACTORS
+         sysUtil.traceprintln("               %%% ActorBasic $name | ctxsMap SIZE = ${sysUtil.ctxsMap.size}")
          sysUtil.ctxsMap.forEach{
             val ctxName  = it.key
             val ctx      = it.value
-            //sysUtil.traceprintln("               %%% ActorBasic $name | ${context!!.name } emit ${event.msgId()} to ${ctxName}  mqttAddr= ${ctx!!.mqttAddr} ")
+            sysUtil.traceprintln("               %%% ActorBasic $name | ${context!!.name } emit ${event.msgId()} to ${ctxName}  mqttAddr= ${ctx!!.mqttAddr} ")
             val proxy  = context!!.proxyMap.get(ctxName)
             if( proxy is ActorBasic ){
                 //println("       ActorBasic $name | emit ${event}  towards $ctxName " )
@@ -235,8 +236,8 @@ Messaging
                     //}
                 }
                 else{
-                    //sysUtil.traceprintln("               %%% ActorBasic $name |  emit in ${context!!.name} : proxy  of $ctxName is null ")
-                    //println("connections active: ${sysUtil.connActive.size}")
+                    sysUtil.traceprintln("               %%% ActorBasic $name |  emit in ${context!!.name} : proxy  of $ctxName is null ")
+                    println("connections active: ${sysUtil.connActive.size}")
                     sysUtil.connActive.forEach {
                         sysUtil.traceprintln("               %%% ActorBasic $name | emit on conn: $it")
                         it.sendALine(event.toString() )
