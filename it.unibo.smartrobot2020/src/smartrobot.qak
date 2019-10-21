@@ -22,9 +22,9 @@ Event  alarm       : alarm(V)
 Context ctxSmartRobot ip [ host= "localhost"     port= 8020 ] 
 Context ctxBasicRobot ip [ host= "192.168.1.6"   port= 8018 ] 
 
-ExternalQActor basicrobot context ctxBasicRobot  
+ExternalQActor basicrobot context ctxBasicRobot   
  
-/* 
+/*  
  * ---------------------------------------------------------------------------
  * smartrobot
  * ---------------------------------------------------------------------------
