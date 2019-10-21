@@ -20,8 +20,8 @@ ExternalQActor basicrobot context ctxBasicRobot
  
 QActor smartrobot context ctxSmartRobot{
 [" 
-var StepTime = 1000L;  
-var Duration=0 
+var StepTime = 1000L;   //to be set by the step command
+var Duration=0 			//to be set after the step command
 "]  	
 	State s0 initial{ println("smartrobot start") }
 	Goto work
@@ -55,7 +55,7 @@ var Duration=0
  		printCurrentMessage 
 		onMsg( step : step( T ) ){
 			["StepTime = payloadArg(0).toLong()"]
-			["startTimer()"]
+			["startTimer()"]	//a built-in operation
 			forward basicrobot -m cmd : cmd( w )
 		}  
 	} 

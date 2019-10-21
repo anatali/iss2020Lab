@@ -193,10 +193,10 @@ it might  terminate in two different modes:
 Therefore, we add also the following requirements:
 
 <ul>
-<li>  requirement <ks>req-step-result</ks>: the <i>smartrobot</i> provides information about the result (<kc>success</kc> or <kc>failure</kc>) of the command <k>step</k>;</li>
-<li>  requirement <ks>req-step-time</ks>: when the command <k>step</k> ends with a <kc>failure</kc>, the <i>smartrobot</i> provides
+<li>  requirement <ks>req-step-result</ks>: the <em>smartrobot</em> provides information about the result (<kc>success</kc> or <kc>failure</kc>) of the command <k>step</k>;</li>
+<li>  requirement <ks>req-step-time</ks>: when the command <k>step</k> ends with a <kc>failure</kc>, the <em>smartrobot</em> provides
 information about the <ks>elapsed-time</ks>;</li>
-<li>  requirement <ks>req-step-info</ks>: the <i>smartrobot</i> makes the <em>smartrobot</em> able to known
+<li>  requirement <ks>req-step-info</ks>: the <em>smartrobot</em> makes the <em>basicrobot</em> able to known
 the result of the command <k>step</k> and, in the case of <kc>failure</kc> the value of the <ks>elapsed-time</ks>. </li>
 .</li>
 </ul>
@@ -206,13 +206,177 @@ the result of the command <k>step</k> and, in the case of <kc>failure</kc> the v
  
  
 <h2>Requirement analysis</h2>
+Our requirement analysis can be formally expressed by the following qak-model:
+
+<table style="width:100%" border="1">
+<tr>
+<td style="width:50%">
+<m><h3>Messages and actors</h3>  </m>
+<pre>
+System smartrobot  
+
+Dispatch cmd       :  cmd(X)
+Dispatch  step     :  step(DURATION)
+Dispatch stop      :  stop  
+Event  obstacle    :  obstacle( DISTANCE )
+ 
+Context ctxSmartRobot ip [ host= "localhost"     port= 8020 ] 
+Context ctxBasicRobot ip [ host= "192.168.1.6"   port= 8018 ] 
+
+ExternalQActor basicrobot context ctxBasicRobot   
+</pre>
+</td>
+<td style="width:50%">
+<m>
+<ol>
+<li>The system is composed of the <em>smartrobot</em> that uses the <em>basicrobot</em> 'service'. </li>
+<li>All the commands are at the moment modeled as <i>dispatches</i>.</li>
+<li>The event <k>obstacle</k> is emitted by the <em>basicrobot</em> when it hits an obstacle.</li>
+</ol>
+</m>
+</td>
+</tr>
+
+<tr>
+<td style="width:50%">
+<m><h3>Startup of the <em>smartrobot</em></h3>  </m>
+<pre>
+QActor smartrobot context ctxSmartRobot{
+[" 
+<ks>var StepTime = 1000L;</ks>  <kc>//to be set by the step command</kc>
+<ks>var Duration=0 </ks> <kc>//to be set after the step command</kc>
+"]  	
+	State s0 initial{ println("smartrobot start") }
+	Goto work
+	
+	State work{	}
+	Transition s0 
+			whenMsg cmd      -> handleCmd
+ 			whenMsg step     -> doStep
+ 			whenMsg stop     -> handleStopNotExpected	     	
+ 	State handleStopNotExpected{
+ 		println("smartrobot | WARNING: stop command should not be sent here")
+ 	}
+ 	Goto work
+</pre>
+</td>
+<td style="width:50%">
+<m>
+The <em>smartrobot</em> waits for a command. <br/>
+It takes care also of <k>stop</k> commands sent by error.
+<ol>
+</ol>
+</m>
+</td>
+</tr>
+
+
+<tr>
+<td style="width:50%">
+<m><h3>REQUIREMENT: <ks>req-cmd</ks></h3>  </m>
+
+<pre>
+	State handleCmd {
+		printCurrentMessage 
+		onMsg( cmd : cmd(X) ){ forward basicrobot -m cmd : cmd( $payloadArg(0) ) }
+	}
+	Goto work
+</pre>
+</td>
+<td style="width:50%">
+<m>
+The <em>smartrobot</em> redirects the commands to the <em>basicrobot</em>.
+<ol>
+</ol>
+</m>
+</td>
+</tr>
+
+<tr>
+<td style="width:50%">
+<m><h3>REQUIREMENT: <ks>req-step</ks></h3>  </m>
+<pre>
+	State doStep{ 
+ 		onMsg( step : step( T ) ){
+			["StepTime = payloadArg(0).toLong()"]
+			["startTimer()"]  <kc>//a built-in operation</kc>
+			forward basicrobot -m cmd : cmd( w )
+		}  
+	} 
+	Transition t0 
+		whenTimeVar StepTime   -> <ks>endStep</ks>	
+		whenMsg stop           -> <ks>stepStop</ks>		  
+		whenEvent obstacle     -> <ks>stepFail</ks>
+		
+	State endStep{  
+		forward basicrobot -m cmd : cmd( h ) 
+		println("smartrobot | step SUCCESS  ")
+		<kc>//TODO:</kc> <k>req-step-result</k>
+ 		<kc>//TODO:</kc> <k>req-step-info => succes</k>
+  	}
+	Goto work
+		
+</pre>
+</td>
+<td style="width:50%">
+<m>
+The <em>smartrobot</em> starts a timer, sends a <ks>w</ks> command to the <em>bascirobot</em> and waits for the end of the <ks>StepTime</ks>
+or for a <k>stop</k> command or for an  <k>obstacle</k> event.
+<br/><br/>
+If the <ks>StepTime</ks> expires, the <em>smartrobot</em> must fulfill the requirements <ks>req-step-result</ks> and <ks>req-step-info</ks>.
+Afterwards, it returns to the state <tt>work</tt>.
+ 
+<ol>
+</ol>
+</m>
+</td>
+</tr>
+
+
+<tr>
+<td style="width:50%">
+<m><h3>REQUIREMENT: <ks>req-stop</ks></h3>  </m>
+<pre>
+	State stepStop{ 
+		["Duration=getDuration()"]  //getDuration is built-in in the actor (with ref. to startTimer)
+		forward basicrobot -m cmd : cmd( h ) 
+ 		println("smartrobot | step FAILURE (stop) AFTER Duration=$Duration ")
+ 		<kc>//TODO:</kc> <k>req-step-result =>  result=failure, reason=stop</k>
+ 		<kc>//TODO:</kc> <k>req-step-time   =>  elapsed-time = Duration</k>
+ 		<kc>//TODO:</kc> <k>req-step-info   =>  elapsed-time = Duration</k>
+ 	}
+	Goto work  	
+</pre>
+</td>
+<td style="width:50%">
+<m>
+If the <ks>stop</ks> command arrives before that  <ks>StepTime</ks> expires, the <em>smartrobot</em> must stop the robot and 
+fulfill the requirements <ks>req-step-result</ks>, <ks> req-step-time</ks> and <ks>req-step-info</ks>.
+Afterwards, it returns to the state <tt>work</tt>.
+<br/><br/>
+The state <k>stepFail</k> is quite similar to <tt>stepStop</tt>: the only difference is about the reason of the failure
+(obstacle).
+<ol>
+</ol>
+</m>
+</td>
+</tr>
+
+
+</table>
+
+
+
 
 <h2>Problem analysis</h2>
+
+Modelling the interaction by using a request-response pattern.
+
+<center><img src="./img/smartrobotsystem.png" alt="smartrobotsystem" width="40%"  ></center>
 
 <h2>Test plans</h2>  
 
 
-<center><img src="./img/smartrobotsystem.png" alt="smartrobotsystem" width="60%" height="60%"></center>
 
  
 
