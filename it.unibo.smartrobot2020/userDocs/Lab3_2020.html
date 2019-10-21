@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <!--
+<link rel="stylesheet" type="text/css" href="../css/issStyle1.css">
+<script type="text/javascript" src="../css/issStyle.js"></script>
+-->
+<style type="text/css">
+<!--
+body
+{
+    margin-left:  30px;
+    margin-right: 30px;
+};
+
+P
+{
+    font-family: Tahoma;
+    font-size: 10pt;
+};
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+}
+
+a:hover {
+    background-color: #cccccc;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #242424;
+    background-color: transparent;
+}
+
+h1, h2, h3 {
+    color: #242424;
+    clear: left;
+    font: 100% Tahoma, Helvetica, Arial, sans-serif;
+    margin: 10;
+    margin-right: 15px;
+    margin-bottom: 0.5em;
+    padding-top: 0.5em;
+    border-bottom: 1px solid #242424;
+}
+
+h1 {
+    font-size: 150%;
+    background-color: #b2c0ff;
+}
+
+h2 {
+    background-color: #d9fbff;
+    font-size: 110%;
+}
+
+h3 {
+	background-color: #e6ccff;
+    font-size: 80%;
+}
+h4 {
+    background-color: #99ffcc;
+    font-size: 100%;
+	width: 750px;
+}
+#i {
+    color: #ff1010;
+}
+tt{
+	font-family: "Arial";
+    font-size: 80%;
+	color: #006600;
+}
+em{
+	font-family: "Arial";
+    font-size: 80%;
+	font-weight: bold;
+	border-style:solid;
+	border-color: #ccffff;
+    color: #0033cc;
+}
+bc{
+	font-family: "Arial";
+	font-size: 80%;
+	font-weight: bold;
+    color: #990000;
+	background-color: #fcf8c7;
+}
+k{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #990000;
+	 
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	 
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	 
+}
+pre{
+	font-family: "Helvetica";
+	font-size: 60%;
+	background-color: #fcf8c7;
+	border: 1px solid blue;
+}
+m{
+	font-family: "Helvetica";
+	line-height: 100%;
+ 	font-size: 75%;
+}
+div.body{
+	width: 800px;
+    font-size: 18px;
+}    
+div.req{
+	background-color: #d9ffb3;
+    font-size: 18px;
+	width: 700px;
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}       
+div.remark{
+	background-color: #FFFC33;     
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}  
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}         
+    
+  -->
+</style>
+    
+<head>
+   
+<title>Lab3_2020</title></head>
+    
+<body>
+<div id="top">
+<h1>Lab3_2020 | A smartrobot <font size="5"></font> </h1>
+</div>  
+
+<div class="body"> 
+
+ 
+<h2>Requirements</h2>
+
+In our previous <kc>SPRINT</kc> related to the problem of
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.basicrobot2020/userDocs/Lab2_2020.html" target="web">
+Lab2_2020.html</a>, we introduce the idea of delegating to a  <em>smartrobot</em>  the responsibility of the requirements <ks>req-step</ks> and <ks>req-stop</ks>.
+The envisaged architecture was introduced by the following informal picture:
+
+<center><img src="./img/basicrobot2020.png" alt="basicrobot2020" width="60%" height="60%"></center>
+
+The <em>basicrobot</em> simply implements the <ks>req-cmd</ks> of 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.basicrobot2020/userDocs/Lab2_2020.html" target="web">
+Lab2_2020.html</a>, by leaving to the <em>smartrobot</em> the task to implement the  requirements <ks>req-step</ks>/<ks>req-stop</ks>.
+
+<br/><br/>
+
+Thus, as a result of our first <k>SPRINT-review meeting</k>, the working team could introduce the following requirements for the <k>next SPRINT</k>:
+<div class="req">
+<m>
+Design and build a new 'resource / service' (<em>smartrobot</em>) that, with reference to our already developed resource/service <em>basicrobot</em> of
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.basicrobot2020/userDocs/Lab2_2020.html" target="web">
+Lab2_2020.html</a>, is able to receive via Internet textual commands, so that:
+<ul>
+<li> requirement <ks>req-cmd</ks>: the <i>basic-commands</i> (<k>w | s | h | a | d</k>) are simply redirected to the <em>basicrobot</em>. </li>
+<li> requirement <ks>req-step</ks>: the command <k>step</k> moves forward the <em>basicrobot</em> for a given  <ks>step-time</ks>, specified in the <k>step</k> command .</li>
+<li> requirement <ks>req-stop</ks>: the command <k>stop</k> stops  'immediately' the <em>smartrobot</em> even it is still executing the command <k>step</k>.</li>
+</ul>
+
+Since the command <k>step</k> can be 'interrupted' by a <k>stop</k> or by the presence of an <kc>obstacle</kc>, 
+it might  terminate in two different modes: 
+<ul>
+<li>with <kc>success</kc>, if the robot stops after the given <ks>step-time</ks>;</li>
+<li>with <kc>failure</kc>, if the robot stops after an <ks>elapsed-time</ks> less then the given <ks>step-time</ks>.</li>
+</ul>
+
+Therefore, we add also the following requirements:
+
+<ul>
+<li>  requirement <ks>req-step-result</ks>: the <i>smartrobot</i> provides information about the result (<kc>success</kc> or <kc>failure</kc>) of the command <k>step</k>;</li>
+<li>  requirement <ks>req-step-time</ks>: when the command <k>step</k> ends with a <kc>failure</kc>, the <i>smartrobot</i> provides
+information about the <ks>elapsed-time</ks>;</li>
+<li>  requirement <ks>req-step-info</ks>: the <i>smartrobot</i> makes the <em>smartrobot</em> able to known
+the result of the command <k>step</k> and, in the case of <kc>failure</kc> the value of the <ks>elapsed-time</ks>. </li>
+.</li>
+</ul>
+</m> 
+</div>	    
+
+ 
+ 
+<h2>Requirement analysis</h2>
+
+<h2>Problem analysis</h2>
+
+<h2>Test plans</h2>  
+
+
+<center><img src="./img/smartrobotsystem.png" alt="smartrobotsystem" width="60%" height="60%"></center>
+
+ 
+
+ 
+
+<h1>Testing</h1> 
+
+<h1>Maintenance</h1> 
+	      	
+<br/><br/> 	
+</div>  
+
+<div style="background-color:rgba(86, 56, 253, 0.9); width:100%;text-align:center;font-size:small;color:white">
+By AN Unibo-DISI  
+</div> 
+
+</body>
+</html>
