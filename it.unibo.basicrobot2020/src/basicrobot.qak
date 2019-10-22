@@ -9,7 +9,7 @@ System  basicrobot
 
 Dispatch cmd     : cmd(X)
 Event  obstacle  : obstacle( DISTANCE )
-Event  alarm     : alarm( V )  
+Event  alarm     : alarm( V )   
 
 Context ctxBasicRobot ip [ host= "localhost"   port= 8018 ]
 
@@ -49,9 +49,20 @@ QActor basicrobot context ctxBasicRobot{
  */	
 	State handleObstacle{
 		forward robotadapter -m cmd : cmd( h )
-		println("basicrobot | stops (for safety) since  obstacle ")
+		println("basicrobot | stops (for safety) since  obstacle  ")
+ 	}
+ 	//Goto work
+	Goto farFromObstacle 	//Added after introducing the real robot
+
+	State farFromObstacle{
+		println("basicrobot |  going back (to avoid event-generation) ")
+ 		forward robotadapter -m cmd : cmd( s )
+		delay 250
+		forward robotadapter -m cmd : cmd( h )
 	}
-	Goto work 
+	Transition t0 
+			whenTime 350       -> work
+			whenEvent obstacle -> farFromObstacle
 }  
 
 /*

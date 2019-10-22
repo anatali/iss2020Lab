@@ -20,8 +20,8 @@ class Sentinel ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, sc
 					action { //it:State
 						println("sentinel waits ..")
 					}
-					 transition(edgeName="t02",targetState="handleObstacle",cond=whenEvent("obstacle"))
-					transition(edgeName="t03",targetState="handleAlarm",cond=whenEvent("alarm"))
+					 transition(edgeName="t04",targetState="handleObstacle",cond=whenEvent("obstacle"))
+					transition(edgeName="t05",targetState="handleAlarm",cond=whenEvent("alarm"))
 				}	 
 				state("handleObstacle") { //this:State
 					action { //it:State
@@ -36,7 +36,7 @@ class Sentinel ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, sc
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("sentinel handleAlarm ")
 					}
-					 transition(edgeName="t04",targetState="handleAlarm",cond=whenEvent("alarm"))
+					 transition(edgeName="t06",targetState="handleAlarm",cond=whenEvent("alarm"))
 				}	 
 			}
 		}

@@ -238,7 +238,7 @@ Messaging
                 else{
                     sysUtil.traceprintln("               %%% ActorBasic $name |  emit in ${context!!.name} : proxy  of $ctxName is null ")
                     //sysUtil.traceprintln("connections active: ${sysUtil.connActive.size}")
-                    sysUtil.connActive.forEach {
+                    sysUtil.connActive.forEach {  //WARNING: connActive includes Arduino
                         sysUtil.traceprintln("               %%% ActorBasic $name | emit on conn: $it")
                         it.sendALine(event.toString() )
                     }
