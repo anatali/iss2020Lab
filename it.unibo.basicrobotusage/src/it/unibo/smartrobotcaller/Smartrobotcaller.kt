@@ -48,9 +48,9 @@ class Smartrobotcaller ( name: String, scope: CoroutineScope ) : ActorBasicFsm( 
 				}	 
 				state("stepFailed") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("stepfail(DURATION)"), Term.createTerm("stepfail(DURATION)"), 
+						if( checkMsgContent( Term.createTerm("stepfail(DURATION,CAUSE)"), Term.createTerm("stepfail(DURATION,CAUSE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								println("smartrobotcaller | step request failed after Duration=${payloadArg(0)} ")
+								println("smartrobotcaller | step request failed after Duration=${payloadArg(0)} Cause=${payloadArg(1)}")
 						}
 						emit("alarm", "alarm(stepcallerfails)" ) 
 					}

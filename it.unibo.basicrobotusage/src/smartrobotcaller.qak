@@ -3,11 +3,10 @@ System smartrobot
 Dispatch cmd  : cmd(X)
  
 Request  step      :  step(DURATION)
-Reply    stepdone  :  stepdone
-Reply    stepfail  :  stepfail(DURATION)
-Dispatch stop      :  stop 
+Reply    stepdone  :  stepdone(V)
+Reply    stepfail  :  stepfail(DURATION,CAUSE) 
+Dispatch stop      :  stop(V) 
  
-Event  sonarRobot  : sonar( DISTANCE )	     //from  sonar on robot 
 Event  obstacle    : obstacle( DISTANCE )
 Event  alarm       : alarm(V)
 
@@ -43,10 +42,10 @@ QActor smartrobotcaller context ctxSmartRobotCaller {
  		println("smartrobotcaller |  step DONE")
    	}
     Goto work  	
- 	
+ 	 
 	State stepFailed{ 
-		onMsg(  stepfail : stepfail(DURATION)  ) {
-			println("smartrobotcaller | step request failed after Duration=${payloadArg(0)} ")
+		onMsg(  stepfail : stepfail(DURATION, CAUSE)  ) {
+			println("smartrobotcaller | step request failed after Duration=${payloadArg(0)} Cause=${payloadArg(1)}")
 		}		
 		emit alarm : alarm(stepcallerfails)
  	}

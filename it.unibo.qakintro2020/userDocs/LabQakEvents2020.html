@@ -161,7 +161,7 @@ table, th, td {
  We also say that a Qa-message (dispatch, event, ...) is :
 <ul>
 <li><em>propagated via Context</em> when it is sent along a context-to-context connection set by the <tt>qak-infrastrcuture</tt></li>
-<li><em>propagated via connection</em> when it is sent (from an 'alien caller' to an actor) along the connection set by the 'alien caller' to the
+<li><em>propagated via connection</em> when it is sent (from an 'alien caller' to an actor) along the TCP-connection set by the caller with the
 QActor context-server; </li>
 <li><em>propagated via proxy</em> when it is sent (from an actor to a 'external caller' ) along a connection-proxy created on the QActor node.</li>
 </ul>
@@ -252,6 +252,7 @@ R,B belong to the same qak-system. R is External for A. A is External for B.
 </table>
 </center> 
 
+<!--
 <h3>Robot-services layer</h3>
 
 <center><table style="width:98%">
@@ -269,18 +270,13 @@ perceived by <em>basicrobot</em>, <em>smartrobotcaller</em> and <em>C2</em></li>
 <li><em>smartrobotcaller</em> emits  <tt>alarm(stepcallerfails)</tt>  when its command <k>step</k> 
 returns a <k>stepfail</k> reply. This event can be
 perceived by <em>smartrobot</em> </li>
-
- 
-
-
 </ul> 
- 
  </m>
  </td>
 </tr>
 </table>
 </center>
- 
+--> 
  
 
 

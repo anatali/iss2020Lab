@@ -9,8 +9,8 @@
 System smartrobot  
 
 Dispatch cmd       : cmd(X)
-Dispatch  step     : step(DURATION)
-Dispatch stop      : stop (V) 
+Dispatch  step     :  step(DURATION)
+Dispatch stop      :  stop  
 Event  obstacle    : obstacle( DISTANCE )
  
 Context ctxSmartRobot ip [ host= "localhost"     port= 8020 ] 
@@ -20,8 +20,8 @@ ExternalQActor basicrobot context ctxBasicRobot
  
 QActor smartrobot context ctxSmartRobot{
 [" 
-var StepTime = 1000L;   //to be set by the step command
-var Duration=0 			//to be set after the step command
+var StepTime = 1000L;  
+var Duration=0 
 "]  	
 	State s0 initial{ println("smartrobot start") }
 	Goto work
@@ -55,7 +55,7 @@ var Duration=0 			//to be set after the step command
  		printCurrentMessage 
 		onMsg( step : step( T ) ){
 			["StepTime = payloadArg(0).toLong()"]
-			["startTimer()"]	 //REQUIREMENT req-step-time
+			["startTimer()"]
 			forward basicrobot -m cmd : cmd( w )
 		}  
 	} 
@@ -67,7 +67,8 @@ var Duration=0 			//to be set after the step command
 	State endStep{  
 		forward basicrobot -m cmd : cmd( h ) 
 		println("smartrobot | step SUCCESS  ")
-  		//TODO: req-step-info =>  success
+		//TODO: req-step-result
+ 		//TODO: req-step-info =>  succes
   	}
 	Goto work
 	
@@ -80,7 +81,8 @@ var Duration=0 			//to be set after the step command
 		["Duration=getDuration()"]  //getDuration is built-in in the actor (with ref. to startTimer)
 		forward basicrobot -m cmd : cmd( h ) 
  		println("smartrobot | step FAILURE (stop) AFTER Duration=$Duration ")
-   		//TODO: req-step-time   =>  elapsed-time = Duration
+ 		//TODO: req-step-result =>  result=failure, reason=stop,
+ 		//TODO: req-step-time   =>  elapsed-time = Duration
  		//TODO: req-step-info   =>  elapsed-time = Duration
  	}
 	Goto work  	
@@ -88,8 +90,9 @@ var Duration=0 			//to be set after the step command
 	State stepFail{ 
 		["Duration=getDuration()"]  //getDuration is built-in in the actor (with ref. to startTimer)
  		println("smartrobot | step FAILURE (obstacle) AFTER Duration=$Duration ")
-  		//TODO: req-step-time   =>  elapsed-time = Duration
- 		//TODO: req-step-info   =>  elapsed-time = Duration
+ 		//TODO: req-step-result	=>  result=failure, reason=obstacle
+ 		//TODO: req-step-time   =>  elapsed-time = Duration
+ 		//TODO: req-step-info   =>   elapsed-time = Duration
   	}
 	Goto work  	
 }
