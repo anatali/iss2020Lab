@@ -506,11 +506,48 @@ The full code can be found in
 </tr>
 </table>
 
+<h1>Working with QActors</h1>  
+A QActor can be viewed as a reusable, observable resource that can be used by sending messages to it in three main forms: 
+<i>fire-and-forget</i> (dispatch), <i>request-response</i> (request) and <i>information-emission</i> (event).
+Since a  QActor can emit events, it can be considered also an observable resource.
+
+<br/><br/>
+In order to present a the architecture of a QActor-based system in graphical form, let us introduce - in informal way - some reference notation that we will
+use from now on.
+
+<h2>Towards a graphical representation</h2>
+The architecture of a QActor-based system must include at least one QActor that can be used by other QActors 
+or by non-QActor code (called here 'alien' code). 
+<br/><br/>
+The main symbols of a possible graphical representation are reported in the following picture (legenda):
+ <center><table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:45%">
+<h3>Legenda</h3>
+<img src="./img/legendaAll.png" alt="legendaAll" width="95%"  /></td>
+ <td><m> 
 
 
- 
+<ul>
+<li>A QActor <em>qa2</em> can use another QActor <em>qa1</em>  if they are both defined in the same qak-model. 
+Interaction can be based on messages of type <i>dispatch, event, request</i>.<br/><br/></li>
+<li>The actor <em>qa1</em> can be viewed by <em>qa2</em> as an <k>ExternalActor</k>. 
+In this case, <em>qa2</em> is not included in the qak-model that defines <em>qa1</em>.
+Thus, <em>qa1</em> does not (statically) known the Context of <em>qa2</em> (and of any other QActor-caller).
+However, the vice-versa is not true, since qak-model description of <em>qa2</em> must include the Context of <em>qa1</em>. 
+<br/><br/></li>
+<li>A QActor <em>qa1</em> used by an 'alien' code <em>Cx</em> is viewed as a '<b>TCP-server</b>' working on some port.</li>
 
-<h3>Run the system</h3>  
+</ul>
+  </m>
+ </td>
+</tr>
+</table>
+</center>
+
+
+<h2>Building and run a system</h2>  
 <center><table style="width:98%">
 <tbody>	
 <tr>
