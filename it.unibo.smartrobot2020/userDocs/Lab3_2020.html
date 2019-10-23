@@ -202,7 +202,7 @@ Therefore, we add also the following requirements:
 information about the <kc>elapsed-time</kc>;</li>
 <li>  requirement <ks>req-step-info</ks>: the <em>smartrobot</em> makes the <em>basicrobot</em> able to known
 the result of the command <k>step</k> and, in the case of <kc>failure</kc> the value of the <kc>elapsed-time</kc>. </li>
-.</li>
+</li>
 </ul>
 </m> 
 </div>	    
@@ -225,17 +225,17 @@ Dispatch stop      :  stop(V)
 Event  obstacle    :  obstacle( DISTANCE )
  
 Context ctxSmartRobot ip [ host= "localhost"     port= 8020 ] 
-Context ctxBasicRobot ip [ host= "192.168.1.6"   port= 8018 ] 
+Context <ks>ctxBasicRobot</ks> ip [ host= "192.168.1.6"   port= 8018 ] 
 
-ExternalQActor basicrobot context ctxBasicRobot   
+<k>ExternalQActor</k> basicrobot context <ks>ctxBasicRobot</ks>   
 </pre>
 </td>
 <td style="width:50%">
 <m>
 <ol>
-<li>The system is composed of the <em>smartrobot</em> that uses the <em>basicrobot</em> 'service'. </li>
-<li>All the commands are at the moment modeled as <i>dispatches</i>.</li>
-<li>The event <k>obstacle</k> is emitted by the <em>basicrobot</em> when it hits an obstacle.</li>
+<li>The system is composed of the <em>smartrobot</em> that uses the <em>basicrobot</em> 'service' as an <kc>ExternalQActor</kc>. <br/> <br/></li>
+<li>All the commands are at the moment modeled as <i>dispatches</i>.<br/> <br/></li>
+<li>The event <k>obstacle</k> is emitted by the <em>basicrobot</em> when it hits an obstacle.<br/> <br/></li>
 </ol>
 </m>
 </td>
@@ -372,13 +372,23 @@ The full code can be found in
 
 <h2>Problem analysis</h2>
 Our problem analysis starts from the <kc>TODO</kc> sentences in the model of the system introduced after requirement-analysis.
+
+<h3>The requirement <ks>req-step-info</ks></h3>
+The requirement <ks>req-step-info</ks> could be fulfilled by emitting and event in the states <k>stepStop</k> ad <k>stepFail</k>. 
+In fact, an event emitted by a QActor (<em>smartrobot</em> in our case) that interacts with an <tt>ExternalActor</tt> (<em>basicrobot</em>),
+can be perceived by the <tt>ExternalActor</tt>  (see
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakintro2020/userDocs/LabQakEvents2020.html" target="lab">
+LabQakEvents2020 | Qak-event propagation</a>).
 <br/><br/>
-We observe that all the 'open' problems can be overcome by supposing that the <k>step</k> command of the <ks>req-step</ks> requirement is 
-logically sent as a <k>request</k> rather than a <i>dispatch</i>. Thus, from a logical point of view, we could simply write:
+However, the requirement states that information about the result of the command <k>step</k> should be made available to the <em>basicrobot</em> only.
+If such an interpretation is confirmed by the customer, the emission of an event is not the correct approach.
+<br/><br/>
+We observe that this problem (and other 'open problems') can be overcome by supposing that the <k>step</k> command  is 
+logically sent as a <k>request</k> rather than a <i>dispatch</i>. In other words, from a logical point of view, we could write :
 
 <pre>
 
-<k>Request</k>  step     :  step(DURATION)
+<k>Request</k>  step     :  step(DURATION) 		<kc>//Instead of Dispatch  step  :  step(DURATION)</kc>
 
 </pre>
 
@@ -400,29 +410,31 @@ one for the success and one for the failure of the  <k>step</k> command:
 The problem now is:
 <div class="remark">
 <m>
-Do we have the proper expressive power to model request-response interaction and to provide proper implementation for
+Do we have the proper expressive power to model <i>request-response interaction</i> and to provide proper implementation for
 this kind of actor interaction-pattern?
-
 <br/><br/>
 If the answer is <k>no</k>, we must 'implement at application-level' the concept of <i>reply to a request</i>.
 </m>
 </div>
-
+<m>
 The the <tt>qak-metamodel</tt> until version <ks>1.1.6</ks> did have the expressive power, but did not provide the implementation.
 <hr/>
-<m>
-Thus, the task of <i>reply</i> to the caller had to be done by the application designer. This task
-was possible, since the application designer can inspect the low-level representation of the <k>step</k> dispatch,
-find the name of the caller and from that name find the  TCP-connection-proxy created on the <em>smartrobot</em> node.
+
+Thus, the task of <i>reply</i> to the caller has to be done by the application designer. This task
+is 'technically possible', since the application designer can inspect the low-level representation of the <k>step</k> dispatch,
+find the name of the caller and from that name, find the  TCP-connection-proxy created by the <tt>qak-infrastructure</tt>
+on the <em>smartrobot</em> node.
 </m>
 <hr/>
 
 <h1 id="reqreply">Messages of type <k>request</k> and <k>replyTo</k></h1>
+<hr/><m>
 From version <ks>1.1.7</ks> the code required to implement  <i>request</i> and <i>reply</i> has been included in the <tt>qak-infrastucture</tt>
 and proper code generated to call it, by using a new <tt>qak-operations</tt> named <k>request</k> and <k>replyTo</k>.
-
+</m><hr/>
 
 <h2>Modeling the interaction by using a request-response pattern</h2>
+
 From <tt>qak-metamodel</tt>  version <ks>1.1.7</ks>, we can modify our model as follows:
 
 <table style="width:100%" border="1">
@@ -507,18 +519,19 @@ The full code can be found in
 </table>
 
 <h1>Working with QActors</h1>  
-A QActor can be viewed as a reusable, observable resource that can be used by sending messages to it in three main forms: 
+At this point of our development, a QActor can be viewed as a <k>reusable</k> resource that can be used by sending messages to it, in three main forms: 
 <i>fire-and-forget</i> (dispatch), <i>request-response</i> (request) and <i>information-emission</i> (event).
-Since a  QActor can emit events, it can be considered also an observable resource.
+Since a  QActor events can also be emitted from the QActor, it can be considered also an <k>observable</k> resource.
+<br/><br/>
+The architecture of a QActor-based system must include at least one QActor that can be used by other QActors 
+or by non-QActor code (called here 'alien' code). 
 
 <br/><br/>
 In order to present a the architecture of a QActor-based system in graphical form, let us introduce - in informal way - some reference notation that we will
 use from now on.
 
 <h2>Towards a graphical representation</h2>
-The architecture of a QActor-based system must include at least one QActor that can be used by other QActors 
-or by non-QActor code (called here 'alien' code). 
-<br/><br/>
+
 The main symbols of a possible graphical representation are reported in the following picture (legenda):
  <center><table style="width:98%">
 <tbody>	
@@ -530,12 +543,12 @@ The main symbols of a possible graphical representation are reported in the foll
 
 
 <ul>
-<li>A QActor <em>qa2</em> can use another QActor <em>qa1</em>  if they are both defined in the same qak-model. 
+<li>A QActor <em>qa2</em> can use another QActor <em>qa1</em>  if they are both defined in the same <tt>qak-model</tt>. 
 Interaction can be based on messages of type <i>dispatch, event, request</i>.<br/><br/></li>
 <li>The actor <em>qa1</em> can be viewed by <em>qa2</em> as an <k>ExternalActor</k>. 
-In this case, <em>qa2</em> is not included in the qak-model that defines <em>qa1</em>.
+In this case, <em>qa2</em> is not included in the <tt>qak-model</tt> that defines <em>qa1</em>.
 Thus, <em>qa1</em> does not (statically) known the Context of <em>qa2</em> (and of any other QActor-caller).
-However, the vice-versa is not true, since qak-model description of <em>qa2</em> must include the Context of <em>qa1</em>. 
+However, the vice-versa is not true, since the <tt>qak-model</tt> of <em>qa2</em> must include the Context of <em>qa1</em>. 
 <br/><br/></li>
 <li>A QActor <em>qa1</em> used by an 'alien' code <em>Cx</em> is viewed as a '<b>TCP-server</b>' working on some port.</li>
 

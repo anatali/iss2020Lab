@@ -154,21 +154,25 @@ table, th, td {
 <h1>LabQakEvents2020 | Qak-event propagation</h1> 
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.issLabStart/userDocs/LectureCesena1920.html" target="isslm">LabISS-lectures site</a></font> 
 
+<br/><br/>
+Let us introduce a 'Legenda' for our graphical models.
 <center><table style="width:98%">
 <tbody>	
 <tr>
- <td style="width:50%"><m>Legenda for the following figures. <br/>
- We also say that a Qa-message (dispatch, event, ...) is :
+<td  style="width:50%"><img src="./img/legenda.png" alt="legenda" width="88%" /></td></td>
+
+ <td style="width:50%">
+ <m>
+ We say that a <tt>Qa-message</tt> (dispatch, event, ...) is :
 <ul>
-<li><em>propagated via Context</em> when it is sent along a context-to-context connection set by the <tt>qak-infrastrcuture</tt></li>
+<li><em>propagated via Context</em> when it is sent along a context-to-context connection set by the <tt>qak-infrastrcuture</tt>;<br/><br/></li>
 <li><em>propagated via connection</em> when it is sent (from an 'alien caller' to an actor) along the TCP-connection set by the caller with the
-QActor context-server; </li>
-<li><em>propagated via proxy</em> when it is sent (from an actor to a 'external caller' ) along a connection-proxy created on the QActor node.</li>
+QActor context-server;<br/><br/> </li>
+<li><em>propagated via proxy</em> when it is sent (from an actor to a 'external caller' ) along a connection-proxy created on the QActor node.<br/><br/></li>
 </ul>
  
  </m>
-<td ><img src="./img/legenda.png" alt="legenda" width="88%" /></td>
- </td>
+  </td>
 </tr>
 
  
@@ -177,14 +181,17 @@ QActor context-server; </li>
 </center>
 
 <h2>Rules</h2>
+<hr/>
+<m>
 <ol>
 <li>The event emitted by a QActor that belongs to a <ks>qak-system</ks> (<tt>qasys</tt>) is <i>propagated via Context</i> to <k>all</k> the other QActor of <tt>qasys</tt>.</li>
 <li>The event emitted by a QActor of a  <tt>qasys</tt> that 
 works as an ExternalQActor for other actors <tt>a1,...,an</tt>  is also <i>propagated via proxy</i> to  <tt>a1,...,an</tt>.</li>
 <li>The event that reaches a Context (since propagated from another Context or sent from an 'alien') is propagated <k>only</k> to the actors internal to that Context</li>
 </ol> 
-
-<br/ 
+</m>
+<hr/>
+ 
 
 <center><table style="width:98%">
 <tbody>	
