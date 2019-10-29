@@ -10,12 +10,24 @@ import org.eclipse.californium.core.server.resources.CoapExchange;
 
  
 public class ResourceSonar extends CoapResource {
-private String msg = "";
+	
+public final static  String path = "sonardata";		//For the URL
+private static ResourceSonar resSonar = null;	    //Singleton
 
+private String msg = "";
+ 
+	public static ResourceSonar init( ) {	//Factory
+		if( resSonar == null ) {
+			resSonar = new ResourceSonar( path );
+		}
+		return resSonar;
+	}
+	
 	public ResourceSonar( String name) {
 		super(name);
 		setObservable(true);
-		System.out.println("Resource " + name + " | created  " );
+		System.out.println("Resource " + name + " | created  " + name);
+		resSonar = this;
 	}
 	
 	@Override
@@ -74,7 +86,7 @@ private String msg = "";
 
 	public static void main(String[] args) {
 		CoapServer server = new CoapServer();
-		server.add( new ResourceSonar("sonardata") );
+		server.add( ResourceSonar.init() );
 		server.start();
 	}
 

@@ -4,7 +4,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.actor 
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import javacode.ResourceSonarClient
+import javacode.ResourceSonarSupport
 import it.unibo.kactor.ApplMessage
 import it.unibo.kactor.MsgUtil
 
@@ -20,11 +20,11 @@ class sonarOnRaspShow( val name : String, val scope: CoroutineScope = GlobalScop
 			    }
 			}
 	
-	var resourceSupport : ResourceSonarClient	 
+	var resourceSupport : ResourceSonarSupport	 
 
 	
 	init{
-		resourceSupport = ResourceSonarClient("coap://192.168.1.8:5683", "sonardata")
+		resourceSupport = ResourceSonarSupport("coap://192.168.1.8:5683", "sonardata")
 	}
 
     suspend fun readInputData(){
