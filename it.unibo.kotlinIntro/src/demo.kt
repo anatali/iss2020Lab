@@ -14,7 +14,7 @@ fun main() = runBlocking{
 	println( str )
 }
  */
-
+  
 fun curThread() : String { 
 	return "thread=${Thread.currentThread().name}" 
 }
