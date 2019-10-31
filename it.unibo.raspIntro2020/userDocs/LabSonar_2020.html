@@ -149,10 +149,43 @@ table, th, td {
 <title>LabSonar_2020</title></head>
     
 <body>
-<div id="top">
-<h1>LabSonar_2020 | Using the sonar HC-SR04 <font size="5"></font> </h1>
+<div id="body">
+<h1>LabSonar_2020 | Handling sonar data <font size="5"></font> </h1>
+
+<h2>The robot as a source of sonar data</h2>
+
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" ><img src="./img/robotAsDataSource.png" alt="robotAsDataSource" width="100%"  /></td>
+<td> <img src="./img/robotAsDataSourceConceptual.png" alt="robotAsDataSourceConceptual" width="100%"  /></td>
+</tr>
+</tbody>
+</table>
+ 
+<h2>Using a middleware</h2>
+
+ <table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:60%" ><img src="./img/coapIntro.png" alt="coapIntro" width="100%"  /></td>
+<td> </td>
+</tr>
+</tbody>
+</table>
+
 
 <h2>UltraSonic Distance Measure Module Range Sensor(<bc>HC-SR04</bc>  )</h2>
+
+ <table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:60%" ><img src="./img/raspSonarCoap.png" alt="raspSonarCoap.png" width="100%"  /></td>
+<td> </td>
+</tr>
+</tbody>
+</table>
+
 
 The code in the file 
 <a href="../resources/sensors/SonarAlone.c" target="code">SonarAlone.c</a> generates sonar data 
@@ -186,9 +219,10 @@ msg(sonar,event,sonaronpcsimulated,none,sonar(2,57),2)
 A client working as a CoAP resource observer is defined in:
 <a href="../src/javacode/ResourceClientObserver.java" target="code">ResourceClientObserver.java</a>
 
+
 <h3>The sonar data-generator on the RaspberryPi</h3>
 <a href="../src/kotlincode/sonarOnRaspShow.kt" target="code">sonarOnRaspShow.kt</a> 
-
+<!--
 <pre>
 ResourceSonar   (sonardata)
 sonarOnPcSimulate
@@ -199,12 +233,12 @@ sonarOnRaspShow			usa ApplMessage ma no ActorBasic
 
 sonarOnRaspEmit			usa ApplMessage, ActorBasic e emitLocalStreamEvent
 </pre>
-</div>  
+-->
 
-<div class="body"> 
+<br/><br/>
+</div>  
 
  
-</div>  
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:100%;text-align:center;font-size:small;color:white">
 By AN Unibo-DISI  

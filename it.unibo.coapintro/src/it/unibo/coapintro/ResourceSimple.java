@@ -75,7 +75,7 @@ private int counter = 0;
 	public static void main(String[] args) {
 		CoapServer server = new CoapServer();
 		server.add( new ResourceSimple("robot") );
-		server.add( new ResourceSimple("sonar") );
+		//server.add( new ResourceSimple("sonar") );
 		server.start();
 	}
 
