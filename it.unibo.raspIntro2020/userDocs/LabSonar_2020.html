@@ -109,7 +109,7 @@ kc{
 }
 pre{
 	font-family: "Helvetica";
-	font-size: 60%;
+	font-size: 90%;
 	background-color: #fcf8c7;
 	border: 1px solid blue;
 }
@@ -212,8 +212,61 @@ Let us start from the basic principles and concepts of interaction among distrib
 reported in 
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.coapintro/userDocs/LabCoAP.html" target="lab">
 LabCoAP | Introduction to CoAP</a>.
+<br/><br/>
+Since REST is a <em>resource-oriented architecture</em>,at the center of our system,  there is now the <k>CoapResource</k>
+(<a href="../src/javacode/Resource.java" target="code">Resource.java</a>) defined as follows:
+<table style="width:100%" border="1">
+<tr>
+<td style="width:50%">
+<pre>
+public class Resource extends CoapResource {
+...
+}
+	public static void main(String[] args) {
+		CoapServer server = new CoapServer();
+		server.add( 
+				new Resource("robot").add(
+					new Resource("sonar") )
+		);
+		server.start();
+	}
 
-<i>it.unibo.raspIntro2020</i>
+</pre>
+
+</td>
+
+<td>The device has <tt>robot</tt> as root and <tt>sonar</tt> as its sensor resource:
+<img src="./img/urlExample.png" alt="urlExample" width="100%"  /><br/><br/>
+
+ 
+</td>
+<m></m>
+</tr>
+</table>
+
+ 
+
+This resource allows us to acquire sonar data in RESTful way, by using the CoAP protocol.
+For example:
+<table style="width:100%" border="1">
+<tr>
+<td style="width:50%">
+<pre>
+CoapClient client = new CoapClient();
+String uriStr     = "coap://localhost:5683/robot/sonar";
+client.setURI( uriStr );
+CoapResponse respGet = client.get();
+String sonarData = respGet.getResponseText()
+</pre>
+
+</td>
+<td></td>
+</tr>
+</table>
+
+<br/><br/>
+ 
+ 
 
  <table style="width:98%">
 <tbody>	
@@ -232,17 +285,14 @@ RaspberryPi.  It uses
 <a href="../src/javacode/ResourceObserverRadar.java" target="code">ResourceObserverRadar.java</a> is the application
 that reads the sonar data available of the resource
 <br/><br/></li>
+<li><a href="../src/javacode/CoapSupport.java" target="code">CoapSupport.java</a></li>
 <m></m>
 </td>
 </tr>
 </tbody>
 </table>
 
-
-
-<br/><br/>
-Each sonar value is written a the representation <tt>V</tt> (in base <tt>10</tt) of a  natural number (<tt>0<=V<=400</tt>).
-
+ 
 <h3>A simulator of sonar data</h3>
 The class <a href="../src/kotlincode/sonarOnPcSimulate.kt" target="code">sonarOnPcSimulate.kt</a> provides a simulator
 of sonar data that might be useful during software development in absence of a RaspberryPi.
@@ -252,38 +302,20 @@ This class implements a process that:
 <li>generates a sonar value <tt>V</tt> by reading an input value from the user-console;</li>
 <li>creates an event <tt>EV</tt> as an instance of <tt>ApplMessage</tt>. For example:
 <pre>
-
 msg(sonar,event,sonaronpcsimulated,none,sonar(2,57),2)
- 
 </pre>
 
 <li>updates the CoAP resource
  <a href="../src/javacode/ResourceSonar.java" target="code">ResourceSonar.java</a>
  using the operation <tt>updateTheResource(String msg)</tt> defined in
- <a href="../src/javacode/ResourceSonarSupport.java" target="code">ResourceSonarSupport.java</a>
+ <a href="../src/javacode/CoapSupport.java" target="code">CoapSupport.java</a>
  
  </li>
 </li>
 </ol>
 
-A client working as a CoAP resource observer is defined in:
-<a href="../src/javacode/ResourceClientObserver.java" target="code">ResourceClientObserver.java</a>
+ 
 
-
-<h3>The sonar data-generator on the RaspberryPi</h3>
-<a href="../src/kotlincode/sonarOnRaspShow.kt" target="code">sonarOnRaspShow.kt</a> 
-<!--
-<pre>
-ResourceSonar   (sonardata)
-sonarOnPcSimulate
-ResourceClientObserver
-
-
-sonarOnRaspShow			usa ApplMessage ma no ActorBasic
-
-sonarOnRaspEmit			usa ApplMessage, ActorBasic e emitLocalStreamEvent
-</pre>
--->
 
 <br/><br/>
 </div>  

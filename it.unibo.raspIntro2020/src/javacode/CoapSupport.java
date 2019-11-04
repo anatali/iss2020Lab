@@ -42,8 +42,8 @@ private CoapObserveRelation relation = null;
 	public void removeObserve() {
 		relation.proactiveCancel();	
 	}
-	public void  observeResource(   ) {
-		relation = client.observe( new MyHandler( ) );
+	public void  observeResource( CoapHandler handler  ) {
+		relation = client.observe( handler );
 	}
 
 	public boolean updateResource( String msg ) {

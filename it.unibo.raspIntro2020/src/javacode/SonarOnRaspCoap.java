@@ -13,7 +13,7 @@ private BufferedReader reader;
 	    String coapAddr = reader.readLine();
 		String path     = reader.readLine();
 		System.out.println("coapAddr=" + coapAddr + " path=" + path);
-		coapSupport = new CoapSupport(coapAddr, path);		
+		coapSupport     = new CoapSupport(coapAddr, path);		
 		
 		new Thread() {
 			public void run() {
