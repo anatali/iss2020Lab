@@ -150,9 +150,48 @@ table, th, td {
     
 <body>
 <div id="body">
-<h1>LabSonar_2020 | Handling sonar data <font size="5"></font> </h1>
+<h1>LabSonar_2020 | A robot-radar system <font size="5"></font> </h1>
 
-<h2>The robot as a source of sonar data</h2>
+ 
+
+
+A ddr robot  equipped with a <tt>HC-SR04</tt> sonar device on its front can be considered as an autonomous agent, able to produce sonar data
+that can be consumed by some other (remote) agent.
+In this section, our consumer will be a device able to show to data on a <tt>GUI</tt>, like the 'radar' made available (as a plain object) by the project
+<i>it.unibo.java.radar</i>.
+
+<center><img src="./img/robotRadar.png" alt="robotRadar" width="50%"  /></center>
+ 
+
+<h3>The interaction robot-radar</h3>
+
+The project <i>it.unibo.java.radar</i> deploys the library <tt>radarPojo.jar</tt>  that provides an object utility to create
+a radar-GUI and to show values on that GUI:
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.java.radar/src/radarPojo/radarSupport.java" target="code">
+radarSupport.java</a>.
+<br/><br/>
+In a bottom-up approach, the software designer must find a way to make the radar able to receive the sonar data produced by the robot. Thus the designer
+must face two problems:
+
+<ol>
+<li>Find a way to transmit data from the robot to the radar.</li>
+<li>Build a new radar component able to receive data and to display them by using the available 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.java.radar/src/radarPojo/radarSupport.java" target="code">
+radarSupport.java</a></li>
+
+</ol>
+
+The picture below (left part) shows two main integration strategies:
+
+<ol>
+<li>The use of a two-way point-to-point communication protocol (e.g. TCP/UDP/etc.). </li>
+<li>The use of a middleware, for example a MQTT broker or a CoAP resource.</li>
+</ol>
+
+The right part of the picture is a possible step towards a more high-level way of reasoning, based on a custom set
+of communication-pattern names (dispatch, request, event). The intent id to capture (or better to express) the <k>logic</k> of the
+interaction between the robot and the radar, rather than the particular low-level technology that makes such an interaction possible.
+<br/><br/>
 
 <table style="width:98%">
 <tbody>	
@@ -162,34 +201,45 @@ table, th, td {
 </tr>
 </tbody>
 </table>
+<br/>
+In the following, we will base our low-level communication technology on the CoAP RESTful protocol and on the concept of (CoaP)<k>resource</k>.
  
-<h2>Using a middleware</h2>
-
- <table style="width:98%">
-<tbody>	
-<tr>
-<td style="width:60%" ><img src="./img/coapIntro.png" alt="coapIntro" width="100%"  /></td>
-<td> </td>
-</tr>
-</tbody>
-</table>
 
 
-<h2>UltraSonic Distance Measure Module Range Sensor(<bc>HC-SR04</bc>  )</h2>
+<h2>CoAP-based interaction </h2>
+
+Let us start from the basic principles and concepts of interaction among distributed agents related to the Constrained Application Protocol
+reported in 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.coapintro/userDocs/LabCoAP.html" target="lab">
+LabCoAP | Introduction to CoAP</a>.
+
+<i>it.unibo.raspIntro2020</i>
 
  <table style="width:98%">
 <tbody>	
 <tr>
 <td style="width:60%" ><img src="./img/raspSonarCoap.png" alt="raspSonarCoap.png" width="100%"  /></td>
-<td> </td>
+<td> 
+
+<li><a href="../src/javacode/Resource.java" target="code">Resource.java</a> is the CoapResource. 
+<br/><br/></li>
+<li><a href="../src/javacode/SonarOnRaspCoap.java" target="code">SonarOnRaspCoap.java</a> is the <b>producer</b> of sonar data that run on the  
+RaspberryPi.  It uses 
+<a href="../resources/sensors/SonarAlone.c" target="code">SonarAlone.c</a> that writes <tt>HC-SR04</tt> data on the standard output.
+<br/><br/></li>
+
+<li>
+<a href="../src/javacode/ResourceObserverRadar.java" target="code">ResourceObserverRadar.java</a> is the application
+that reads the sonar data available of the resource
+<br/><br/></li>
+<m></m>
+</td>
 </tr>
 </tbody>
 </table>
 
 
-The code in the file 
-<a href="../resources/sensors/SonarAlone.c" target="code">SonarAlone.c</a> generates sonar data 
-using the <bc>HC-SR04</bc> device and writes the data on the standard output.
+
 <br/><br/>
 Each sonar value is written a the representation <tt>V</tt> (in base <tt>10</tt) of a  natural number (<tt>0<=V<=400</tt>).
 
