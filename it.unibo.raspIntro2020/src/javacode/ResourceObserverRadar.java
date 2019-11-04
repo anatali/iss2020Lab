@@ -19,9 +19,8 @@ class DataHandler implements CoapHandler {
 
 	@Override public void onLoad(CoapResponse response) {
 		String content  = handleAsApplMessage(response.getResponseText());	 //later ...
-		//String content  = response.getResponseText();
 		System.out.println("DataHandler | observes: " + content );
-		radarPojo.radarSupport.update(content, "90");
+		radarPojo.radarSupport.update(content, "0");
 	}					
 	@Override public void onError() {
 		System.out.println("DataHandler |  FAILED (press enter to exit)");

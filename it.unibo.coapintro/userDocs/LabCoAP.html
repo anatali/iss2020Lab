@@ -109,7 +109,7 @@ kc{
 }
 pre{
 	font-family: "Helvetica";
-	font-size: 60%;
+	font-size: 90%;
 	background-color: #fcf8c7;
 	border: 1px solid blue;
 }
@@ -263,14 +263,6 @@ It is invoked whenever the path of a resource changes, when a child resource is 
 </ul>
 
 
-
-
-
-
-
-
-
-
 <h2>Example</h2>
 
  <table style="width:98%">
@@ -289,13 +281,19 @@ The device has <tt>robot</tt> as root and <tt>sonar</tt> as its sensor resource:
 
 To run:
 <ol>
-<li>Activate the CoAP-observable resource <a href="../src/it/unibo/coapintro/Resource.java" target="code">Resource.java</a>/></li>
+<li>Activate the CoAP-observable resource <a href="../src/it/unibo/coapintro/Resource.java" target="code">Resource.java</a></li>
 <li>Look at the initial content of the resource by running the reader-client <a href="../src/it/unibo/coapintro/ResourceClientReader.java" target="code">
 ResourceClientReader.java</a></li>
 <li>Activate a observer-client <a href="../src/it/unibo/coapintro/ResourceClientObserver.java" target="code">ResourceClientObserver.java</a></li>
 <li>Update the resource by running the producer-client <a href="../src/it/unibo/coapintro/ResourceClientProducer.java" target="code">ResourceClientProducer.java</a></li>
 </ol>
-	      	
+
+Note that the Californium framework makes use of the logger library <tt>slf4j</tt> that should be included
+in the dependencies: 
+<pre>
+compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
+</pre>	      
+This library generates the file <k>log4jInfo.log</k>.	
 <br/><br/> 	
 </div>  
 

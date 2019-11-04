@@ -389,3 +389,86 @@ java.net.BindException: Address already in use: Cannot bind
 2019-11-04 12:43:41 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:51570
 2019-11-04 12:43:41 INFO  EndpointManager:140 - created implicit endpoint coap://0.0.0.0:51570 for coap
 2019-11-04 12:43:41 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:51570#[95f1e65f6a1a05ed] and resource /robot/sonar (Exchange[R6349], size 6)
+2019-11-04 15:39:54 INFO  NetworkConfig:372 - loading properties from file C:\Didattica2018Work\iss2020Lab\it.unibo.raspIntro2020\Californium.properties
+2019-11-04 15:39:54 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2019-11-04 15:39:54 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2019-11-04 15:39:54 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2019-11-04 15:39:54 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2019-11-04 15:39:54 INFO  CoapEndpoint:452 - Endpoint [coap://0.0.0.0:0] requires an executor to start, using default single-threaded daemon executor
+2019-11-04 15:39:55 INFO  UDPConnector:161 - UDPConnector starts up 4 sender threads and 4 receiver threads
+2019-11-04 15:39:55 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:49522, recv buf = 65536, send buf = 65536, recv packet size = 2048
+2019-11-04 15:39:55 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:49522
+2019-11-04 15:39:55 INFO  EndpointManager:140 - created implicit endpoint coap://0.0.0.0:49522 for coap
+2019-11-04 15:39:55 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:49522#[0362bc99be9be89b] and resource /robot/sonar (Exchange[R6422], size 7)
+2019-11-04 15:40:33 INFO  NetworkConfig:372 - loading properties from file C:\Didattica2018Work\iss2020Lab\it.unibo.raspIntro2020\Californium.properties
+2019-11-04 15:40:34 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2019-11-04 15:40:34 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2019-11-04 15:40:34 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2019-11-04 15:40:34 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2019-11-04 15:40:34 INFO  CoapEndpoint:452 - Endpoint [coap://0.0.0.0:0] requires an executor to start, using default single-threaded daemon executor
+2019-11-04 15:40:34 INFO  UDPConnector:161 - UDPConnector starts up 4 sender threads and 4 receiver threads
+2019-11-04 15:40:34 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:63878, recv buf = 65536, send buf = 65536, recv packet size = 2048
+2019-11-04 15:40:34 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:63878
+2019-11-04 15:40:34 INFO  EndpointManager:140 - created implicit endpoint coap://0.0.0.0:63878 for coap
+2019-11-04 15:40:42 INFO  NetworkConfig:372 - loading properties from file C:\Didattica2018Work\iss2020Lab\it.unibo.raspIntro2020\Californium.properties
+2019-11-04 15:40:43 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2019-11-04 15:40:43 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2019-11-04 15:40:43 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2019-11-04 15:40:43 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2019-11-04 15:40:43 INFO  CoapEndpoint:452 - Endpoint [coap://0.0.0.0:0] requires an executor to start, using default single-threaded daemon executor
+2019-11-04 15:40:43 INFO  UDPConnector:161 - UDPConnector starts up 4 sender threads and 4 receiver threads
+2019-11-04 15:40:43 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:63879, recv buf = 65536, send buf = 65536, recv packet size = 2048
+2019-11-04 15:40:43 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:63879
+2019-11-04 15:40:43 INFO  EndpointManager:140 - created implicit endpoint coap://0.0.0.0:63879 for coap
+2019-11-04 15:40:43 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:63879#[7b5aa570581261ea] and resource /robot/sonar (Exchange[R6545], size 8)
+2019-11-04 15:41:10 INFO  ObserveLayer:252 - notification for token [Token=[a7c30a42dca0149e]] timed out. Canceling all relations with source [/127.0.0.1:63835]
+2019-11-04 15:41:10 INFO  CoapResource:735 - remove observe relation between /127.0.0.1:63835#[a7c30a42dca0149e] and resource /robot/sonar (Exchange[R6343, complete], size 7)
+2019-11-04 15:41:11 INFO  ObserveLayer:252 - notification for token [Token=[5ba79ce65d5e674a]] timed out. Canceling all relations with source [/127.0.0.1:56330]
+2019-11-04 15:41:11 INFO  CoapResource:735 - remove observe relation between /127.0.0.1:56330#[5ba79ce65d5e674a] and resource /robot/sonar (Exchange[R6345, complete], size 6)
+2019-11-04 15:41:21 INFO  ObserveLayer:252 - notification for token [Token=[95f1e65f6a1a05ed]] timed out. Canceling all relations with source [/127.0.0.1:51570]
+2019-11-04 15:41:21 INFO  CoapResource:735 - remove observe relation between /127.0.0.1:51570#[95f1e65f6a1a05ed] and resource /robot/sonar (Exchange[R6349, complete], size 5)
+2019-11-04 15:41:27 INFO  ObserveLayer:252 - notification for token [Token=[9dbdf67b8eaa10ad]] timed out. Canceling all relations with source [/127.0.0.1:56337]
+2019-11-04 15:41:27 INFO  CoapResource:735 - remove observe relation between /127.0.0.1:56337#[9dbdf67b8eaa10ad] and resource /robot/sonar (Exchange[R6347, complete], size 4)
+2019-11-04 15:41:29 INFO  ObserveLayer:252 - notification for token [Token=[2984491bbfdde7f4]] timed out. Canceling all relations with source [/127.0.0.1:56332]
+2019-11-04 15:41:29 INFO  CoapResource:735 - remove observe relation between /127.0.0.1:56332#[2984491bbfdde7f4] and resource /robot/sonar (Exchange[R6346, complete], size 3)
+2019-11-04 15:41:35 INFO  ObserveLayer:252 - notification for token [Token=[25dd2ce0e971c4f1]] timed out. Canceling all relations with source [/127.0.0.1:61024]
+2019-11-04 15:41:35 INFO  CoapResource:735 - remove observe relation between /127.0.0.1:61024#[25dd2ce0e971c4f1] and resource /robot/sonar (Exchange[R6348, complete], size 2)
+2019-11-04 15:41:48 INFO  NetworkConfig:372 - loading properties from file C:\Didattica2018Work\iss2020Lab\it.unibo.raspIntro2020\Californium.properties
+2019-11-04 15:41:48 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2019-11-04 15:41:48 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2019-11-04 15:41:48 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2019-11-04 15:41:48 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2019-11-04 15:41:48 INFO  CoapEndpoint:452 - Endpoint [coap://0.0.0.0:0] requires an executor to start, using default single-threaded daemon executor
+2019-11-04 15:41:48 INFO  UDPConnector:161 - UDPConnector starts up 4 sender threads and 4 receiver threads
+2019-11-04 15:41:48 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:63884, recv buf = 65536, send buf = 65536, recv packet size = 2048
+2019-11-04 15:41:48 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:63884
+2019-11-04 15:41:48 INFO  EndpointManager:140 - created implicit endpoint coap://0.0.0.0:63884 for coap
+2019-11-04 15:41:48 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:63884#[f3bb2bab49589474] and resource /robot/sonar (Exchange[R6599], size 3)
+2019-11-04 15:41:51 INFO  ObserveLayer:252 - notification for token [Token=[0362bc99be9be89b]] timed out. Canceling all relations with source [/127.0.0.1:49522]
+2019-11-04 15:41:51 INFO  CoapResource:735 - remove observe relation between /127.0.0.1:49522#[0362bc99be9be89b] and resource /robot/sonar (Exchange[R6422, complete], size 2)
+2019-11-04 15:47:15 INFO  NetworkConfig:372 - loading properties from file C:\Didattica2018Work\iss2020Lab\it.unibo.raspIntro2020\Californium.properties
+2019-11-04 15:47:15 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2019-11-04 15:47:15 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2019-11-04 15:47:16 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2019-11-04 15:47:16 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2019-11-04 15:47:16 INFO  CoapEndpoint:452 - Endpoint [coap://0.0.0.0:0] requires an executor to start, using default single-threaded daemon executor
+2019-11-04 15:47:16 INFO  UDPConnector:161 - UDPConnector starts up 4 sender threads and 4 receiver threads
+2019-11-04 15:47:16 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:61529, recv buf = 65536, send buf = 65536, recv packet size = 2048
+2019-11-04 15:47:16 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:61529
+2019-11-04 15:47:16 INFO  EndpointManager:140 - created implicit endpoint coap://0.0.0.0:61529 for coap
+2019-11-04 15:47:16 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:61529#[fd237bccdc2c9712] and resource /robot/sonar (Exchange[R6602], size 3)
+2019-11-04 15:49:00 INFO  ObserveLayer:252 - notification for token [Token=[7b5aa570581261ea]] timed out. Canceling all relations with source [/127.0.0.1:63879]
+2019-11-04 15:49:00 INFO  CoapResource:735 - remove observe relation between /127.0.0.1:63879#[7b5aa570581261ea] and resource /robot/sonar (Exchange[R6545, complete], size 2)
+2019-11-04 15:49:32 INFO  ObserveLayer:252 - notification for token [Token=[f3bb2bab49589474]] timed out. Canceling all relations with source [/127.0.0.1:63884]
+2019-11-04 15:49:32 INFO  CoapResource:735 - remove observe relation between /127.0.0.1:63884#[f3bb2bab49589474] and resource /robot/sonar (Exchange[R6599, complete], size 1)
+2019-11-04 15:50:22 INFO  NetworkConfig:372 - loading properties from file C:\Didattica2018Work\iss2020Lab\it.unibo.raspIntro2020\Californium.properties
+2019-11-04 15:50:23 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2019-11-04 15:50:23 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2019-11-04 15:50:23 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2019-11-04 15:50:23 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2019-11-04 15:50:23 INFO  CoapEndpoint:452 - Endpoint [coap://0.0.0.0:0] requires an executor to start, using default single-threaded daemon executor
+2019-11-04 15:50:23 INFO  UDPConnector:161 - UDPConnector starts up 4 sender threads and 4 receiver threads
+2019-11-04 15:50:23 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:56027, recv buf = 65536, send buf = 65536, recv packet size = 2048
+2019-11-04 15:50:23 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:56027
+2019-11-04 15:50:23 INFO  EndpointManager:140 - created implicit endpoint coap://0.0.0.0:56027 for coap
+2019-11-04 15:50:23 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:56027#[c7f55cf0efd168bd] and resource /robot/sonar (Exchange[R6752], size 2)
