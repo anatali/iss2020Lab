@@ -86,9 +86,13 @@ sourceSets {
     main.java.srcDirs += 'src'
     main.java.srcDirs += 'resources'
 }
- 
+
+//mainClassName = 'kotlincode.SonarOnRaspKt' 
+mainClassName = 'kotlincode.SonarOnRaspActorKt' 
 //mainClassName = 'kotlincode.SonarOnRaspCoapKt'    //Must start with Upcase and end with Kt!!
-mainClassName = 'javacode.SonarOnRaspCoap'
+//mainClassName = 'javacode.SonarOnRaspCoap'
+
+
 jar {
     println("executing jar")
     from sourceSets.main.allSource

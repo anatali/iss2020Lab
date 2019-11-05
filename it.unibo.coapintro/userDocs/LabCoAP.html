@@ -288,12 +288,17 @@ ResourceClientReader.java</a></li>
 <li>Update the resource by running the producer-client <a href="../src/it/unibo/coapintro/ResourceClientProducer.java" target="code">ResourceClientProducer.java</a></li>
 </ol>
 
-Note that the Californium framework makes use of the logger library <tt>slf4j</tt> that should be included
+<h3>Installation notes</h3>
+The Californium framework makes use of the logger library <tt>slf4j</tt> that should be included
 in the dependencies: 
 <pre>
 compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
 </pre>	      
-This library generates the file <k>log4jInfo.log</k>.	
+This library 
+<ul>
+<li>Requires the presence in the directory <k>src</k> of the file <a href="../src/log4j.properties" target="code">log4j.properties</a> </li>
+<li>generates (at run-time) the file <ks>log4jInfo.log</ks></li>
+</ul>
 <br/><br/> 	
 </div>  
 

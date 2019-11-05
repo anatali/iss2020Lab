@@ -472,3 +472,13 @@ java.net.BindException: Address already in use: Cannot bind
 2019-11-04 15:50:23 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:56027
 2019-11-04 15:50:23 INFO  EndpointManager:140 - created implicit endpoint coap://0.0.0.0:56027 for coap
 2019-11-04 15:50:23 INFO  CoapResource:722 - successfully established observe relation between /127.0.0.1:56027#[c7f55cf0efd168bd] and resource /robot/sonar (Exchange[R6752], size 2)
+2019-11-04 19:15:10 INFO  NetworkConfig:372 - loading properties from file C:\Didattica2018Work\iss2020Lab\it.unibo.raspIntro2020\Californium.properties
+2019-11-04 19:15:10 INFO  CoapServer:207 - Starting server
+2019-11-04 19:15:10 INFO  CoapServer:212 - no endpoints have been defined for server, setting up server endpoint on default port 5683
+2019-11-04 19:15:10 INFO  RandomTokenGenerator:55 - using tokens of 8 bytes in length
+2019-11-04 19:15:11 INFO  CoapEndpoint:423 - CoapEndpoint uses udp plain
+2019-11-04 19:15:11 INFO  BlockwiseLayer:207 - BlockwiseLayer uses MAX_MESSAGE_SIZE=1024, PREFERRED_BLOCK_SIZE=512, BLOCKWISE_STATUS_LIFETIME=300000 and MAX_RESOURCE_BODY_SIZE=8192
+2019-11-04 19:15:11 INFO  ReliabilityLayer:83 - ReliabilityLayer uses ACK_TIMEOUT=2000, ACK_RANDOM_FACTOR=1.5, and ACK_TIMEOUT_SCALE=2.0
+2019-11-04 19:15:11 INFO  UDPConnector:161 - UDPConnector starts up 4 sender threads and 4 receiver threads
+2019-11-04 19:15:11 INFO  UDPConnector:187 - UDPConnector listening on 0.0.0.0/0.0.0.0:5683, recv buf = 65536, send buf = 65536, recv packet size = 2048
+2019-11-04 19:15:11 INFO  CoapEndpoint:485 - Started endpoint at coap://0.0.0.0:5683

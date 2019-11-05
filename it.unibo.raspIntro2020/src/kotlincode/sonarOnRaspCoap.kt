@@ -10,11 +10,12 @@ import java.io.FileInputStream
 
 class sonarOnRaspCoap( val name : String, val scope: CoroutineScope = GlobalScope )  {
 
+	@kotlinx.coroutines.ObsoleteCoroutinesApi
 	val actor = scope.actor<String>{
  			    for (msg in channel) { // iterate over incoming messages
 					println("sonarOnRaspCoap receives: ${msg}  " )
 			        when ( msg  ) {
-						"start" ->  scope.launch{ readInputData() }
+						"start" ->  readInputData() //scope.launch{ readInputData() }
 			            else -> throw Exception( "unknown" )
 			        }
 			    }

@@ -161,9 +161,25 @@ In this section, our consumer will be a device able to show to data on a <tt>GUI
 <i>it.unibo.java.radar</i>.
 
 <center><img src="./img/robotRadar.png" alt="robotRadar" width="50%"  /></center>
- 
 
-<h3>The interaction robot-radar</h3>
+<h2>Handling the sonar</h2> 
+
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" ><a href="../src/kotlincode/sonarOnRasp.kt" target="code">sonarOnRasp.kt</a></td>
+<td><m>An object written in Kotlin that 
+<li>starts <a href="../resources/sensors/SonarAlone.c" target="code">SonarAlone.c</a></li>
+<li>reads sonar data fron the standard input</li>
+<li>writes sonar data on the standard output</li>
+
+</m>  </td>
+</tr>
+</tbody>
+</table>
+<br/>
+
+<h2>The interaction robot-radar</h2>
 
 The project <i>it.unibo.java.radar</i> deploys the library <tt>radarPojo.jar</tt>  that provides an object utility to create
 a radar-GUI and to show values on that GUI:
@@ -327,24 +343,155 @@ msg(sonar,event,sonaronpcsimulated,none,sonar(2,57),2)
  </li>
 </ol>
 </m>
+
 <a href="../src/it/unibo/coapintro/SonarOnRaspCoap.java" target="code">SonarOnRaspCoap.java</a>:
-must run on a RaspberryPi. It requires the component <ks>SonarAlone</ks> and to description file
+must run on a <em>RaspberryPi</em>. It requires:
+<ul>
+<li>the executable version of the component <ks>SonarAlone.c</ks></li>
+<li>the  description file
 <a href="../coapConfig.txt" target="code">coapConfig.txt</a> that includes the elements of the <tt>resource-URL</tt>.
 For example:
 <pre>
 coap://192.168.1.8:5683
 robot/sonar
 </pre>
+</li>
+</ul>
+ 
+<h3>Deployment notes</h3>
 Remember that the <i>Californium framework</i> makes use of the logger library <tt>slf4j</tt> that should be included
 in the dependencies: 
 <pre>
 compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
 </pre>
-This library generates the file <k>log4jInfo.log</k>.
+
+This library 
+<ul>
+<li>Requires the presence in the directory <k>src</k> of the file <a href="../src/log4j.properties" target="code">log4j.properties</a> </li>
+<li>generates (at run-time) the file <ks>log4jInfo.log</ks></li>
+</ul>
 
 
 
+
+<h2 id="domainmodel">The Resource Model in the center</h2>
+<!--
+During problem analysis, we can state that requirement similar to <em>Introspection</em> appear in the <tt>IOT</tt> domain
+and in particular in the <em>Web Of Things</em> (<bc>WOT</bc>).<br/><br/>
+-->
+<center><table style="width:98%">
+<tbody>	
+
+<tr>
+<td style="width:60%">
+<img src="./img/portAdapterArch.png" alt="portAdapterArch" width="95%" height="30%"/>
+</td>
+<td> 
+<img src="./img/wotBook.jpg" alt="wotBook" width="40%" height="30%"/><br/>
+
+<m>
+From the <tt>Guinard/Trifa WOT</tt> book, we read (pg. 225) :<br/>
+We need a method to describe what a device is and does. In other words, we need a <bc>conceptual model</bc> of
+a web Thing (a <em>WebThingModel</em>) that can describe the resources of a web Thing using a set of well-known
+concepts.
+
+</m>
+</td>
+ </tr>
+ </table>
+</center>
+
+The architecture shown on the left in the figure represents the reference system architecture in these domains,
+known ad hexagoal architecture or port/adapter pattern (see for example
+<a href="https://softwarecampament.wordpress.com/portsadapters/" target="web">Ports and Adapters Pattern (Hexagonal Architecture)</a>. 
+
+
+<h3>Hexagonal architecture</h3>
+The main aim of this architecture is to decouple the application's core logic from the services it uses. 
+This allows different services to be "plugged in", and it allows the application to be run without these services.
+<br/><br/>
+The <em>connection between the inside and the outside part</em> of the system is realized via abstractions called 
+<bc>ports</bc> and their implementation counterparts called <bc>adapters</bc>.
+
+<center><table style="width:98%">
+<tbody>	
+
+<tr>
+<td style="width:15%">
+<img src="./img/portAdapter.png" alt="portAdapter" width="80%" height="30%"/>
+</td>
+<td> 
+<m>
+<ul>
+ <li>The <em>business logic</em> of an application consists of the algorithms that are essential to its purpose. 
+They implement the <em>use cases</em> that are the heart of the application. 
+When you change them, you change the essence of the application.
+</li>
+<li>The <em>services</em> are not essential. They can be replaced without changing the purpose of the application. 
+Examples: database access and other types of storage, user interface components, 
+e-mail and other communication components, hardware devices.</li>
+<li>The business logic can be <em>tested independent of outside services</em>.</li>
+<li>
+It is <em>easy to replace services</em> by other ones that are more fit in view of changing requirements.
+</ul>
+
+</m>
+</td>
+ </tr>
+ </table>
+</center>
+
+
+At the center, there is the model of the resources and the structure of system can be viewed an instance of the
+<bc>MVC</bc> pattern.
+
+<h3>The pattern MVC</h3>
+
+<center><table style="width:98%">
+<tbody>	
+
+<tr>
+<td style="width:70%">
+<img src="./img/mvc.png" alt="mvc" width="100%" height="40%"/>
+</td>
+<td> 
+
+
+<m>
+Today, it is quite common to express the resource model in <tt>JSON</tt>.
+
+<img src="./resourceModelJson1.png" alt="resourceModelJson1" width="60%" height="32%"/>
+
+<pre>
+{
+"env": {
+	"actuators": {
+		"leds": {
+			"led1": {
+			"name": "LED 1",
+			"value": false,
+			"gpio": 4
+			},
+			"led2": {
+			...
+			}
+		}
+	} 
+	...
+}
+</pre>
+
+</m>
+</td>
+ </tr>
+ </table>
+</center>
  
+ <div class="req">
+<em>Introspection</em>: The system must be able to  <em>show relevant information</em> to the user  about the <em>state</em>
+of the system and of the external world. For example, the system should show the current state of robot, including its
+position (assuming that it moves into a room with a flat floor) and the value of temperature in the room.
+ </div>
 
 
 <br/><br/>
