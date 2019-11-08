@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <!--
+<link rel="stylesheet" type="text/css" href="../css/issStyle1.css">
+<script type="text/javascript" src="../css/issStyle.js"></script>
+-->
+<style type="text/css">
+<!--
+body
+{
+    margin-left:  30px;
+    margin-right: 30px;
+};
+
+P
+{
+    font-family: Tahoma;
+    font-size: 10pt;
+};
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+}
+
+a:hover {
+    background-color: #cccccc;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #242424;
+    background-color: transparent;
+}
+
+h1, h2, h3 {
+    color: #242424;
+    clear: left;
+    font: 100% Tahoma, Helvetica, Arial, sans-serif;
+    margin: 10;
+    margin-right: 15px;
+    margin-bottom: 0.5em;
+    padding-top: 0.5em;
+    border-bottom: 1px solid #242424;
+}
+
+h1 {
+    font-size: 150%;
+    background-color: #b2c0ff;
+}
+
+h2 {
+    background-color: #d9fbff;
+    font-size: 110%;
+}
+
+h3 {
+	background-color: #e6ccff;
+    font-size: 80%;
+}
+h4 {
+    background-color: #99ffcc;
+    font-size: 100%;
+	width: 750px;
+}
+#i {
+    color: #ff1010;
+}
+tt{
+	font-family: "Arial";
+    font-size: 80%;
+	color: #006600;
+}
+em{
+	font-family: "Arial";
+    font-size: 80%;
+	font-weight: bold;
+	border-style:solid;
+	border-color: #ccffff;
+    color: #0033cc;
+}
+bc{
+	font-family: "Arial";
+	font-size: 80%;
+	font-weight: bold;
+    color: #990000;
+	background-color: #fcf8c7;
+}
+k{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #990000;
+	 
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	 
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	 
+}
+pre{
+	font-family: "Helvetica";
+	font-size: 90%;
+	background-color: #fcf8c7;
+	border: 1px solid blue;
+}
+m{
+	font-family: "Helvetica";
+	line-height: 100%;
+ 	font-size: 75%;
+}
+div.body{
+	width: 800px;
+    font-size: 18px;
+}    
+div.req{
+	background-color: #d9ffb3;
+    font-size: 18px;
+	width: 700px;
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}       
+div.remark{
+	background-color: #FFFC33;     
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}  
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}         
+    
+  -->
+</style>
+    
+<head>
+   
+<title>LabSonar_2020</title></head>
+    
+<body>
+<div id="body">
+<h1>LabSonarRadar | A robot-radar system <font size="5"></font> </h1>
+
+ 
+
+
+A ddr robot  equipped with a <tt>HC-SR04</tt> sonar device on its front can be considered as an autonomous agent, able to produce sonar data
+that can be consumed by some other (remote) agent.
+In this section, our consumer will be a device able to show to data on a <tt>GUI</tt>, like the 'radar' made available (as a plain object) by the project
+<i>it.unibo.java.radar</i>.
+
+<center><img src="./img/robotRadar.png" alt="robotRadar" width="50%"  /></center>
+
+ 
+
+
+
+ 
+<h2 id="problemrr">The interaction robot-radar</h2>
+
+The project <i>it.unibo.java.radar</i> deploys the library <tt>radarPojo.jar</tt>  that provides an object utility to create
+a radar-GUI and to show values on that GUI:
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.java.radar/src/radarPojo/radarSupport.java" target="code">
+radarSupport.java</a>.
+<br/><br/>
+In a bottom-up approach, the software designer must find a way to make the radar able to receive the sonar data produced by the robot. Thus the designer
+must face two problems:
+
+<ol>
+<li>Find a way to transmit data from the robot to the radar.</li>
+<li>Build a new radar component able to receive data and to display them by using the available 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.java.radar/src/radarPojo/radarSupport.java" target="code">
+radarSupport.java</a></li>
+
+</ol>
+
+The picture below (left part) shows two main integration strategies:
+
+<ol>
+<li>The use of a two-way point-to-point communication protocol (e.g. TCP/UDP/etc.). </li>
+<li>The use of a middleware, for example a MQTT broker or a CoAP resource.</li>
+</ol>
+
+The right part of the picture is a possible step towards a more high-level way of reasoning, based on a custom set
+of communication-pattern names (dispatch, request, event). The intent id to capture (or better to express) the <k>logic</k> of the
+interaction between the robot and the radar, rather than the particular low-level technology that makes such an interaction possible.
+<br/><br/>
+
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" ><img src="./img/robotAsDataSource.png" alt="robotAsDataSource" width="100%"  /></td>
+<td> <img src="./img/robotAsDataSourceConceptual.png" alt="robotAsDataSourceConceptual" width="100%"  /></td>
+</tr>
+</tbody>
+</table>
+<br/>
+
+<h3>Interaction based on TCP</h3>
+A direct communication robot-radar based on some standard protocol (e.g. TCP) 
+can be implemented in a quite easy way. <br/>
+The main project choice is related to
+question of the location of the server-TCP socket. The most 'natural' choice seems to activate a the server-socket
+on the radar, by considering (in a IOT perspective) the radar  as a 'service' used by the 'robot-as-thing'.
+<br/><br/>
+The task of building such a TCP-based system is left to the reader, with the goal to keep track of the time required
+to build a working prototype and to 'document' in a proper way the solution. 
+ 
+  
+
+
+<h3>Producers of sonar data</h3>
+<a href="../src/kotlincode/sonarOnPcSimulate.kt" target="code">sonarOnPcSimulate.kt</a>: provides a simulator
+of sonar data that might be useful during software development in absence of a RaspberryPi. <br/>
+<m>
+This class implements a process that:
+<ol>
+<li>generates a sonar value <tt>V</tt> by reading an input value from the user-console;</li>
+<li>creates an event <tt>EV</tt> as an instance of <tt>ApplMessage</tt>. For example:
+<pre>
+msg(sonar,event,sonaronpcsimulated,none,sonar(2,57),2)
+</pre>
+<li>updates the CoAP resource
+ <a href="../src/javacode/ResourceSonar.java" target="code">ResourceSonar.java</a>
+ using the operation <tt>updateTheResource(String msg)</tt> defined in
+ <a href="../src/javacode/CoapSupport.java" target="code">CoapSupport.java</a>
+ </li>
+</ol>
+</m>
+
+</div>  
+
+ 
+
+<div style="background-color:rgba(86, 56, 253, 0.9); width:100%;text-align:center;font-size:small;color:white">
+By AN Unibo-DISI  
+</div> 
+
+</body>
+</html>

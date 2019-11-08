@@ -1,8 +1,43 @@
 /*
- * Used just to configure Eclipse
+ * =======================================================
+ * A PROJECT model for the robot/radar system
+ * =======================================================
  */
-System radarusage
+System radarusage 
 
-Event polar : polar(D,A)
+Event    sonar : sonar(D)
+Request  polar : polar(D,A)
+Reply    fromRadar : fromRadar(X) 
 
-Context ctxRadarUsage ip [ host= "localhost"   port= 8044 ]
+Context ctxRadar      ip [ host= "192.168.1.8"   port= 8038 ]
+Context ctxRadarUsage ip [ host= "localhost"     port= 8044 ]
+
+ExternalQActor radar context ctxRadar
+ 
+QActor demousage context ctxRadarUsage{
+[" val ResultMap =   hashMapOf( \"key1\" to \"item1\" ) "]  //init a map to store the results of run	
+	State s0 initial{
+		println("demousage start")
+	}
+	Goto work 
+	 
+	State work{
+ 		run utils.sonarDataSimulator.sonarValFromUser( ResultMap, "sonarVal" )
+ 		[" val Result = ResultMap.remove(\"sonarVal\")"]
+ 		//println("Dtat from sonar: $Result")
+ 		request radar -m polar : polar( $Result,0 ) 		
+	}  
+	Transition t0 
+		whenTime 1000       -> handleAnwerTimeout
+		whenReply fromRadar -> handleRadarReply   //Blocks until answer
+	
+	State handleRadarReply{
+		printCurrentMessage
+	}
+	Goto work
+	
+	State handleAnwerTimeout{
+		println("WARNING: the radar does not send the answer ... ")
+	}
+	Goto work
+}

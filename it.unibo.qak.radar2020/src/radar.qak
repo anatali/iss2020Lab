@@ -1,0 +1,44 @@
+/*
+ * =======================================================
+ * A PROJECT model for the robot/radar system
+ * =======================================================
+ */
+System radarsys  
+
+Request  polar     : polar(D,A) 
+Reply    fromRadar : fromRadar(X) 
+ 
+Context ctxRadar ip [ host= "localhost"   port= 8038 ]
+ 
+/*
+ * -----------------------------------------------------------
+ * Embeds the radarpojo and provides message-based interaction
+ * (it is the 'exoskeleton - decorator')
+ * -----------------------------------------------------------
+ */ 
+QActor radar context ctxRadar{ 
+	State s0 initial{ 
+		println("radar start") 
+		run radarPojo.radarSupport.setUpRadarGui()
+	} 
+	Goto waitForDataToShow
+	
+	State waitForDataToShow{	} 
+	Transition t0  whenRequest polar -> showSpot
+ 
+	State showSpot{
+		//printCurrentMessage
+		onMsg( polar : polar(D,A) ) {
+			["
+				val Distance = payloadArg(0)
+			    val DistInt  = Distance.toInt()
+				val Angle    = payloadArg(1) 
+			"]
+			if "DistInt <= 90"  {   
+				run radarPojo.radarSupport.update(  Distance,  Angle )
+			    replyTo polar with fromRadar : fromRadar( done ) 
+		    } //No reply if DistInt > 90
+		}
+ 	}
+	Goto waitForDataToShow
+}
