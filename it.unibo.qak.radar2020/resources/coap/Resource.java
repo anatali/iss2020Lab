@@ -10,8 +10,8 @@ import org.eclipse.californium.core.server.resources.CoapExchange;
 
  
 public class Resource extends CoapResource {
-	public static String path = "robot/sonar";
 
+public static String path = "robot/sonar";
 private String lastMsg = "msg(sonar,event,sonarOnRaspCoap,none,sonar(00),0)";
 
 	public Resource( String name ) {
@@ -55,7 +55,7 @@ private String lastMsg = "msg(sonar,event,sonarOnRaspCoap,none,sonar(00),0)";
 	@Override
 	public void handlePUT(CoapExchange exchange) {
 		String arg = exchange.getRequestText() ;		
-		//System.out.println("Resource " + getName() + " | PUT arg=" + arg );
+		//System.out.println("Resource " + getName() + " | PUT arg=" + arg + " from " + exchange.getRequestCode() );
 		lastMsg = arg;
  		changed();	// notify all CoAp observers		
     	/*
@@ -82,6 +82,12 @@ private String lastMsg = "msg(sonar,event,sonarOnRaspCoap,none,sonar(00),0)";
 					new Resource("sonar") )  //robot/sonar
 		);
 		server.start();
+		
+		CoapSupport support = new CoapSupport("coap://localhost:5683", "robot/sonar");
+		support.updateResource("msg(sonar,event,sonarOnRaspCoap,none,sonar(10),1)");
+		
+		String v = support.readResource();
+		System.out.println("v=" + v);
 	}
 
 }

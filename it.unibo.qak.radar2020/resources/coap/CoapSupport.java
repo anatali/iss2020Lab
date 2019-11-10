@@ -26,7 +26,7 @@ private CoapObserveRelation relation = null;
 	public CoapSupport( String address, String path) { //"coap://localhost:5683/" + path
 		String url = address + "/" + path;
 		client = new CoapClient( url );
-		System.out.println("CoapSupport | STARTS url=" +  url + " client=" + client );
+		System.out.println("CoapSupport | STARTS url=" +  url ); //+ " client=" + client );
 		client.setTimeout( 1000L );		 
 	}
 	public CoapSupport( String address ) {  

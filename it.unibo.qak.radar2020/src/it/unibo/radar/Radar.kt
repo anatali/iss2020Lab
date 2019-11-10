@@ -15,6 +15,10 @@ class Radar ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scope
 	}
 		
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
+		var DoReply     = false
+		  var DistanceStr = "0"
+		  var Distance    = 0
+		  var Angle       = "0"
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -26,14 +30,41 @@ class Radar ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scope
 				state("waitForDataToShow") { //this:State
 					action { //it:State
 					}
-					 transition(edgeName="t00",targetState="showSpot",cond=whenDispatch("polar"))
+					 transition(edgeName="t00",targetState="showSpotReply",cond=whenRequest("polar"))
+					transition(edgeName="t01",targetState="showSpotNoReply",cond=whenDispatch("polar"))
 				}	 
-				state("showSpot") { //this:State
+				state("showSpotNoReply") { //this:State
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("polar(D,A)"), Term.createTerm("polar(D,A)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								radarPojo.radarSupport.update( payloadArg(0), payloadArg(1)  )
+								
+												DistanceStr = payloadArg(0)
+											    Distance    = DistanceStr.toInt()
+												Angle       = payloadArg(1) 
+								                DoReply     = false
 						}
+					}
+					 transition( edgeName="goto",targetState="showSpot", cond=doswitch() )
+				}	 
+				state("showSpotReply") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("polar(D,A)"), Term.createTerm("polar(D,A)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								
+												DistanceStr = payloadArg(0)
+											    Distance    = DistanceStr.toInt()
+												Angle       = payloadArg(1) 
+								                DoReply     = true
+						}
+					}
+					 transition( edgeName="goto",targetState="showSpot", cond=doswitch() )
+				}	 
+				state("showSpot") { //this:State
+					action { //it:State
+						if(Distance <= 90 ){ radarPojo.radarSupport.update( DistanceStr, Angle  )
+						if(DoReply){ answer("polar", "fromRadar", "fromRadar(done)"   )  
+						 }
+						 }
 					}
 					 transition( edgeName="goto",targetState="waitForDataToShow", cond=doswitch() )
 				}	 

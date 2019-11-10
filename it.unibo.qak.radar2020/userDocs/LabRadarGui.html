@@ -155,7 +155,8 @@ table, th, td {
 In this work we will build a <em>radarGuiservice</em> that shows data on a graphical interface that looks like the screen of a radar. These  data could be:
 <ul>
 <li>simulated by an user, by using a proper utility; for example
-<a href="../resources/utils/sonarDataSimulator.kt" target="code">sonarDataSimulator.kt</a> that reads the data from a user console.
+<a href="../resources/utils/sonarDataSimulator.kt" target="code">sonarDataSimulator.kt</a> or
+<a href="../resources/coap/sonarDataSimulatorCoap.kt" target="code">sonarDataSimulatorCoap.kt</a> that read the data from a user console;
 <br/><br/>
 </li>
 <li>produced by a <tt>HC-SR04</tt> sonar device mounted on the front of a ddr robot (<em>robot-sonar</em>). For example, 
@@ -167,9 +168,8 @@ writes these data on the standard output.
 
 </ul>
 
-The library <k>radarPojo.jar</k> (from the project <i>it.unibo.java.radar</i>) provides an object-utility 
-(<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.java.radar/src/radarPojo/radarSupport.java" target="code">
-radarSupport.java</a>) to create a radar-like-GUI and to show values on that GUI. It could be useful in building the <em>radarGuiservice</em>.
+The library <k>radarPojo.jar</k> (from the project <i>it.unibo.java.radar</i>) provides an object-utility
+(<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.java.radar/src/radarPojo/radarSupport.java" target="code">radarSupport.java</a>) to create a radar-like-GUI and to show values on that GUI. It could be useful in building the <em>radarGuiservice</em>.
 <br/>
 
  
@@ -192,8 +192,8 @@ The picture below shows our initial situation:
 <tbody>	
 <tr>
 <td style="width:50%" ><img src="./img/RobotSonarStarting.png" alt="RobotSonarStarting" width="100%"  /></td>
-<td><m>We have to write code in order to allow data to flow from the <em>robot-sonar</em> to the <em>radarGui</em>, by finding a proper
-<ks>component integration strategy</ks>.
+<td><m>We have to write code in order to allow data to flow from the <em>robot-sonar</em> to the <em>radarGui</em>
+In other words, we must find a proper <ks>component integration strategy</ks>.
 </m>  </td>
 </tr>
 </tbody>
@@ -235,21 +235,195 @@ on the node that runs the <em>radarGui</em>, by considering (in a <tt>IOT</tt> p
 The task of building such a TCP-based system is left to the reader, with the goal to keep track of the time required
 to build a working prototype and to 'document' in a proper way the solution. 
 
-<h3>Interaction based on CoAP</h3>
+<h3>Interaction based on a CoAP-Resource</h3>
+According to 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.coapintro/userDocs/LabCoAP.html" target="lab">
+LabCoAP | Introduction to CoAP</a>, let us introduce first of all a CoAP resource :
+<br/><br/>
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:35%" ><img src="./img/Resource.png" alt="Resource" width="80%"  /></td>
+<td><m>The class <a href="../resources/coap/Resource.java" target="code">Resource.java</a></ks> defines a  <i>CoAP Resource-Tree</i>
+that: 
+<ul>
+<li>is addressable with <kc>URI-path</kc> = <ks>robot/sonar</ks> </li>
+<li>defines its logical content as a String variable of name <ks>lastMsg</ks> that assumes the form of the external representation
+of a <tt>it.unibo.kactor.ApplMessage</tt>:
+<pre>
 
-<a href="../resources/coap/sonarDataSimulatorCoap.kt" target="code">sonarDataSimulatorCoap.kt</a>
-<br/><br/>
-<a href="../resources/coap/Resource.java" target="code">Resource.java</a>
-<br/><br/>
-<a href="../resources/coap/CoapSupport.java" target="code">CoapSupport.java</a>
-<br/><br/>
-<a href="../resources/coap/RadarGuiCoap.java" target="code">RadarGuiCoap.java</a>
-<br/><br/>
+msg(sonar,event,EMITTER,none,sonar(VALUE),MSGNUM)
 
+</pre>
+ </li>
+</ul>
+The method <kc>handlePUT(CoapExchange exchange)</kc> updates the value of <ks>lastMsg</ks> with
+<kc>exchange.getRequestText()</kc>.
+
+</m>  </td>
+</tr>
+</tbody>
+</table>
+<br/> 
+
+As second step, let us introduce an Utility to interact with a CoAP resource:
+<br/><br/>
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" ><img src="./img/ResourceSupport.png" alt="ResourceSupport" width="100%"  /></td>
+<td><m>The class <a href="../resources/coap/CoapSupport.java" target="code">CoapSupport.java</a></ks> provides a conventional
+object with methods to <kc>read/update</kc> and <kc>observe</kc> a CoAP resource.
+<br/>
+The <kc>observe</kc> method requires an object of interface <kc>org.eclipse.californium.core.CoapHandler</kc>. For example:
+<pre>
+class MyHandler implements CoapHandler {
+	@Override public void onLoad(CoapResponse response) {
+		String content = response.getResponseText();
+		System.out.println("MyHandler | NOTIFICATION: " + content);
+ 	}					
+	@Override public void onError() {
+		System.err.println("MyHandler  |  FAILED (press enter to exit)");
+	}
+}
+</pre>
+
+</m>  </td>
+</tr>
+</tbody>
+</table>
+<br/>
+
+Now, we can  build our system:
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" >
+<m> 
+<h3>The RadarGui</h3>
+The class <a href="../resources/coap/RadarGuiCoap.java" target="code">RadarGuiCoap.java</a>:
+<ol>
+<li>creates a radar-like GUI</li>
+<li> looks (via polling or via observation) at the 
+ <a href="../resources/coap/Resource.java" target="code">Resource.java</a> in order to show sonar-data on the GUI.</li>
+</ol>
+  
+ For the sake of simplicity, it crates also the CoAP resource itself.
+</m>  </td>
+<td><m><h3>A sonar data source simulator</h3>
+The Kotlin object <a href="../resources/coap/sonarDataSimulatorCoap.kt" target="code">sonarDataSimulatorCoap.kt</a>:
+<ol>
+<li>waits for a sonar-data value from the user console;</li>
+<li>updates the CoAP resource with that value.</li>
+</ol>
+
+</m></td>
+</tr>
+</tbody>
+</table>
+
+<h4>Run the system</h4>
+<ol>
+<li>Execute <a href="../resources/coap/RadarGuiCoap.java" target="code">RadarGuiCoap.java</a></li>
+<li>Launch <a href="../resources/coap/sonarDataSimulatorCoap.kt" target="code">sonarDataSimulatorCoap.kt</a></li>
+</ol>
+
+Of course, the structure of a CoAP-based system is completely different from the structure of a system based on a two-way, direct connection.
+Let us investigate now what kind of system could result by starting from a top-down (model-based) design.
+ 
+<!--
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" ><img src="./img/RobotSonarStarting.png" alt="RobotSonarStarting" width="100%"  /></td>
+<td><m> 
+</m>  </td>
+</tr>
+</tbody>
+</table>
+<br/>
+-->
 <h2>A top-down approach </h2>
-The <em>robot-sonar</em> is viewed as an autonomous source of data, while the <em>radarGui</em> is viewed as a service
-able to receive sonar data and to handle them in a proper way.<br/><br/>
+In a top-down approach to software development, we aim at leaving technological details 'in the background' by focusing our
+attention on the 'logical-interaction' between our system components. Thus, our starting point could be represented as follows:
 
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" ><img src="./img/RobotSonarLogicalStarting.png" alt="RobotSonarLogicalStarting" width="100%"  /></td>
+<td><m>The <em>robot-sonar</em> and the <em>radarGui</em> are considered as two autonomous entities 
+(we could refer to them as <ks>agents</ks> or <ks>actors</ks> rather than objects or processes) that must
+exchange information in order to achieve a common goal. 
+<br/><br/>
+The <ks>component integration strategy</ks> should be 
+a consequence of the <k>requirements</k>: the data produced by the <em>robot-sonar</em> must be consumed by the <em>radarGui</em>
+with a minimal consumption of energy, bandwidth, money, etc.
+<br/><br/>
+Technological details (quite important in any case) are at the moment put in  'behind the scene', 'embedded' within
+the agents.
+</m>  </td>
+</tr>
+</tbody> 
+</table>
+<br/>
+From the logical point of view, the <em>robot-sonar</em> could be viewed as an <ks>information-emitter</ks> agent or as a <ks>resource</ks> 
+that provides data. <br/><br/>
+As a consequence, the <em>radarGui</em> could be viewed as an <ks>information-receiver</ks> agent or as a
+<ks>resource-reader</ks> (that works in 'polling' mode) or as a <ks>resource-observer</ks> (that works according to the <kc>Hollywood Principle</kc>
+or - better - to the <a href="https://en.wikipedia.org/wiki/Inversion_of_control" target="web">Inversion of Control Principle</a>.)
+
+<h3>The emitter-receiver (meta)model</h3>
+In this (meta)model, the <em>robot-sonar</em> agent can send information to the <em>radarGui</em> agent:
+<ol>
+<li>in a <i>'fire-and-forget'</i> way.</li>
+<li>as a <i>request</i> to perform an action (e.g. show the data).</li>
+</ol> 
+
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" ><img src="./img/logicalP2P.png" alt="logicalP2P" width="100%"  /></td>
+<td><m>The <em>robot-sonar</em> is logically viewed here as an emitter that:
+<ol>
+<li>can send information to the <em>radarGui</em> in a <i>'fire-and-forget'</i> way.</li>
+<li>can send to the <em>radarGui</em> a <i>request</i> to show the data, by expecting an <tt>answer</tt> (or an <tt>ack</tt>) to it.</li>
+</ol> 
+</m>  </td>
+</tr>
+</tbody>
+</table>
+
+<h3>Polling</h3>
+The idea of 'polling' is captured by a request-based interaction, from the <em>radarGui</em>to the <em>robot-sonar</em>.
+<br/><br/>
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" ><img src="./img/logicalPolling.png" alt="logicalPolling" width="100%"  /></td>
+<td><m>The <em>radarGui</em> explicitly asks the <em>robot-sonar</em> for sonar-data
+</m>  </td>
+</tr>
+</tbody>
+</table>
+ 
+
+<h3>The resource-observer (meta)model</h3>
+In this (meta)model,  the <em>robot-sonar</em> agent produces a state-change in a resource that can be 'observed' as an <k>event</k>
+by the <em>radarGui</em>.
+ 
+ 
+ <table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" ><img src="./img/logicalEvent.png" alt="logicalEvent" width="100%"  /></td>
+<td><m>The <em>robot-sonar</em> is logically viewed here as an emitter that  can generate information 'in the world' without any specific destination. 
+  
+</m>  </td>
+</tr>
+</tbody>
+</table>
+<br/>
+<!--
 <table style="width:98%">
 <tbody>	
 <tr>
@@ -261,25 +435,24 @@ able to receive sonar data and to handle them in a proper way.<br/><br/>
 <li>can emit information 'in the world' without any specific destination.</li>
 </ol>
 
-The picture excludes the idea of 'polling', i.e. that the <em>radarGui</em> explicitly asks the <em>robot-sonar</em> for sonar-data.
+The picture excludes 
 </m>  </td>
 </tr>
 </tbody>
 </table>
 <br/>
+-->
 
-Thus, in a top-down approach to software development, we aim at leaving technological details 'in the background' by focusing our
-attention on the 'logical-interaction' between our system components.
-<br/><br/>
+<h3>Towards a standard set of names</h3>
 <table style="width:98%">
 <tbody>	
 <tr>
-<td style="width:50%" ><img src="./img/robotAsDataSourceConceptual.png" alt="robotAsDataSourceConceptual" width="100%"  /></td>
+<td style="width:60%" ><img src="./img/robotAsDataSourceConceptual.png" alt="robotAsDataSourceConceptual" width="100%"  /></td>
 <td><m> From the logical point of view:
 <ol>
 <li>the term <em>Dispatch</em> is used to capture the idea of information sent from a source to a destination in a 'fire-and-forget' way.</li>
 <li>the term <em>Request</em>  is used to capture the idea of the request of execution of some service, by expecting an <tt>answer</tt> (or an <tt>ack</tt>) to it.</li>
-<li>the term <em>Request</em>  is used to capture the idea that information can be emitted 'in the world' without any specific destination.</li>
+<li>the term <em>Event</em>  is used to capture the idea that information can be emitted 'in the world' without any specific destination.</li>
 </ol>
 
 Each of these terms captures an abstraction can should be implemented in some way.

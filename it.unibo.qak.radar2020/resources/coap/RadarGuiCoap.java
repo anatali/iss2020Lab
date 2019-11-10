@@ -3,7 +3,6 @@ package coap;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.CoapServer;
-
 import alice.tuprolog.Struct;
 import alice.tuprolog.Term;
 import it.unibo.kactor.ApplMessage;
