@@ -1,14 +1,17 @@
 /*
  * =======================================================
- * A PROJECT model for the robot/radar system
+ * A radar-GUI as a service
  * =======================================================
  */
-System radarsys  
+System radarsys   
+
+mqttBroker "localhost" : 1883 
 
 Request  polar     : polar(D,A) 
-Reply    fromRadar : fromRadar(X) 
+Dispatch polar     : polar(D,A) 
+Reply    fromRadar : fromRadar(X)    
  
-Context ctxRadar ip [ host= "localhost"   port= 8038 ]
+Context ctxRadarGui ip [ host= "localhost"   port= 8038 ] +mqtt
  
 /*
  * -----------------------------------------------------------
@@ -16,7 +19,12 @@ Context ctxRadar ip [ host= "localhost"   port= 8038 ]
  * (it is the 'exoskeleton - decorator')
  * -----------------------------------------------------------
  */ 
-QActor radar context ctxRadar{ 
+QActor radar context ctxRadarGui{ 
+["var DoReply     = false
+  var DistanceStr = \"0\"
+  var Distance    = 0
+  var Angle       = \"0\"
+"]
 	State s0 initial{ 
 		println("radar start") 
 		run radarPojo.radarSupport.setUpRadarGui()
@@ -24,21 +32,81 @@ QActor radar context ctxRadar{
 	Goto waitForDataToShow
 	
 	State waitForDataToShow{	} 
-	Transition t0  whenRequest polar -> showSpot
+	Transition t0  
+		 whenRequest polar -> showSpotReply
+		 whenMsg     polar -> showSpotNoReply
  
-	State showSpot{
-		//printCurrentMessage
+	//WARNING: the current message is lost after an empty-move
+ 	State showSpotNoReply{ 
+ 		//printCurrentMessage
 		onMsg( polar : polar(D,A) ) {
 			["
-				val Distance = payloadArg(0)
-			    val DistInt  = Distance.toInt()
-				val Angle    = payloadArg(1) 
+				DistanceStr = payloadArg(0)
+			    Distance    = DistanceStr.toInt()
+				Angle       = payloadArg(1) 
+                DoReply     = false
 			"]
-			if "DistInt <= 90"  {   
-				run radarPojo.radarSupport.update(  Distance,  Angle )
-			    replyTo polar with fromRadar : fromRadar( done ) 
-		    } //No reply if DistInt > 90
 		}
+ 	} 
+ 	Goto showSpot 
+ 	
+ 
+	State showSpotReply{
+		//printCurrentMessage
+   		onMsg( polar : polar(D,A) ) {
+			["
+				DistanceStr = payloadArg(0)
+			    Distance    = DistanceStr.toInt()
+				Angle       = payloadArg(1) 
+                DoReply     = true
+			"]
+ 	 	}
+ 	 }  
+ 	 Goto showSpot
+	
+	
+ 	State showSpot{
+  		if "Distance <= 90 "  {   
+			run radarPojo.radarSupport.update(  DistanceStr,  Angle )
+			if "DoReply" {  replyTo polar with fromRadar : fromRadar( done ) }
+ 		}   
  	}
 	Goto waitForDataToShow
+	
+}
+
+QActor demo context ctxRadarGui {
+[" val ResultMap =   hashMapOf( \"key1\" to \"item1\" ) "]  //init a map to store the results of run
+	State s0 initial{
+		println("demo STARTS")
+		delay 4000 //give time to start the GUI
+		forward radar -m polar : polar( 0,0 )
+		delay 500
+		forward radar -m polar : polar( 45,0 ) 
+		delay 500
+		forward radar -m polar : polar( 90,0 )
+		delay 500
+		forward radar -m polar : polar( 120,0 )		
+	}
+	Goto workUsingRequest
+	
+	State workUsingRequest{
+ 		run utils.sonarDataSimulator.sonarValFromUser( ResultMap, "sonarVal" )
+ 		[" val Result = ResultMap.remove(\"sonarVal\")"]
+ 		//println("Dtat from sonar: $Result")
+ 		request radar -m polar : polar( $Result,0 ) 		
+	}  
+	Transition t0 
+		whenTime 1000       -> handleAnwerTimeout
+		whenReply fromRadar -> handleRadarReply   //Blocks until answer
+	
+	State handleRadarReply{
+		printCurrentMessage
+	}
+	Goto workUsingRequest
+	
+	State handleAnwerTimeout{
+		println("WARNING: the radar does not send the answer ... ")
+	}
+	Goto workUsingRequest
 }

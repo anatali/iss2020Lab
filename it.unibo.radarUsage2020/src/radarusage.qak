@@ -3,14 +3,17 @@
  * A PROJECT model for the robot/radar system
  * =======================================================
  */
-System radarusage 
+System /*-trace*/ radarusage 
+
+mqttBroker "localhost" : 1883
 
 Event    sonar : sonar(D)
 Request  polar : polar(D,A)
 Reply    fromRadar : fromRadar(X) 
+Dispatch polar : polar(D,A)
 
-Context ctxRadar      ip [ host= "192.168.1.8"   port= 8038 ]
-Context ctxRadarUsage ip [ host= "localhost"     port= 8044 ]
+Context ctxRadar      ip [ host= "192.168.1.8"   port= 8038 ] +mqtt
+Context ctxRadarUsage ip [ host= "localhost"     port= 8044 ] +mqtt  
 
 ExternalQActor radar context ctxRadar
  
@@ -19,9 +22,20 @@ QActor demousage context ctxRadarUsage{
 	State s0 initial{
 		println("demousage start")
 	}
-	Goto work 
-	 
-	State work{
+	Goto workUsingDispatch
+	
+	State workUsingDispatch{
+		forward radar -m polar : polar( 0,0 )
+		delay 500
+		forward radar -m polar : polar( 45,0 ) 
+		delay 500
+		forward radar -m polar : polar( 90,0 )
+		delay 500
+		forward radar -m polar : polar( 120,0 )
+	}
+	Goto workUsingRequest
+	
+	State workUsingRequest{
  		run utils.sonarDataSimulator.sonarValFromUser( ResultMap, "sonarVal" )
  		[" val Result = ResultMap.remove(\"sonarVal\")"]
  		//println("Dtat from sonar: $Result")
@@ -34,10 +48,10 @@ QActor demousage context ctxRadarUsage{
 	State handleRadarReply{
 		printCurrentMessage
 	}
-	Goto work
+	Goto workUsingRequest
 	
 	State handleAnwerTimeout{
 		println("WARNING: the radar does not send the answer ... ")
 	}
-	Goto work
+	Goto workUsingRequest
 }

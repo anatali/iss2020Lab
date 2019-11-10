@@ -1,0 +1,364 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <!--
+<link rel="stylesheet" type="text/css" href="../css/issStyle1.css">
+<script type="text/javascript" src="../css/issStyle.js"></script>
+-->
+<style type="text/css">
+<!--
+body
+{
+    margin-left:  30px;
+    margin-right: 30px;
+};
+
+P
+{
+    font-family: Tahoma;
+    font-size: 10pt;
+};
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+}
+
+a:hover {
+    background-color: #cccccc;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #242424;
+    background-color: transparent;
+}
+
+h1, h2, h3 {
+    color: #242424;
+    clear: left;
+    font: 100% Tahoma, Helvetica, Arial, sans-serif;
+    margin: 10;
+    margin-right: 15px;
+    margin-bottom: 0.5em;
+    padding-top: 0.5em;
+    border-bottom: 1px solid #242424;
+}
+
+h1 {
+    font-size: 150%;
+    background-color: #b2c0ff;
+}
+
+h2 {
+    background-color: #d9fbff;
+    font-size: 110%;
+}
+
+h3 {
+	background-color: #e6ccff;
+    font-size: 80%;
+}
+h4 {
+    background-color: #99ffcc;
+    font-size: 100%;
+	width: 750px;
+}
+#i {
+    color: #ff1010;
+}
+tt{
+	font-family: "Arial";
+    font-size: 80%;
+	color: #006600;
+}
+em{
+	font-family: "Arial";
+    font-size: 80%;
+	font-weight: bold;
+	border-style:solid;
+	border-color: #ccffff;
+    color: #0033cc;
+}
+bc{
+	font-family: "Arial";
+	font-size: 80%;
+	font-weight: bold;
+    color: #990000;
+	background-color: #fcf8c7;
+}
+k{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #990000;
+	 
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	 
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	 
+}
+pre{
+	font-family: "Helvetica";
+	font-size: 90%;
+	background-color: #fcf8c7;
+	border: 1px solid blue;
+}
+m{
+	font-family: "Helvetica";
+	line-height: 100%;
+ 	font-size: 75%;
+}
+div.body{
+	width: 800px;
+    font-size: 18px;
+}    
+div.req{
+	background-color: #d9ffb3;
+    font-size: 18px;
+	width: 700px;
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}       
+div.remark{
+	background-color: #FFFC33;     
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}  
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}         
+    
+  -->
+</style>
+    
+<head>
+   
+<title>LabSonar_2020</title></head>
+    
+<body>
+<div id="body">
+<h1>LabRadarGui | Radar GUI as a service<font size="5"></font> </h1>
+
+In this work we will build a <em>radarGuiservice</em> that shows data on a graphical interface that looks like the screen of a radar. These  data could be:
+<ul>
+<li>simulated by an user, by using a proper utility; for example
+<a href="../resources/utils/sonarDataSimulator.kt" target="code">sonarDataSimulator.kt</a> that reads the data from a user console.
+<br/><br/>
+</li>
+<li>produced by a <tt>HC-SR04</tt> sonar device mounted on the front of a ddr robot (<em>robot-sonar</em>). For example, 
+<a href="../resources/utils/SonarAlone.c" target="code">SonarAlone.c</a> that - on a RaspberryPi - reads sonar data from <tt>HC-SR04</tt> and 
+writes these data on the standard output.
+<br/><br/>
+<center><img src="./img/robotRadar.png" alt="robotRadar" width="50%"  /></center>
+ </li>
+
+</ul>
+
+The library <k>radarPojo.jar</k> (from the project <i>it.unibo.java.radar</i>) provides an object-utility 
+(<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.java.radar/src/radarPojo/radarSupport.java" target="code">
+radarSupport.java</a>) to create a radar-like-GUI and to show values on that GUI. It could be useful in building the <em>radarGuiservice</em>.
+<br/>
+
+ 
+<h2>A bottom-up approach </h2>
+
+In a bottom-up approach, the software designer must find a way to make the radar able to receive the sonar data produced by the <em>robot-sonar</em>. 
+Thus, there are two main problems to solve:
+
+<ol>
+<li>Find a way to transmit data from the <em>robot-sonar</em> to the <em>radarGui</em>.</li>
+<li>Build a new radar component (the <em>radarGuiservice</em> indeed) able to receive sonar-data and to display them by using the available 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.java.radar/src/radarPojo/radarSupport.java" target="code">
+radarSupport.java</a></li>
+</ol>
+
+The picture below shows our initial situation:
+
+
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" ><img src="./img/RobotSonarStarting.png" alt="RobotSonarStarting" width="100%"  /></td>
+<td><m>We have to write code in order to allow data to flow from the <em>robot-sonar</em> to the <em>radarGui</em>, by finding a proper
+<ks>component integration strategy</ks>.
+</m>  </td>
+</tr>
+</tbody>
+</table>
+<br/>
+
+The picture below shows two main component integration strategies:
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" >
+<img src="./img/srrIntegrate1.png" alt="srrIntegrate1" width="100%"  /></td>
+<td><m> <h3>Direct communication</h3>
+Data might flow from the <em>robot-sonar</em> to the <em>radarGui</em>, by using a 
+two-way point-to-point <ks>communication protocol</ks> (e.g.  (TCP, UDP, BTH, HTTP, …).
+</m>  </td>
+</tr>
+
+<tr>
+<td style="width:50%" >
+<img src="./img/srrIntegrate2.png" alt="srrIntegrate2" width="100%"  /></td>
+<td><m> <h3>Using a middleware </h3>
+Data might flow from the <em>robot-sonar</em> to the <em>radarGui</em>, by using a 
+mediator, like a MQTT broker, a CoAP resource, a TupleSpace etc.
+</m>  </td>
+</tr>
+</tbody>
+</table>
+<br/>
+
+In both cases we have to write proper code 'around' our starting available resources.
+
+<h3>Interaction based on TCP</h3>
+A direct communication based on some standard protocol (e.g. TCP)  can be implemented in a quite easy way. <br/>
+The main project choice is related to
+question of the location of the server-TCP socket. The most 'natural' choice seems to activate a the server-socket
+on the node that runs the <em>radarGui</em>, by considering (in a <tt>IOT</tt> perspective) the radar  as a 'service' used by the 'robot-as-thing'.
+<br/><br/>
+The task of building such a TCP-based system is left to the reader, with the goal to keep track of the time required
+to build a working prototype and to 'document' in a proper way the solution. 
+
+<h3>Interaction based on CoAP</h3>
+
+<a href="../resources/coap/sonarDataSimulatorCoap.kt" target="code">sonarDataSimulatorCoap.kt</a>
+<br/><br/>
+<a href="../resources/coap/Resource.java" target="code">Resource.java</a>
+<br/><br/>
+<a href="../resources/coap/CoapSupport.java" target="code">CoapSupport.java</a>
+<br/><br/>
+<a href="../resources/coap/RadarGuiCoap.java" target="code">RadarGuiCoap.java</a>
+<br/><br/>
+
+<h2>A top-down approach </h2>
+The <em>robot-sonar</em> is viewed as an autonomous source of data, while the <em>radarGui</em> is viewed as a service
+able to receive sonar data and to handle them in a proper way.<br/><br/>
+
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" ><img src="./img/srrIntegrateModel.png" alt="srrIntegrateModel" width="100%"  /></td>
+<td><m> From the logical point of view, the <em>robot-sonar</em> is viewed here as an emitter that:
+<ol>
+<li>can send information to the <em>radarGui</em> in a <i>'fire-and-forget'</i> way.</li>
+<li>can send to the <em>radarGui</em> a <i>request</i> to show the data, by expecting an <tt>answer</tt> (or an <tt>ack</tt>) to it.</li>
+<li>can emit information 'in the world' without any specific destination.</li>
+</ol>
+
+The picture excludes the idea of 'polling', i.e. that the <em>radarGui</em> explicitly asks the <em>robot-sonar</em> for sonar-data.
+</m>  </td>
+</tr>
+</tbody>
+</table>
+<br/>
+
+Thus, in a top-down approach to software development, we aim at leaving technological details 'in the background' by focusing our
+attention on the 'logical-interaction' between our system components.
+<br/><br/>
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" ><img src="./img/robotAsDataSourceConceptual.png" alt="robotAsDataSourceConceptual" width="100%"  /></td>
+<td><m> From the logical point of view:
+<ol>
+<li>the term <em>Dispatch</em> is used to capture the idea of information sent from a source to a destination in a 'fire-and-forget' way.</li>
+<li>the term <em>Request</em>  is used to capture the idea of the request of execution of some service, by expecting an <tt>answer</tt> (or an <tt>ack</tt>) to it.</li>
+<li>the term <em>Request</em>  is used to capture the idea that information can be emitted 'in the world' without any specific destination.</li>
+</ol>
+
+Each of these terms captures an abstraction can should be implemented in some way.
+</m>  
+</td>
+</tr>
+</tbody>
+</table>
+<br/>
+
+<h2>A model-based approach</h2> 
+<a href="../src/radar.qak" target="code">radar.qak</a>:
+
+ 
+<!--
+A ddr robot  equipped with a <tt>HC-SR04</tt> sonar device on its front can be considered as an autonomous agent, able to produce sonar data
+that can be consumed by some other (remote) agent.<br/>
+In this work, our consumer will be a device able to show to data on a <tt>GUI</tt>, like the 'radar' made available (as a plain object) by the project
+<i>it.unibo.java.radar</i>.
+
+<center><img src="./img/robotRadar.png" alt="robotRadar" width="50%"  /></center>
+ 
+<h2 id="problemrr">The interaction sonar-radar</h2>
+
+The project <i>it.unibo.java.radar</i> deploys the library <tt>radarPojo.jar</tt>  that provides an object utility to create
+a radar-GUI and to show values on that GUI:
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.java.radar/src/radarPojo/radarSupport.java" target="code">
+radarSupport.java</a>.
+<br/><br/>
+
+
+
+
+The right part of the picture is a possible step towards a more high-level way of reasoning, based on a custom set
+of communication-pattern names (dispatch, request, event). The intent id to capture (or better to express) the <k>logic</k> of the
+interaction between the robot and the radar, rather than the particular low-level technology that makes such an interaction possible.
+<br/><br/>
+
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" ><img src="./img/robotAsDataSource.png" alt="robotAsDataSource" width="100%"  /></td>
+<td> <img src="./img/robotAsDataSourceConceptual.png" alt="robotAsDataSourceConceptual" width="100%"  /></td>
+</tr>
+</tbody>
+</table>
+<br/>
+
+
+
+
+<h3>Producers of sonar data</h3>
+<a href="../src/kotlincode/sonarOnPcSimulate.kt" target="code">sonarOnPcSimulate.kt</a>: provides a simulator
+of sonar data that might be useful during software development in absence of a RaspberryPi. <br/>
+<m>
+This class implements a process that:
+<ol>
+<li>generates a sonar value <tt>V</tt> by reading an input value from the user-console;</li>
+<li>creates an event <tt>EV</tt> as an instance of <tt>ApplMessage</tt>. For example:
+<pre>
+msg(sonar,event,sonaronpcsimulated,none,sonar(2,57),2)
+</pre>
+<li>updates the CoAP resource
+ <a href="../src/javacode/ResourceSonar.java" target="code">ResourceSonar.java</a>
+ using the operation <tt>updateTheResource(String msg)</tt> defined in
+ <a href="../src/javacode/CoapSupport.java" target="code">CoapSupport.java</a>
+ </li>
+</ol>
+</m>
+-->
+
+<br/><br/>
+</div>  
+
+ 
+
+<div style="background-color:rgba(86, 56, 253, 0.9); width:100%;text-align:center;font-size:small;color:white">
+By AN Unibo-DISI  
+</div> 
+
+</body>
+</html>

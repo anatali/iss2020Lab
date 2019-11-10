@@ -26,19 +26,13 @@ class Radar ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scope
 				state("waitForDataToShow") { //this:State
 					action { //it:State
 					}
-					 transition(edgeName="t00",targetState="showSpot",cond=whenRequest("polar"))
+					 transition(edgeName="t00",targetState="showSpot",cond=whenDispatch("polar"))
 				}	 
 				state("showSpot") { //this:State
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("polar(D,A)"), Term.createTerm("polar(D,A)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								
-												val Distance = payloadArg(0)
-											    val DistInt  = Distance.toInt()
-												val Angle    = payloadArg(1) 
-								if(DistInt <= 90){ radarPojo.radarSupport.update( Distance, Angle  )
-								answer("polar", "fromRadar", "fromRadar(done)"   )  
-								 }
+								radarPojo.radarSupport.update( payloadArg(0), payloadArg(1)  )
 						}
 					}
 					 transition( edgeName="goto",targetState="waitForDataToShow", cond=doswitch() )

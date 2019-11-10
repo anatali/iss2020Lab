@@ -1,16 +1,16 @@
 /*
 ================================================================================
-build_ctxRadar.gradle
+build_ctxRadarGui.gradle
 GENERATED ONLY ONCE
 USAGE:	 
 	gradle build eclipse		//to set the dependency on the library
-	gradle   -b build_ctxRadar.gradle distZip //for executable jar and distribution
+	gradle   -b build_ctxRadarGui.gradle distZip //for executable jar and distribution
 	
-	gradle   -b build_ctxRadar.gradle qawrapper
-	gradlew  -b build_ctxRadar.gradle eclipse		//to set the dependency on the library
-	gradlew  -b build_ctxRadar.gradle build
-	gradlew  -b build_ctxRadar.gradle -q tasks --all
-	gradlew  -b build_ctxRadar.gradle cleanDistDir	//to clean the src directory
+	gradle   -b build_ctxRadarGui.gradle qawrapper
+	gradlew  -b build_ctxRadarGui.gradle eclipse		//to set the dependency on the library
+	gradlew  -b build_ctxRadarGui.gradle build
+	gradlew  -b build_ctxRadarGui.gradle -q tasks --all
+	gradlew  -b build_ctxRadarGui.gradle cleanDistDir	//to clean the src directory
 ================================================================================
 */
 plugins {
@@ -54,8 +54,6 @@ dependencies {
 //MONGO
 	// https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver
 	//compile group: 'org.mongodb', name: 'mongo-java-driver', version: '3.8.2'
-//LOG
-	compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'	//INCLUDE log4j properties in source
 
 //CUSTOM
     compile name: 'uniboInterfaces'
@@ -79,8 +77,6 @@ dependencies {
     //compile name: 'it.unibo.planner'
  	// https://mvnrepository.com/artifact/com.googlecode.aima-java/aima-core
 	compile group: 'com.googlecode.aima-java', name: 'aima-core', version: '3.0.0'
-	
-	
 }
 
 compileKotlin {
@@ -92,7 +88,7 @@ compileTestKotlin {
 
 sourceSets {
     main.java.srcDirs += 'src'
-    main.java.srcDirs += 'resources'
+    //main.java.srcDirs += 'resources'
 }
 /*
 mainClassName = 'it.unibo.TODOKt'

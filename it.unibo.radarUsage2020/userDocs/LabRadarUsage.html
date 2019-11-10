@@ -150,14 +150,14 @@ table, th, td {
     
 <body>
 <div id="body">
-<h1>LabSonarRadar | A robot-radar system <font size="5"></font> </h1>
+<h1>LabSonarRadar | Sonar data to a radar GUI <font size="5"></font> </h1>
 
  
 
 
 A ddr robot  equipped with a <tt>HC-SR04</tt> sonar device on its front can be considered as an autonomous agent, able to produce sonar data
-that can be consumed by some other (remote) agent.
-In this section, our consumer will be a device able to show to data on a <tt>GUI</tt>, like the 'radar' made available (as a plain object) by the project
+that can be consumed by some other (remote) agent.<br/>
+In this work, our consumer will be a device able to show to data on a <tt>GUI</tt>, like the 'radar' made available (as a plain object) by the project
 <i>it.unibo.java.radar</i>.
 
 <center><img src="./img/robotRadar.png" alt="robotRadar" width="50%"  /></center>
@@ -167,18 +167,18 @@ In this section, our consumer will be a device able to show to data on a <tt>GUI
 
 
  
-<h2 id="problemrr">The interaction robot-radar</h2>
+<h2 id="problemrr">The interaction sonar-radar</h2>
 
 The project <i>it.unibo.java.radar</i> deploys the library <tt>radarPojo.jar</tt>  that provides an object utility to create
 a radar-GUI and to show values on that GUI:
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.java.radar/src/radarPojo/radarSupport.java" target="code">
 radarSupport.java</a>.
 <br/><br/>
-In a bottom-up approach, the software designer must find a way to make the radar able to receive the sonar data produced by the robot. Thus the designer
-must face two problems:
+In a bottom-up approach, the software designer must find a way to make the radar able to receive the sonar data produced by the sonar on the robot (robot-sonar). 
+Thus the designer must face two problems:
 
 <ol>
-<li>Find a way to transmit data from the robot to the radar.</li>
+<li>Find a way to transmit data from the robot-sonar to the radar.</li>
 <li>Build a new radar component able to receive data and to display them by using the available 
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.java.radar/src/radarPojo/radarSupport.java" target="code">
 radarSupport.java</a></li>
@@ -208,7 +208,7 @@ interaction between the robot and the radar, rather than the particular low-leve
 <br/>
 
 <h3>Interaction based on TCP</h3>
-A direct communication robot-radar based on some standard protocol (e.g. TCP) 
+A direct communication robot-sonar/radar based on some standard protocol (e.g. TCP) 
 can be implemented in a quite easy way. <br/>
 The main project choice is related to
 question of the location of the server-TCP socket. The most 'natural' choice seems to activate a the server-socket
@@ -216,9 +216,15 @@ on the radar, by considering (in a IOT perspective) the radar  as a 'service' us
 <br/><br/>
 The task of building such a TCP-based system is left to the reader, with the goal to keep track of the time required
 to build a working prototype and to 'document' in a proper way the solution. 
- 
-  
 
+
+<h2>A model-based approach</h2>
+
+<a href="../src/radar.qak" target="code">radar.qak</a>:
+
+
+  
+<!--
 
 <h3>Producers of sonar data</h3>
 <a href="../src/kotlincode/sonarOnPcSimulate.kt" target="code">sonarOnPcSimulate.kt</a>: provides a simulator
@@ -238,7 +244,9 @@ msg(sonar,event,sonaronpcsimulated,none,sonar(2,57),2)
  </li>
 </ol>
 </m>
+-->
 
+<br/><br/>
 </div>  
 
  
