@@ -19,28 +19,28 @@ class Demo ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scope)
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						println("demo STARTS")
+						println("demo STARTS working using dispatch")
 						delay(4000) 
-						forward("polar", "polar(0,0)" ,"radar" ) 
+						forward("polar", "polar(0,0)" ,"radargui" ) 
 						delay(500) 
-						forward("polar", "polar(45,0)" ,"radar" ) 
+						forward("polar", "polar(45,0)" ,"radargui" ) 
 						delay(500) 
-						forward("polar", "polar(90,0)" ,"radar" ) 
+						forward("polar", "polar(90,0)" ,"radargui" ) 
 						delay(500) 
-						forward("polar", "polar(120,0)" ,"radar" ) 
+						forward("polar", "polar(120,0)" ,"radargui" ) 
 					}
-					 transition( edgeName="goto",targetState="workUsingRequest", cond=doswitch() )
+					 transition( edgeName="goto",targetState="workUsingRequestNoWait", cond=doswitch() )
 				}	 
 				state("workUsingRequest") { //this:State
 					action { //it:State
 						utils.sonarDataSimulator.sonarValFromUser( ResultMap, "sonarVal"  )
 						 val Result = ResultMap.remove("sonarVal")
-						request("polar", "polar($Result,0)" ,"radar" )  
+						request("polar", "polar($Result,0)" ,"radargui" )  
 						stateTimer = TimerActor("timer_workUsingRequest", 
 							scope, context!!, "local_tout_demo_workUsingRequest", 1000.toLong() )
 					}
 					 transition(edgeName="t02",targetState="handleAnwerTimeout",cond=whenTimeout("local_tout_demo_workUsingRequest"))   
-					transition(edgeName="t03",targetState="handleRadarReply",cond=whenReply("fromRadar"))
+					transition(edgeName="t03",targetState="handleRadarReply",cond=whenReply("fromRadarGui"))
 				}	 
 				state("handleRadarReply") { //this:State
 					action { //it:State
@@ -53,6 +53,25 @@ class Demo ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scope)
 						println("WARNING: the radar does not send the answer ... ")
 					}
 					 transition( edgeName="goto",targetState="workUsingRequest", cond=doswitch() )
+				}	 
+				state("workUsingRequestNoWait") { //this:State
+					action { //it:State
+						request("polar", "polar(30,90)" ,"radargui" )  
+						delay(1000) 
+						request("polar", "polar(50,90)" ,"radargui" )  
+						delay(1000) 
+						request("polar", "polar(70,90)" ,"radargui" )  
+					}
+					 transition( edgeName="goto",targetState="handleAllRadarReply", cond=doswitch() )
+				}	 
+				state("handleAllRadarReply") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+						stateTimer = TimerActor("timer_handleAllRadarReply", 
+							scope, context!!, "local_tout_demo_handleAllRadarReply", 1000.toLong() )
+					}
+					 transition(edgeName="t04",targetState="handleAnwerTimeout",cond=whenTimeout("local_tout_demo_handleAllRadarReply"))   
+					transition(edgeName="t05",targetState="handleAllRadarReply",cond=whenReply("fromRadarGui"))
 				}	 
 			}
 		}

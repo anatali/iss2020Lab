@@ -1,7 +1,7 @@
 %====================================================================================
-% radarsys description   
+% robotradarsys description   
 %====================================================================================
 mqttBroker("localhost", "1883").
 context(ctxradargui, "localhost",  "TCP", "8038").
- qactor( radar, ctxradargui, "it.unibo.radar.Radar").
+ qactor( radargui, ctxradargui, "it.unibo.radargui.Radargui").
   qactor( demo, ctxradargui, "it.unibo.demo.Demo").

@@ -150,165 +150,40 @@ table, th, td {
     
 <body>
 <div id="body">
-<h1>LabSonar_2020 | A robot-radar system <font size="5"></font> </h1>
+<h1>LabRobotRadar_2020 | A robot-radar system <font size="5"></font> </h1>
 
- 
-
-
-A ddr robot  equipped with a <tt>HC-SR04</tt> sonar device on its front can be considered as an autonomous agent, able to produce sonar data
-that can be consumed by some other (remote) agent.
-In this section, our consumer will be a device able to show to data on a <tt>GUI</tt>, like the 'radar' made available (as a plain object) by the project
-<i>it.unibo.java.radar</i>.
-
-<center><img src="./img/robotRadar.png" alt="robotRadar" width="50%"  /></center>
-
-<h2>Handling the sonar</h2> 
-
-<table style="width:98%">
-<tbody>	
-<tr>
-<td style="width:50%" ><a href="../src/kotlincode/sonarOnRasp.kt" target="code">sonarOnRasp.kt</a></td>
-<td><m>An object written in Kotlin that 
-<li>starts <a href="../resources/sensors/SonarAlone.c" target="code">SonarAlone.c</a></li>
-<li>reads sonar data from the standard input</li>
-<li>writes sonar data on the standard output</li>
-</m>  </td>
-</tr>
-</tbody>
-</table>
-
-
-
-<br/>
-
-<h2 id="problemrr">The interaction robot-radar</h2>
-
-The project <i>it.unibo.java.radar</i> deploys the library <tt>radarPojo.jar</tt>  that provides an object utility to create
-a radar-GUI and to show values on that GUI:
-<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.java.radar/src/radarPojo/radarSupport.java" target="code">
-radarSupport.java</a>.
+The goal of this work is to build a distributed version of the system described in 
+ <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qak.radar2020/userDocs/LabRadarGui.html" target="web">
+LabRadarGui | Radar GUI as a service</a>  in which sonar data are produced by a <tt>HC-SR04</tt> device mounted on a RaspberryPi.
 <br/><br/>
-In a bottom-up approach, the software designer must find a way to make the radar able to receive the sonar data produced by the robot. Thus the designer
-must face two problems:
-
-<ol>
-<li>Find a way to transmit data from the robot to the radar.</li>
-<li>Build a new radar component able to receive data and to display them by using the available 
-<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.java.radar/src/radarPojo/radarSupport.java" target="code">
-radarSupport.java</a></li>
-
-</ol>
-
-The picture below (left part) shows two main integration strategies:
-
-<ol>
-<li>The use of a two-way point-to-point communication protocol (e.g. TCP/UDP/etc.). </li>
-<li>The use of a middleware, for example a MQTT broker or a CoAP resource.</li>
-</ol>
-
-The right part of the picture is a possible step towards a more high-level way of reasoning, based on a custom set
-of communication-pattern names (dispatch, request, event). The intent id to capture (or better to express) the <k>logic</k> of the
-interaction between the robot and the radar, rather than the particular low-level technology that makes such an interaction possible.
+The interaction between the <em>robot-sonar</em> and the <em>radarGuiservice</em> will be based on a CoAP Resource, according to the architecture
+shown in the following figure:
 <br/><br/>
-
-<table style="width:98%">
-<tbody>	
-<tr>
-<td style="width:50%" ><img src="./img/robotAsDataSource.png" alt="robotAsDataSource" width="100%"  /></td>
-<td> <img src="./img/robotAsDataSourceConceptual.png" alt="robotAsDataSourceConceptual" width="100%"  /></td>
-</tr>
-</tbody>
-</table>
-<br/>
-In the following, we will base our low-level communication technology on the CoAP RESTful protocol and on the concept of (CoaP)<k>resource</k>.
- 
-
-
-<h2>CoAP-based interaction </h2>
-
-Let us start from the basic principles and concepts of interaction among distributed agents related to the Constrained Application Protocol
-reported in 
-<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.coapintro/userDocs/LabCoAP.html" target="lab">
-LabCoAP | Introduction to CoAP</a>.
-<br/><br/>
-Since REST is a <em>resource-oriented architecture</em>,at the center of our system,  there is now the <k>CoapResource</k>
-(<a href="../src/javacode/Resource.java" target="code">Resource.java</a>) defined as follows:
-<table style="width:100%" border="1">
-<tr>
-<td style="width:50%">
-<pre>
-public class Resource extends CoapResource {
-...
-}
-	public static void main(String[] args) {
-		CoapServer server = new CoapServer();
-		server.add( 
-				new Resource("robot").add(
-					new Resource("sonar") )
-		);
-		server.start();
-	}
-
-</pre>
-
-</td>
-
-<td>The device has <tt>robot</tt> as root and <tt>sonar</tt> as its sensor resource:
-<img src="./img/urlExample.png" alt="urlExample" width="100%"  /><br/><br/>
-
- 
-</td>
-<m></m>
-</tr>
-</table>
-
- 
-
-This resource allows us to acquire sonar data in RESTful way, by using the CoAP protocol.
-For example:
-<table style="width:100%" border="1">
-<tr>
-<td style="width:50%">
-<pre>
-CoapClient client = new CoapClient();
-String uriStr     = "coap://localhost:5683/robot/sonar";
-client.setURI( uriStr );
-CoapResponse respGet = client.get();
-String sonarData = respGet.getResponseText()
-</pre>
-
-</td>
-<td></td>
-</tr>
-</table>
-
-<br/><br/>
- 
- 
-
- <table style="width:98%">
+  <table style="width:98%">
 <tbody>	
 <tr>
 <td style="width:60%" ><img src="./img/raspSonarCoap.png" alt="raspSonarCoap.png" width="100%"  /></td>
 <td> 
 
-<li><a href="../src/javacode/Resource.java" target="code">Resource.java</a> is the CoapResource. 
+<li><a href="../src/javacode/Resource.java" target="code">Resource.java</a> is the CoAP Resource. 
 <br/><br/></li>
+<li>
+<a href="../resources/sensors/SonarAlone.c" target="code">SonarAlone.c</a> writes <tt>HC-SR04</tt> data on the standard output.
+<br/><br/></li>
+
 <li><a href="../src/javacode/SonarOnRaspCoap.java" target="code">SonarOnRaspCoap.java</a> runs on the  
-RaspberryPi. It is <b>producer</b> of data of form :
+RaspberryPi. It reads sonar-data and updates the  CoAP Resource with 'messages'  of form :
 
 <pre>
-msg(sonar,event,robot,none,sonar(V),N)
+<ks>msg(sonar,event,robot,none,sonar(V),N)</ks>
 </pre>
-It uses 
-<a href="../resources/sensors/SonarAlone.c" target="code">SonarAlone.c</a> that writes <tt>HC-SR04</tt> data on the standard output.
-<br/><br/></li>
+</li>
 
 <li>
-<a href="../src/javacode/ResourceObserverRadar.java" target="code">ResourceObserverRadar.java</a> is the application
-that reads the sonar data available of the resource
+<a href="../src/javacode/ResourceObserverRadar.java" target="code">ResourceObserverRadar.java</a> is the <em>radarGuiservice</em>
+that reads 'messages' from the  CoAP Resource and updates the GUI
 <br/><br/></li>
-<li><a href="../src/javacode/CoapSupport.java" target="code">CoapSupport.java</a></li>
+<li><a href="../src/javacode/CoapSupport.java" target="code">CoapSupport.java</a> is the Utility to access the CoAP Resource</li>
 <m></m>
 </td>
 </tr>
@@ -507,3 +382,133 @@ By AN Unibo-DISI
 
 </body>
 </html>
+
+
+<!--
+A ddr robot  equipped with a <tt>HC-SR04</tt> sonar device on its front can be considered as an autonomous agent, able to produce sonar data
+that can be consumed by some other (remote) agent.
+In this section, our consumer will be a device able to show to data on a <tt>GUI</tt>, like the 'radar' made available (as a plain object) by the project
+<i>it.unibo.java.radar</i>.
+
+<center><img src="./img/robotRadar.png" alt="robotRadar" width="50%"  /></center>
+
+<h2>Handling the sonar</h2> 
+
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" ><a href="../src/kotlincode/sonarOnRasp.kt" target="code">sonarOnRasp.kt</a></td>
+<td><m>An object written in Kotlin that 
+<li>starts <a href="../resources/sensors/SonarAlone.c" target="code">SonarAlone.c</a></li>
+<li>reads sonar data from the standard input</li>
+<li>writes sonar data on the standard output</li>
+</m>  </td>
+</tr>
+</tbody>
+</table>
+
+
+
+<br/>
+
+<h2 id="problemrr">The interaction robot-radar</h2>
+
+The project <i>it.unibo.java.radar</i> deploys the library <tt>radarPojo.jar</tt>  that provides an object utility to create
+a radar-GUI and to show values on that GUI:
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.java.radar/src/radarPojo/radarSupport.java" target="code">
+radarSupport.java</a>.
+<br/><br/>
+In a bottom-up approach, the software designer must find a way to make the radar able to receive the sonar data produced by the robot. Thus the designer
+must face two problems:
+
+<ol>
+<li>Find a way to transmit data from the robot to the radar.</li>
+<li>Build a new radar component able to receive data and to display them by using the available 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.java.radar/src/radarPojo/radarSupport.java" target="code">
+radarSupport.java</a></li>
+
+</ol>
+
+The picture below (left part) shows two main integration strategies:
+
+<ol>
+<li>The use of a two-way point-to-point communication protocol (e.g. TCP/UDP/etc.). </li>
+<li>The use of a middleware, for example a MQTT broker or a CoAP resource.</li>
+</ol>
+
+The right part of the picture is a possible step towards a more high-level way of reasoning, based on a custom set
+of communication-pattern names (dispatch, request, event). The intent id to capture (or better to express) the <k>logic</k> of the
+interaction between the robot and the radar, rather than the particular low-level technology that makes such an interaction possible.
+<br/><br/>
+
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" ><img src="./img/robotAsDataSource.png" alt="robotAsDataSource" width="100%"  /></td>
+<td> <img src="./img/robotAsDataSourceConceptual.png" alt="robotAsDataSourceConceptual" width="100%"  /></td>
+</tr>
+</tbody>
+</table>
+<br/>
+In the following, we will base our low-level communication technology on the CoAP RESTful protocol and on the concept of (CoaP)<k>resource</k>.
+ 
+
+
+<h2>CoAP-based interaction </h2>
+
+Let us start from the basic principles and concepts of interaction among distributed agents related to the Constrained Application Protocol
+reported in 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.coapintro/userDocs/LabCoAP.html" target="lab">
+LabCoAP | Introduction to CoAP</a>.
+<br/><br/>
+Since REST is a <em>resource-oriented architecture</em>,at the center of our system,  there is now the <k>CoapResource</k>
+(<a href="../src/javacode/Resource.java" target="code">Resource.java</a>) defined as follows:
+<table style="width:100%" border="1">
+<tr>
+<td style="width:50%">
+<pre>
+public class Resource extends CoapResource {
+...
+}
+	public static void main(String[] args) {
+		CoapServer server = new CoapServer();
+		server.add( 
+				new Resource("robot").add(
+					new Resource("sonar") )
+		);
+		server.start();
+	}
+
+</pre>
+
+</td>
+
+<td>The device has <tt>robot</tt> as root and <tt>sonar</tt> as its sensor resource:
+<img src="./img/urlExample.png" alt="urlExample" width="100%"  /><br/><br/>
+
+ 
+</td>
+<m></m>
+</tr>
+</table>
+
+ 
+
+This resource allows us to acquire sonar data in RESTful way, by using the CoAP protocol.
+For example:
+<table style="width:100%" border="1">
+<tr>
+<td style="width:50%">
+<pre>
+CoapClient client = new CoapClient();
+String uriStr     = "coap://localhost:5683/robot/sonar";
+client.setURI( uriStr );
+CoapResponse respGet = client.get();
+String sonarData = respGet.getResponseText()
+</pre>
+
+</td>
+<td></td>
+</tr>
+</table>
+-->

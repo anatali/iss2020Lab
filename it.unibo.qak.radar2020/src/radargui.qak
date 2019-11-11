@@ -3,15 +3,15 @@
  * A radar-GUI as a service
  * =======================================================
  */
-System radarsys   
+System robotradarsys   
 
 mqttBroker "localhost" : 1883 
 
-Request  polar     : polar(D,A) 
-Dispatch polar     : polar(D,A) 
-Reply    fromRadar : fromRadar(X)    
+Request  polar        : polar(D,A) 
+Dispatch polar        : polar(D,A) 
+Reply    fromRadarGui : fromRadarGui(X)    
  
-Context ctxRadarGui ip [ host= "localhost"   port= 8038 ] +mqtt
+Context ctxRadarGui ip [ host= "localhost"   port= 8038 ] //+mqtt
  
 /*
  * -----------------------------------------------------------
@@ -19,7 +19,7 @@ Context ctxRadarGui ip [ host= "localhost"   port= 8038 ] +mqtt
  * (it is the 'exoskeleton - decorator')
  * -----------------------------------------------------------
  */ 
-QActor radar context ctxRadarGui{ 
+QActor radargui context ctxRadarGui{ 
 ["var DoReply     = false
   var DistanceStr = \"0\"
   var Distance    = 0
@@ -68,7 +68,7 @@ QActor radar context ctxRadarGui{
  	State showSpot{
   		if "Distance <= 90 "  {   
 			run radarPojo.radarSupport.update(  DistanceStr,  Angle )
-			if "DoReply" {  replyTo polar with fromRadar : fromRadar( done ) }
+			if "DoReply" {  replyTo polar with fromRadarGui : fromRadarGui( done($DistanceStr) ) }
  		}   
  	}
 	Goto waitForDataToShow
@@ -78,27 +78,27 @@ QActor radar context ctxRadarGui{
 QActor demo context ctxRadarGui {
 [" val ResultMap =   hashMapOf( \"key1\" to \"item1\" ) "]  //init a map to store the results of run
 	State s0 initial{
-		println("demo STARTS")
+		println("demo STARTS working using dispatch")
 		delay 4000 //give time to start the GUI
-		forward radar -m polar : polar( 0,0 )
+		forward radargui -m polar : polar( 0,0 )
 		delay 500
-		forward radar -m polar : polar( 45,0 ) 
+		forward radargui -m polar : polar( 45,0 ) 
 		delay 500
-		forward radar -m polar : polar( 90,0 )
+		forward radargui -m polar : polar( 90,0 )
 		delay 500
-		forward radar -m polar : polar( 120,0 )		
+		forward radargui -m polar : polar( 120,0 )		
 	}
-	Goto workUsingRequest
+	Goto workUsingRequestNoWait //workUsingRequest
 	
 	State workUsingRequest{
  		run utils.sonarDataSimulator.sonarValFromUser( ResultMap, "sonarVal" )
  		[" val Result = ResultMap.remove(\"sonarVal\")"]
  		//println("Dtat from sonar: $Result")
- 		request radar -m polar : polar( $Result,0 ) 		
+ 		request radargui -m polar : polar( $Result,0 ) 		
 	}  
 	Transition t0 
 		whenTime 1000       -> handleAnwerTimeout
-		whenReply fromRadar -> handleRadarReply   //Blocks until answer
+		whenReply fromRadarGui -> handleRadarReply   //Blocks until answer
 	
 	State handleRadarReply{
 		printCurrentMessage
@@ -109,4 +109,22 @@ QActor demo context ctxRadarGui {
 		println("WARNING: the radar does not send the answer ... ")
 	}
 	Goto workUsingRequest
+	
+	
+	
+	State workUsingRequestNoWait{
+   		request radargui -m polar : polar( 30,90 ) 
+   		delay 1000
+   		request radargui -m polar : polar( 50,90 )	
+   		delay 1000
+   		request radargui -m polar : polar( 70,90 )	   			
+	}  
+	Goto handleAllRadarReply    
+	
+	State handleAllRadarReply{
+		printCurrentMessage
+	}
+	Transition t0 
+		whenTime 1000          -> handleAnwerTimeout
+		whenReply fromRadarGui -> handleAllRadarReply    
 }
