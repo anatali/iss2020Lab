@@ -552,7 +552,7 @@ The picture excludes
 <br/>
 -->
 
-<h2>Towards a standard set of names</h2>
+<h2>Towards a standard set of high-level concepts</h2>
 Let us introduce a more precise (although still informal) description of the terminology used so far:<br/><br/>
 <table style="width:98%">
 <tbody>	
@@ -584,7 +584,7 @@ Using the <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss
 Qak metamodel </a>, the <em>radarGui</em> agent can be modeled as an actor able to handle messages (Dispatch, Request) or Events. 
 Let us start with the case of messages.
 
-<h2>1) A P2P message-based system model</h2>
+<h2>1.1) A P2P message-based system model</h2>
 In this case, we model the  <em>radarGui</em>  as an actor able to handle either a Dispatch or a Request. The full code is
 <a href="../src/radar.qak" target="code">radar.qak</a>; however, let us introduce the model step-by-step:
 
@@ -771,7 +771,7 @@ network communications are hidden behind the scenes in the Qak platform, that cr
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakintro2020/userDocs/LabQakIntro2020.html#QakInfrastructure" target="web">
 LabQakIntro2020.html | QakInfrastructure</a>).
  
-<h2>Using a MQTT broker</h2>
+<h2>1.2) Using a MQTT broker</h2>
 Now, let us suppose that we want to change the component interaction by using the <i>Message Queue Telemetry Transport</i> (MQTT) protocol and a 
 Moquitto MQTT broker.
 <br/><br/>
@@ -802,29 +802,33 @@ Context ctxRadarGui ip [ host= "localhost"   port= 8038 ] <k>+mqtt</k>
 QActor <ks>radargui</ks> context ctxRadarGui{ ... }
 </pre>
 </td>
-<td>With the  mqttBroker declaration and the <k>+mqtt</k> flag, we change the run-time behavior of the model.
+<td>
+<m>With the  <k>mqttBroker</k> declaration and the <k>+mqtt</k> flag, we change the run-time behavior of the model.
 <br/><br/>
 All the messages sent to the <em>radargui</em> from actors working in a different Context,
 will be published on the topic named <k>unibo/qak/radargui</k>. 
-<br/><br/>
+<br/>
 The <em>radargui</em> actor works as a subscriber
 on that topic, as described in 
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakintro2020/userDocs/LabQakIntro2020.html#mqtt" target="web">
 LabQakIntro2020.html | mqtt</a>
 <br/><br/>
 The flag <k>-trace</k> allows us to see on the standard output the details of the messages exchanged.
+<br/><br/>
+For an example of interaction with this version of the <em>radarGui</em>, see 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.radarUsage2020/userDocs/LabRadarUsage.html " target="lab">
+LabRadarUsage | Using the RadarGUI service</a>
+ 
+</m>
  </td>
 </tr>
 </tbody>
 </table>
 <br/>
 
-For an example of interaction with this version of the <em>radarGui</em>, see 
-<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.radarUsage2020/userDocs/LabRadarUsage.html " target="lab">
-LabRadarUsage | Using the RadarGUI service</a>
- 
 
-<h2>1.1) An event-based system model</h2>
+
+<h2>2) Using CoAP resources</h2>
  
 <!--
 A ddr robot  equipped with a <tt>HC-SR04</tt> sonar device on its front can be considered as an autonomous agent, able to produce sonar data
