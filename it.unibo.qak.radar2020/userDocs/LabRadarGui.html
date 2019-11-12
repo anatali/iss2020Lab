@@ -384,7 +384,7 @@ This library
 <br/>
 -->
 
-<h3 id="realdata">Using real sonar-data from the <tt>HC-SR04</tt> device</h3>
+<h3 id="realdata">Using real sonar-data from the <tt>HC-SR04</tt><tt>HC-SR04</tt> device</h3>
 Let us replace the sonar data simulator with an agent that runs on a <tt>RaspberryPi</tt>. It will use the
 <a href="../resources/utils/SonarAlone.c" target="code">SonarAlone.c</a> to acquire data from the <tt>HC-SR04</tt> device
 in order to update the CoAP resource.
@@ -434,29 +434,38 @@ the agents.
 </tr>
 </tbody> 
 </table>
-<br/>
-From the logical point of view, the <em>robot-sonar</em> could be viewed in two different ways:
+
+<h2>Interaction patterns</h2>
+
+From the logical point of view, the <em>robot-sonar</em> could be viewed in two main different ways:
 <ol>
-<li>an <ks>information-emitter</ks> agent</li>
+<li>an <ks>source</ks> agent that emits information</li>
 <li>as a <ks>resource</ks>  that stores and provides data</li>
 </ol>
  
 As a consequence, the <em>radarGui</em> could be viewed as:
 
 <ol>
-<li>an <ks>information-receiver</ks> agent</li>
+<li>an <ks>information-receiver</ks> agent that is able to <i>'perceive'</i> information emitted by the source:
+	<ol>
+	<li>by using a two-way connection-based protocol (TCP, UDP, BTH, etc)</li>
+	<li>by subscribing to a topic of a MQTT broker</li>
+	</ol>
+</li>
 <li>or as :
 	<ol>
 	<li>a <ks>resource-reader</ks> (that works in 'polling' mode)</li>
 	<li>a <ks>resource-observer</ks> (that works according to the 
-	<a href="https://en.wikipedia.org/wiki/Inversion_of_control" target="web">Inversion of Control Principle</a>(<kc>Hollywood Principle</kc>)</li>
+	<a href="https://en.wikipedia.org/wiki/Inversion_of_control" target="web">Inversion of Control Principle</a>- or <kc>Hollywood Principle</kc>)</li>
 	</li>
 	</ol>
  </li>
 </ol> 
 
-<h3>1) The emitter-receiver (meta)model</h3>
-In this (meta)model, the <em>robot-sonar</em> agent can send information to the <em>radarGui</em> agent in two main, different modes:
+Let us explore each of these patterns in a more detailed way.
+
+<h3><ks>1.1)</ks> Using connection-based protocols</h3>
+In this pattern, the <em>robot-sonar</em> agent can send information to the <em>radarGui</em> agent in two main, different modes:
 <ol>
 <li>in a <i>'fire-and-forget'</i> way.</li>
 <li>as a <i>request</i> to perform an action (e.g. show the data).</li>
@@ -476,7 +485,23 @@ In this (meta)model, the <em>robot-sonar</em> agent can send information to the 
 </tbody>
 </table>
 
-<h3>2.1) Polling</h3>
+<h3><ks>1.2)</ks> Using publish-subscribe</h3>
+In this pattern, the <em>robot-sonar</em> agent works as a <i>publisher</i> of information (on a MQTT-<tt>topic</tt>), while the <em>radarGui</em> works as
+a <i>subscriber</i> of information (on the <tt>topic</tt>).
+<br/><br/>
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" ><img src="./img/logicalBroker.png" alt="logicalBroker" width="100%"  /></td>
+<td><m>The <em>robot-sonar</em> works as a  <i>publisher</i> of information (on a MQTT-<tt>topic</tt>), while the <em>radarGui</em> works as-
+a <i>subscriber</i>. Both the components use the <tt>MQTT-Broker</tt> as a mediator, by sending a Dispatch to it.
+</m>  </td>
+</tr>
+</tbody>
+</table>
+ 
+
+<h3><ks>2.1)</ks> Polling</h3>
 The idea of 'polling' is captured by a request-based interaction, from the <em>radarGui</em>to the <em>robot-sonar</em>.
 <br/><br/>
 <table style="width:98%">
@@ -490,17 +515,18 @@ The idea of 'polling' is captured by a request-based interaction, from the <em>r
 </table>
  
 
-<h3>2.2) The resource-observer (meta)model</h3>
-In this (meta)model,  the <em>robot-sonar</em> agent produces a state-change in a resource that can be 'observed' as an <k>event</k>
-by the <em>radarGui</em>.
+<h3><ks>2.2)</ks> Resource observation</h3>
+In this pattern,  the <em>robot-sonar</em> agent produces a state-change in a resource that can be 'observed' 
+by interested components, like the the <em>radarGui</em>.
+<br/><br/> 
  
- 
- <table style="width:98%">
+<table style="width:98%">
 <tbody>	
 <tr>
-<td style="width:50%" ><img src="./img/logicalEvent.png" alt="logicalEvent" width="100%"  /></td>
-<td><m>The <em>robot-sonar</em> is logically viewed here as an emitter that  can generate information 'in the world' without any specific destination. 
-  
+<td style="width:50%" ><img src="./img/logicalObserver.png" alt="logicalObserver" width="100%"  /></td>
+<td><m>The <em>robot-sonar</em> is logically viewed here as an emitter that  can generate information for the
+'registered' components. 
+ <!-- as an <k>event</k> logicalEvent -->
 </m>  </td>
 </tr>
 </tbody>
@@ -526,7 +552,7 @@ The picture excludes
 <br/>
 -->
 
-<h3>Towards a standard set of names</h3>
+<h2>Towards a standard set of names</h2>
 Let us introduce a more precise (although still informal) description of the terminology used so far:<br/><br/>
 <table style="width:98%">
 <tbody>	
@@ -534,9 +560,9 @@ Let us introduce a more precise (although still informal) description of the ter
 <td style="width:60%" ><img src="./img/robotAsDataSourceConceptual.png" alt="robotAsDataSourceConceptual" width="100%"  /></td>
 <td><m> From the logical point of view:
 <ol>
-<li>the term <em>Dispatch</em> is used to capture the idea of information sent from a source to a destination in a 'fire-and-forget' way.</li>
-<li>the term <em>Request</em>  is used to capture the idea of the request of execution of some service, by expecting an <tt>answer</tt> (or an <tt>ack</tt>) to it.</li>
-<li>the term <em>Event</em>  is used to capture the idea that information can be emitted 'in the world' without any specific destination.</li>
+<li>the term <em>Dispatch</em> is used to capture the idea of information sent from a source to a destination in a 'fire-and-forget' way.<br/><br/></li>
+<li>the term <em>Request</em>  is used to capture the idea of the request of execution of some service, by expecting an <tt>answer</tt> (or an <tt>ack</tt>) to it.<br/><br/></li>
+<li>the term <em>Event</em>  is used to capture the idea that information can be emitted 'in the world' without any specific destination.<br/><br/></li>
 </ol>
 
 Each of these terms captures an abstraction can should be implemented in some way.
@@ -549,20 +575,20 @@ Each of these terms captures an abstraction can should be implemented in some wa
 <br/>
 The <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakintro2020/userDocs/LabQakIntro2020.html" target="web">
 Qak metamodel </a>  gives a formal definition of these terms, by providing also a run-time library (<tt>it.unibo.qakactor-1.2.jar</tt>) that can help
-in implementation and a software factory(the <tt>it.unibo.Qactork_1.1.7.</tt> plugins for Eclipse) that provides a custom (domain specific) language and code generation.
+in implementation and a software factory (the <tt>it.unibo.Qactork_1.1.7.</tt> plugins for Eclipse) that provides a custom (Domain Specific) language and code generation.
 
 
-<h2>A model-based approach</h2> 
+<h1>A model-based approach</h1> 
 
-
-<a href="../src/radar.qak" target="code">radar.qak</a>:
 Using the <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakintro2020/userDocs/LabQakIntro2020.html" target="web">
-Qak metamodel </a>, the <em>radarGui</em> agent can be modeled as an actor able to handle messages (dispatch, request) or events. 
+Qak metamodel </a>, the <em>radarGui</em> agent can be modeled as an actor able to handle messages (Dispatch, Request) or Events. 
 Let us start with the case of messages.
 
-<h3>1) An emitter-receiver system</h3>
-In this case we model the  <em>radarGui</em>  as an actor able to handle either a dispatch or a request:
+<h2>1) A P2P message-based system model</h2>
+In this case, we model the  <em>radarGui</em>  as an actor able to handle either a Dispatch or a Request. The full code is
+<a href="../src/radar.qak" target="code">radar.qak</a>; however, let us introduce the model step-by-step:
 
+<br/><br/>
 <table style="width:98%">
 <tbody>	
 <tr>
@@ -651,21 +677,20 @@ State showSpotReply{
 </pre>
  
 The state <ks>showSpot</ks> updates the GUI and (if <ks>polar</ks> was a request) sends a reply to the caller.
-<br/><br/>
-The full code is in <a href="../src/radargui.qak" target="code">radargui.qak</a> 
 </m>
 </td>
 </tr>
 </tbody>
 </table>
-<br/><br/>
-A working prototype can be easily built by introducing another actor that performs message-sending
+<br/> 
+A working prototype can be easily built by introducing another actor (<tt>sonarsimulator</tt>) that performs message-sending.
+<br/> <br/>
 <table style="width:98%">
 <tbody>	
 <tr>
 <td style="width:50%" >
 <m><pre>
-QActor demo context ctxRadarGui {
+QActor sonarsimulator context <ks>ctxRadarGui</ks> {
 [" val <ks>ResultMap</ks>=hashMapOf( \"key1\" to \"item1\" ) "]  <kc>//utility map </kc>
 	State s0 initial{
 		println("demo STARTS working using dispatch")
@@ -701,28 +726,29 @@ QActor demo context ctxRadarGui {
 }</pre></m>
  </td>
 <td><m>
-In the initial state, the simulator sends a sequence of <ks>polar</ks> messages, each as a Dispatch.
+In the initial state, the <tt>sonarsimulator</tt> sends a sequence of <ks>polar</ks> messages, each as a Dispatch.
 <br/>
 Afterwards, it sends a sequence of <ks>polar</ks> Request, by waiting for the answer after each request.
 <br/><br/>
 The Kotlin object <a href="../resources/utils/sonarDataSimulator.kt" target="code">sonarDataSimulator.kt</a> 
-provides the method <ks>sonarValFromUser</ks> that puts in the given <ks>ResultMap</ks>, with key="sonarVal" 
-a sonar value read from the user console.
-
+provides the method <ks>sonarValFromUser</ks> that puts ( with key="sonarVal" ) in the given <ks>ResultMap</ks>
+a sonar-value read from the user-console.
+</m>
 <h3>Non-blocking requests</h3>
-Let us show a possible behavior of a client that sends a sequence of requests without waiting for the reply. It
-will consume the replies at some other time
+<m>
+A client that sends a sequence of requests without waiting for the reply is shown hereunder. It
+will consume the replies at some later time.
 <pre>
 	State workUsingRequestNoWait{
-   		request radargui -m polar : polar( 30,90 ) 
+   		<k>request</k> radargui -m polar : polar( 30,90 ) 
    		delay 1000
-   		request radargui -m polar : polar( 50,90 )	
+   		<k>request</k> radargui -m polar : polar( 50,90 )	
    		delay 1000
-   		request radargui -m polar : polar( 70,90 )	   			
+   		<k>request</k> radargui -m polar : polar( 70,90 )	   			
 	}  
-	Goto handleAllRadarReply    
+	Goto <ks>handleAllRadarReply</ks>    
 	
-	State handleAllRadarReply{ <k>printCurrentMessage</k> }
+	State <ks>handleAllRadarReply</ks>{  printCurrentMessage  }
 	Transition t0 
 		whenTime 1000          -> handleAnwerTimeout
 		whenReply fromRadarGui -> handleAllRadarReply    
@@ -731,8 +757,75 @@ will consume the replies at some other time
 </tr>
 </tbody>
 </table>
+
+<h3>Final Notes (Sprint Review)</h3>
+Initially, we put the <tt>sonarsimulator</tt> in the same context of the <em>radargui</em>. Later, it can be put
+in a different context and replaced by another actor that handles real data coming from a <tt>HC-SR04</tt> sonar device. 
+An example is given in 
+
+ <br/> <br/>
+
+The model described in the file <a href="../src/radar.qak" target="code">radar.qak</a>, can be put in execution; this fact gives us
+the opportunity to interact quite soon with the customer, and to understand and fix the system requirements. All the technological details related to
+network communications are hidden behind the scenes in the Qak platform, that creates a TCP-server in each context (see
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakintro2020/userDocs/LabQakIntro2020.html#QakInfrastructure" target="web">
+LabQakIntro2020.html | QakInfrastructure</a>).
+ 
+<h2>Using a MQTT broker</h2>
+Now, let us suppose that we want to change the component interaction by using the <i>Message Queue Telemetry Transport</i> (MQTT) protocol and a 
+Moquitto MQTT broker.
+<br/><br/>
+In a bottom-up approach, it is highly probable that we have to change our code in a significant way. But we
+must ask ourselves whether the usage of a MQTT broker changes the logic of our system. If not, the model above is still valid, and we
+should 'only' replace the default QAk infrastructure (based on Context-TCP-servers)  with another infrastructure that implements the
+high level concepts of Dispatch and Request by using the MQTT broker.
+<br/><br/>
+This 'change of infrastucture' can be done by the QAk software factory by introducing a declaration for the MQTT broker to use and
+a <k>+mqtt</k> flag on the Context:
+
+
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" >
+<pre>
+System <k>-trace</k> robotradarsys   
+
+<k>mqttBroker</k> "localhost" : 1883 
+<m>
+Request  polar        : polar(D,A) 
+Dispatch polar        : polar(D,A) 
+Reply    fromRadarGui : fromRadarGui(X)    
+</m> 
+Context ctxRadarGui ip [ host= "localhost"   port= 8038 ] <k>+mqtt</k>
+
+QActor <ks>radargui</ks> context ctxRadarGui{ ... }
+</pre>
+</td>
+<td>With the  mqttBroker declaration and the <k>+mqtt</k> flag, we change the run-time behavior of the model.
+<br/><br/>
+All the messages sent to the <em>radargui</em> from actors working in a different Context,
+will be published on the topic named <k>unibo/qak/radargui</k>. 
+<br/><br/>
+The <em>radargui</em> actor works as a subscriber
+on that topic, as described in 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakintro2020/userDocs/LabQakIntro2020.html#mqtt" target="web">
+LabQakIntro2020.html | mqtt</a>
+<br/><br/>
+The flag <k>-trace</k> allows us to see on the standard output the details of the messages exchanged.
+ </td>
+</tr>
+</tbody>
+</table>
 <br/>
 
+For an example of interaction with this version of the <em>radarGui</em>, see 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.radarUsage2020/userDocs/LabRadarUsage.html " target="lab">
+LabRadarUsage | Using the RadarGUI service</a>
+ 
+
+<h2>1.1) An event-based system model</h2>
+ 
 <!--
 A ddr robot  equipped with a <tt>HC-SR04</tt> sonar device on its front can be considered as an autonomous agent, able to produce sonar data
 that can be consumed by some other (remote) agent.<br/>

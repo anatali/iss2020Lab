@@ -146,86 +146,57 @@ table, th, td {
     
 <head>
    
-<title>LabSonar_2020</title></head>
+<title>LabRadarUsage</title></head>
     
 <body>
 <div id="body">
-<h1>LabSonarRadar | Sonar data to a radar GUI <font size="5"></font> </h1>
+<h1>LabRadarUsage | Using the RadarGUI service<font size="5"></font> </h1>
 
  
-
-
-A ddr robot  equipped with a <tt>HC-SR04</tt> sonar device on its front can be considered as an autonomous agent, able to produce sonar data
-that can be consumed by some other (remote) agent.<br/>
-In this work, our consumer will be a device able to show to data on a <tt>GUI</tt>, like the 'radar' made available (as a plain object) by the project
-<i>it.unibo.java.radar</i>.
-
-<center><img src="./img/robotRadar.png" alt="robotRadar" width="50%"  /></center>
-
- 
-
-
-
- 
-<h2 id="problemrr">The interaction sonar-radar</h2>
-
-The project <i>it.unibo.java.radar</i> deploys the library <tt>radarPojo.jar</tt>  that provides an object utility to create
-a radar-GUI and to show values on that GUI:
-<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.java.radar/src/radarPojo/radarSupport.java" target="code">
-radarSupport.java</a>.
-<br/><br/>
-In a bottom-up approach, the software designer must find a way to make the radar able to receive the sonar data produced by the sonar on the robot (robot-sonar). 
-Thus the designer must face two problems:
-
-<ol>
-<li>Find a way to transmit data from the robot-sonar to the radar.</li>
-<li>Build a new radar component able to receive data and to display them by using the available 
-<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.java.radar/src/radarPojo/radarSupport.java" target="code">
-radarSupport.java</a></li>
-
-</ol>
-
-The picture below (left part) shows two main integration strategies:
-
-<ol>
-<li>The use of a two-way point-to-point communication protocol (e.g. TCP/UDP/etc.). </li>
-<li>The use of a middleware, for example a MQTT broker or a CoAP resource.</li>
-</ol>
-
-The right part of the picture is a possible step towards a more high-level way of reasoning, based on a custom set
-of communication-pattern names (dispatch, request, event). The intent id to capture (or better to express) the <k>logic</k> of the
-interaction between the robot and the radar, rather than the particular low-level technology that makes such an interaction possible.
-<br/><br/>
-
 <table style="width:98%">
 <tbody>	
 <tr>
-<td style="width:50%" ><img src="./img/robotAsDataSource.png" alt="robotAsDataSource" width="100%"  /></td>
-<td> <img src="./img/robotAsDataSourceConceptual.png" alt="robotAsDataSourceConceptual" width="100%"  /></td>
+<td style="width:55%">
+
+<pre>
+System /* -trace */ radarusage 
+
+<k>mqttBroker</k> "localhost" : 1883
+<m>
+Event    sonar : sonar(D)
+Request  polar : polar(D,A)
+Reply    fromRadarGui : fromRadarGui(X) 
+Dispatch polar : polar(D,A)
+</m>
+Context <ks>ctxRadar</ks>      ip [ host= "192.168.1.8"   port= 8038 ] <k>+mqtt</k>
+Context <ks>ctxRadarUsage</ks> ip [ host= "localhost"     port= 8044 ] 
+	//+mqtt  <kc>//required for achieving responses</kc>
+
+<k>ExternalQActor</k> <ks>radargui</ks> context ctxRadar
+
+</pre>
+
+
+ </td>
+<td>
+<m>This component uses the <em>radarGui</em> defined in 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qak.radar2020/userDocs/LabRadarGui.html" target="lab">
+LabRadarGui | Radar GUI as a service</a>.
+<br/>
+
+The full code is in <a href="../src/radarusage.qak" target="code">radarusage.qak</a> 
+</m>
+</td>
 </tr>
 </tbody>
 </table>
 <br/>
 
-<h3>Interaction based on TCP</h3>
-A direct communication robot-sonar/radar based on some standard protocol (e.g. TCP) 
-can be implemented in a quite easy way. <br/>
-The main project choice is related to
-question of the location of the server-TCP socket. The most 'natural' choice seems to activate a the server-socket
-on the radar, by considering (in a IOT perspective) the radar  as a 'service' used by the 'robot-as-thing'.
-<br/><br/>
-The task of building such a TCP-based system is left to the reader, with the goal to keep track of the time required
-to build a working prototype and to 'document' in a proper way the solution. 
-
-
-<h2>A model-based approach</h2>
-
-<a href="../src/radar.qak" target="code">radar.qak</a>:
-
+ 
 
   
 <!--
-
+<img src="./img/robotAsDataSourceConceptual.png" alt="robotAsDataSourceConceptual" width="100%"  />
 <h3>Producers of sonar data</h3>
 <a href="../src/kotlincode/sonarOnPcSimulate.kt" target="code">sonarOnPcSimulate.kt</a>: provides a simulator
 of sonar data that might be useful during software development in absence of a RaspberryPi. <br/>

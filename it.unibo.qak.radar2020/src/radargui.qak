@@ -1,9 +1,9 @@
 /*
  * =======================================================
- * A radar-GUI as a service
+ * A radargui-GUI as a service
  * =======================================================
  */
-System robotradarsys   
+System /*-trace*/ robotradarsys   
 
 mqttBroker "localhost" : 1883 
 
@@ -11,7 +11,7 @@ Request  polar        : polar(D,A)
 Dispatch polar        : polar(D,A) 
 Reply    fromRadarGui : fromRadarGui(X)    
  
-Context ctxRadarGui ip [ host= "localhost"   port= 8038 ] //+mqtt
+Context ctxRadarGui ip [ host= "localhost"   port= 8038 ] +mqtt
  
 /*
  * -----------------------------------------------------------
@@ -26,19 +26,19 @@ QActor radargui context ctxRadarGui{
   var Angle       = \"0\"
 "]
 	State s0 initial{ 
-		println("radar start") 
+		println("radargui start") 
 		run radarPojo.radarSupport.setUpRadarGui()
 	} 
 	Goto waitForDataToShow
 	
-	State waitForDataToShow{	} 
+	State waitForDataToShow{ println("radargui waitForDataToShow %%%% ")  } 
 	Transition t0  
 		 whenRequest polar -> showSpotReply
 		 whenMsg     polar -> showSpotNoReply
- 
+  
 	//WARNING: the current message is lost after an empty-move
  	State showSpotNoReply{ 
- 		//printCurrentMessage
+ 		printCurrentMessage	 
 		onMsg( polar : polar(D,A) ) {
 			["
 				DistanceStr = payloadArg(0)
@@ -60,7 +60,7 @@ QActor radargui context ctxRadarGui{
 				Angle       = payloadArg(1) 
                 DoReply     = true
 			"]
- 	 	}
+ 	 	} 
  	 }  
  	 Goto showSpot
 	
@@ -75,7 +75,7 @@ QActor radargui context ctxRadarGui{
 	
 }
 
-QActor demo context ctxRadarGui {
+QActor sonarsimulator context ctxRadarGui {
 [" val ResultMap =   hashMapOf( \"key1\" to \"item1\" ) "]  //init a map to store the results of run
 	State s0 initial{
 		println("demo STARTS working using dispatch")
@@ -91,25 +91,26 @@ QActor demo context ctxRadarGui {
 	Goto workUsingRequestNoWait //workUsingRequest
 	
 	State workUsingRequest{
- 		run utils.sonarDataSimulator.sonarValFromUser( ResultMap, "sonarVal" )
+ 		run utils.sonarDataSimulator.sonarValFromUser( ResultMap, "sonarVal" ) 
+ 		//WARNING: could block all the thread, including radargui
  		[" val Result = ResultMap.remove(\"sonarVal\")"]
  		//println("Dtat from sonar: $Result")
  		request radargui -m polar : polar( $Result,0 ) 		
 	}  
 	Transition t0 
-		whenTime 1000       -> handleAnwerTimeout
+		whenTime 1000          -> handleAnwerTimeout
 		whenReply fromRadarGui -> handleRadarReply   //Blocks until answer
 	
 	State handleRadarReply{
-		printCurrentMessage
+		printCurrentMessage //msg(local_noMsg,event,sonarsimulator,none,noMsg,6) is for eps-move
 	}
 	Goto workUsingRequest
 	
 	State handleAnwerTimeout{
-		println("WARNING: the radar does not send the answer ... ")
+		println("WARNING: the radargui does not send the answer ... ")
 	}
-	Goto workUsingRequest
-	
+	Goto workUsingRequest 
+	  
 	
 	
 	State workUsingRequestNoWait{
@@ -128,3 +129,4 @@ QActor demo context ctxRadarGui {
 		whenTime 1000          -> handleAnwerTimeout
 		whenReply fromRadarGui -> handleAllRadarReply    
 }
+
