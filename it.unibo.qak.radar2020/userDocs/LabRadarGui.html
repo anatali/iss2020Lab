@@ -238,7 +238,9 @@ two-way protocols such as <tt>TCP, UDP</tt>, etc. or a serial line (the case of 
 
 <center><img src="./img/noawtsupport.png" alt="noawtsupport" width="40%" height="40%"></center>
 
+<hr/>
 <h4>The library <tt>unibonoawtsupports</tt> </h4>
+<m>
 The library  includes:
 <ul>
 <li>a set of specialized factories (<tt>FactoryTcpProtocol</tt>, <tt>FactoryUdpProtocol</tt>, etc.) that 
@@ -257,6 +259,8 @@ public interface <k>IConnInteraction</k> {
 </pre>
 </li>
 </ul>
+</m>
+<hr/>
 
 The main project choice is related to
 question of the location of the server-TCP socket. The most 'natural' choice seems to activate a the server-socket
@@ -267,7 +271,7 @@ to build a working prototype and to 'document' in a proper way the solution.
 </div>
 
 
-<h3>Interaction based on a CoAP-Resource</h3>
+<h3 id="bottomCoap">Interaction based on a CoAP-Resource</h3>
 According to 
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.coapintro/userDocs/LabCoAP.html" target="lab">
 LabCoAP | Introduction to CoAP</a>, let us introduce first of all a CoAP resource :
@@ -391,6 +395,8 @@ The Kotlin object <a href="../resources/coap/sonarDataSimulatorCoap.kt" target="
 <li>Launch <a href="../resources/coap/sonarDataSimulatorCoap.kt" target="code">sonarDataSimulatorCoap.kt</a></li>
 </ol>
 
+<hr/>
+<m>
 Remember that the <i>Californium framework</i> makes use of the logger library <tt>slf4j</tt> that should be included
 in the dependencies: 
 <pre>
@@ -402,7 +408,8 @@ This library
 <li>Requires the presence in the directory <k>src</k> of the file <a href="../src/log4j.properties" target="code">log4j.properties</a> </li>
 <li>generates (at run-time) the file <ks>log4jInfo.log</ks></li>
 </ul>
- 
+</m>
+<hr/> 
 <!--
 <table style="width:98%">
 <tbody>	
@@ -432,8 +439,8 @@ The <em>radarGuiservice</em> is now an observer of the CoAP resource that runs o
 <br/><br/>
 The CoAP resource can run both on the Raspberry and on the PC.
 <br/><br/>
-See <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.raspIntro2020/userDocs/LabSonar_2020.html" target="lab">
-LabSonar_2020 | The interaction robot-radar</a> 
+See <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.raspIntro2020/userDocs/LabRobotRadar_2020.html" target="lab">
+LabRobotRadar_2020 | A robot-radar system</a> 
 </td>
 </tr>
 </tbody>
@@ -1013,26 +1020,24 @@ will consume the replies at some later time.
 </table>
 
 <h3>Final Notes (Sprint Review)</h3>
-Initially, we put the <tt>sonarsimulator</tt> in the same context of the <em>radargui</em>. Later, it can be put
-in a different context and replaced by another actor that handles real data coming from a <tt>HC-SR04</tt> sonar device. 
-An example is given in 
-
- <br/> <br/>
 
 The model described in the file <a href="../src/radar.qak" target="code">radar.qak</a>, can be put in execution; this fact gives us
 the opportunity to interact quite soon with the customer, and to understand and fix the system requirements. All the technological details related to
 network communications are hidden behind the scenes in the Qak platform, that creates a TCP-server in each context (see
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakintro2020/userDocs/LabQakIntro2020.html#QakInfrastructure" target="web">
 LabQakIntro2020.html | QakInfrastructure</a>).
+ <br/> <br/>
+Initially, we put the <tt>sonarsimulator</tt> in the same context of the <em>radargui</em>. Later, it can be put
+in a different context and replaced by another actor that handles real data coming from a <tt>HC-SR04</tt> sonar device. 
  
 <h2>1.2) Using a MQTT broker</h2>
 Now, let us suppose that we want to change the component interaction by using the <i>Message Queue Telemetry Transport</i> (MQTT) protocol and a 
-Moquitto MQTT broker.
+<a href="https://mosquitto.org/" target="web">Mosquitto </a>MQTT broker.
 <br/><br/>
 In a bottom-up approach, it is highly probable that we have to change our code in a significant way. But we
 must ask ourselves whether the usage of a MQTT broker changes the logic of our system. If not, the model above is still valid, and we
 should 'only' replace the default QAk infrastructure (based on Context-TCP-servers)  with another infrastructure that implements the
-high level concepts of Dispatch and Request by using the MQTT broker.
+high level concepts of Dispatch and Request by using MQTT.
 <br/><br/>
 This 'change of infrastucture' can be done by the QAk software factory by introducing a declaration for the MQTT broker to use and
 a <k>+mqtt</k> flag on the Context:
