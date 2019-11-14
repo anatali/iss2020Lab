@@ -46,8 +46,8 @@ class SonarSimulator( name : String, scope : CoroutineScope, confined : Boolean 
  */
 	suspend fun work(){
 		while( true ){
-			val v = utils.sonarDataSimulator.getSonarValBlocking()  
-			//val v = utils.sonarDataSimulator.getSonarVal()
+			//val v = utils.sonarDataSimulator.getSonarValBlocking()  
+			val v = utils.sonarDataSimulator.getSonarVal()
 			println( "SonarSimulator forwards $v" )
 			forward( "polar", "polar($v,0)", radar!!)
 			//delay( 2000 )  //WORKS, but IS THE WRONG WAY ...
@@ -65,7 +65,7 @@ class DummyActor( name : String, scope : CoroutineScope, confined : Boolean = fa
 	
 	suspend fun work(){
 		while( true ){
-			println("dummy is working ... ")
+			println("dummy is working ... " )
 			delay( 2000 )
 		}
 	}
@@ -74,13 +74,13 @@ class DummyActor( name : String, scope : CoroutineScope, confined : Boolean = fa
 fun curThread() : String { 
 	return "thread=${Thread.currentThread().name} / nthreads=${Thread.activeCount()}" 
 }
-
+ 
 fun main() = runBlocking {
     val cpus = Runtime.getRuntime().availableProcessors();
     println("RadarGui | START  CPU=$cpus ${curThread()}")
-	radar = RadarGui("radargui", this, false)	         //WARNING: confined=true means 1 Thread
-	sonar = SonarSimulator("sonarsimulator", this, false) //WARNING: confined=true means 1 Thread
-	other = DummyActor("otehr", this, false)              //WARNING: confined=true means 1 Thread
+	radar = RadarGui("radargui", this, true)	         //WARNING: confined=true means 1 Thread
+	sonar = SonarSimulator("sonarsimulator", this, true) //WARNING: confined=true means 1 Thread
+	other = DummyActor("other", this, true)              //WARNING: confined=true means 1 Thread
 	MsgUtil.sendMsg( "main", "start", "start", sonar!!)
 	MsgUtil.sendMsg( "main", "start", "start", other!!)
  }
