@@ -6,6 +6,7 @@ import kotlinx.coroutines.delay
 import alice.tuprolog.Term
 import alice.tuprolog.Struct
 import kotlinx.coroutines.CoroutineScope
+
 var radar : ActorBasic? = null
 var sonar : ActorBasic? = null
 var other : ActorBasic? = null

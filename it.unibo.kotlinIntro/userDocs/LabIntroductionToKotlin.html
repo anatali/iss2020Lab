@@ -218,19 +218,21 @@ loosing in performance.</li>
 For the examples hereunder, put the code after <tt>----</tt> in  a main and use the following import:
 <pre>
 import kotlin.system.measureTimeMillis
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.^
+import kotlinx.coroutines.channels.*
+import kotlinx.coroutines.channels.actor
+
+<kc>//More detailed</kc>
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.channels.Channel
+
 
 
 <kc>Coroutines API are still experimental ... </kc>
@@ -2087,12 +2089,12 @@ class <ks>CounterMsg</ks>(
   val response:CompletableDeferred&ltInt>?=null){
 }
 
-val <ks>counter</ks> = <k>actor%lt;CounterMsg></k> {
+val <ks>counter</ks> = <k>GlobalScope.actor&lt;CounterMsg></k> {
     var localCounter = 0 <kc>// actor state</kc>
     for (<k>msg in channel</k>) { <kc>// iterate over incoming messages</kc>
 	     if( localCounter % 10000 == 0 ) 
 			println("${msg.cmd} | $localCounter in ${curThread()}")
-        when ( msg.cmd ) {
+        <k>when</k> ( msg.cmd ) {
             "INC" -> localCounter++
             "DEC" -> localCounter--
             "GET" -> msg.response?.complete(localCounter) 
