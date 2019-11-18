@@ -11,46 +11,14 @@ import it.unibo.kactor.MsgUtil
 import kotlinx.coroutines.GlobalScope
 import it.unibo.kactor.ApplMessage
 import alice.tuprolog.Term
-import alice.tuprolog.Struct     
+import alice.tuprolog.Struct
+import sonarRadarFsmAppl.msgReceiver
+import sonarRadarFsmAppl.curThread
+import sonarRadarFsmAppl.msgNetServer     
 
-	var hlCommSupport : hlComm? =  null
-
-fun curThread() : String { return "thread=${Thread.currentThread().name} of ${Thread.activeCount()} threads"  }
-
-/*
- Activates a TCP server and waits for a connection
- Afterwards, it waits for a msg (a string rep of ApplMessage) on the created hlCommSupport
- and sends the received msg to the given actor a
-*/	
-class radarguiReceiver( val a : ActorBasicFsm   ){
-	init{
-		val workTime = 600000L
-		System.setProperty("inputTimeOut", "$workTime" )  //for the server socket
-		connectAsReceiver( "TCP", 8010 )
-		GlobalScope.launch{ work() }
-	}
-
-	fun connectAsReceiver( protocol: String, port : Int  ){
-		println("radarguiReceiver | START A TCP SERVER ON PORT 8010 and waits for a connection ... ")
-		val fp    = FactoryProtocol(null,protocol,"support")	 
-		val conn : IConnInteraction = fp.createServerProtocolSupport( port ) //waitforconnection
-		hlCommSupport = hlComm( conn )
-		println("radarguiReceiver | CONNECTED ")
-	}
-	
-	suspend fun  work(){
-//		connectAsReceiver( "TCP", 8010 )
- 		while( true ){
-			//println("receiver | waiting ... ")
-			val msg = hlCommSupport!!.receive()
-			println("radarguiReceiver | receives: $msg")
-			val currentMsg = ApplMessage( msg )
- 			MsgUtil.sendMsg( currentMsg, a )
-		} 			
-	}
-} 
 class radarGui( name : String, scope : CoroutineScope  ) : ActorBasicFsm( name, scope ) {
 var msgSender = ""
+var hlCommSupport : hlComm? =  null
 /*
 If the class has a superclass, the superclass constructor
 is called before the class construction logic is executed.
@@ -62,8 +30,8 @@ is called before the class construction logic is executed.
 	init{
 		//receiver(  myself  )		//BLOCKS  : we put it in the intial state
 	}
-	    
-	override fun getInitialState(): String{ return "INIT"}
+	
+ 	override fun getInitialState(): String{ return "INIT"}
 	
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		//println("radarGui | getBody in ${curThread()} ")
@@ -71,9 +39,22 @@ is called before the class construction logic is executed.
 			state("INIT") { //this:State
 				action { //it:State	}
 					radarPojo.radarSupport.setUpRadarGui()
-					radarguiReceiver(  myself  )  //creates a (TCP) receiver
 				}
- 				transition(edgeName="t0",targetState="ELAB",cond=whenRequest("polar") ) 
+ 				transition(edgeName="t0",targetState="ACTIVATE",cond=doswitch() ) //EMPTY MOVE
+ 			}
+			state("ACTIVATE"){
+				action {
+					//Activate a receiver of ApplMessage and get the connection
+ 					hlCommSupport = msgNetServer(myself).serverdWaitConn("TCP",8010) 
+				}
+				transition(edgeName="t0",targetState="WAITING",cond=doswitch() ) //EMPTY MOVE
+ 			}
+			state("WAITING"){
+				action{
+					println("radarGui | WAITS for request in ${curThread()} ")
+				}
+				transition(edgeName="t0",targetState="ELAB",cond=whenRequest("polar") ) 
+ 				transition(edgeName="t0",targetState="END", cond=whenEvent("failure") ) //connection reset
 			}
 			state("ELAB"){ 
 				action{
@@ -86,16 +67,18 @@ is called before the class construction logic is executed.
 			}
 			state("SENDANSWER"){
 				action{
-					println("radarGui | ${myself.name} SENDANSWER to ${msgToReply.msgSender()} in ${curThread()} ")
+					println("radarGui | SENDANSWER to ${msgToReply.msgSender()} in ${curThread()} ")
 					delay( 1000 )//simulate some work to do ...
 					hlCommSupport!!.answer("answer", "work(done)", "${myself.name}", "${msgToReply.msgSender()}" )
-					transition(edgeName="t0",targetState="ELAB",cond=whenRequest("polar") ) 
- 				}
+				}
+				transition(edgeName="t0",targetState="WAITING",cond=doswitch() ) //EMPTY MOVE 				}
+				
 			}
 			state("END"){
 				action{
 					println("radarGui | END")
 				}
+				transition(edgeName="t0",targetState="ACTIVATE",cond=doswitch() )
 			}
 		}
 	}//getBody
@@ -119,5 +102,5 @@ fun main() = runBlocking  {
 	//System.setProperty("debugOn", "set" ) 	//for noawtsupport
 	val cpus = Runtime.getRuntime().availableProcessors();
     println("radarGui  | START CPU=$cpus ${curThread()}")
-    val radar =  radarGui( "radarGui", this )
-}
+ 	val radar = radarGui( "radarGui", this )
+ }
