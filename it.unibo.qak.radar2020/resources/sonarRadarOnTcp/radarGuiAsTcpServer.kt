@@ -1,12 +1,18 @@
 package sonarRadarOnTcp
-
+/*
+ radarGuiAsTcpServer.kt
+ ------------------------------------------------------------------------------------------
+ A scheme for a radarGui that works as a TCP server
+ The structure of the code arises from the technology-support (socket in java.net libray)
+ ------------------------------------------------------------------------------------------
+*/ 
 import it.unibo.kactor.MsgUtil
 import java.net.ServerSocket
 import it.unibo.`is`.interfaces.protocols.IConnInteraction  //WARNING !!! 
 import lowLevelComms.tcpConnSupport
 import highLevelComms.hlComm
 
-var hlServerCommSupport : hlComm?    =  null
+var hlServerCommSupport : hlComm?  =  null
 
 fun serverStartUp( port:Int ){
 	println("server | init ...  ")
@@ -26,7 +32,6 @@ fun serverWork(){
  	val msg = hlServerCommSupport!!.receive()
 	println("server | received: $msg" )
 }
-
 
 fun main() {
     println("server | BEGIN")

@@ -1,5 +1,5 @@
 package kotlincomponents
-
+//sonarRadarProdCons.kt
 import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.actor

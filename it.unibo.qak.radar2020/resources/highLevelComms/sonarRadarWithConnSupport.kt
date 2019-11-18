@@ -1,4 +1,5 @@
 package highLevelComms
+//sonarRadarWithConnSupport.kt
 import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.actor
@@ -8,7 +9,6 @@ import lowLevelComms.tcpConnSupport
 import alice.tuprolog.Term
 import alice.tuprolog.Struct
 import it.unibo.kactor.ApplMessage
-
 import it.unibo.`is`.interfaces.protocols.IConnInteraction  //WARNING !!!
 import it.unibo.supports.*
 
@@ -74,18 +74,18 @@ val radarGuiReceiverServer  = GlobalScope.launch {
 		//STATE: waitfordata
 	 	//println("radarGuiServer | waits for message in ${curThread()} ...")
 	 	val msg = hlServerCommSupport!!.receive()
-		val applMasg    = ApplMessage( msg )
- 		println("radarGuiServer | received: $msg type= ${applMasg.msgType()}" )
+		val applMsg    = ApplMessage( msg )
+ 		println("radarGuiServer | received: $msg type= ${applMsg.msgType()}" )
 		
 		//STATE: handdledata
-		val tt          = Term.createTerm( applMasg.msgContent()  ) as Struct
+		val tt          = Term.createTerm( applMsg.msgContent()  ) as Struct
 		val DistanceStr = tt.getArg(0).toString()
 		val AngleStr    = tt.getArg(1).toString()
 		println("radarGuiServer | update: $DistanceStr, $AngleStr " )
   		radarPojo.radarSupport.update( DistanceStr, AngleStr)
 		
 		//STATE: send the answer in case of request
-		if( applMasg.isRequest() ){ 
+		if( applMsg.isRequest() ){ 
 			delay( 1500 )  //Simulate some complex elaboration ...
 			hlServerCommSupport!!.answer("answerTopolar", "done")
 		}

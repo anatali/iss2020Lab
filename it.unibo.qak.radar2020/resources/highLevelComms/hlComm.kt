@@ -17,8 +17,8 @@ class hlComm( val conn : IConnInteraction ) {
 		conn.sendALine( m.toString() )
 	}
 
-	fun answer( msgId : String, msgContent : String   ){
-		val m = MsgUtil.buildReply("fromcalled",msgId,msgContent,"tocaller")
+	fun answer( msgId : String, msgContent : String, service : String ="fromcalled", caller : String="tocaller"   ){
+		val m = MsgUtil.buildReply(service,msgId,msgContent, caller)
 		conn.sendALine( m.toString() )
 	}
 	

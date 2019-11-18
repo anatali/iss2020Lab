@@ -1,5 +1,5 @@
 package kotlintcp
-
+//sonarRadarTcpProdCons.kt
 import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.actor
