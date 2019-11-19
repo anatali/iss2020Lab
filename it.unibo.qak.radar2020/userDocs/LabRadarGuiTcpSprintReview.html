@@ -341,22 +341,22 @@ As a main result of our SPRINT retrospective, let us resume the set of high-leve
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qak.radar2020/userDocs/LabRadarGui.html#hlconcepts" target="lab">
 LabRadarGui | Towards a standard set of high-level concepts</a>.
 <br/><br/>
-The new approach of software design and building is now based on the possibility to express the behavior of each system component as a finite state
-machine, whose transitions are driven by information available in form of <m><k>dispatch, request, reply, event, ...</k></m>.
+The top-down approach of software design and building is now based on the possibility to express the behavior of each component as a finite state
+machine, whose transitions are driven by high-level communication concepts, such as <m><k>dispatch, request, reply, event, ...</k></m>.
 
 For example, the design of the <em>radarGuiservice</em> can start from the state diagrams of its two main components:
 <br/><br/>
 
 <center><img src="./img/sonarRadarFsms.png" alt="noawtsupport" width="60%" height="40%"></center>
 <br/><br/>
-At this level of description, technology-dependent low-level communication details are hidden behind the actions named <m><ks>connectToRadarGuiServer</ks></m> 
+At this level of description, low-level communication details are hidden behind the actions named <m><ks>connectToRadarGuiServer</ks></m> 
 (in the <tt>sonarRobot</tt>) and  <m> <ks>waitConnection</ks></m> (in the <tt>radarGui</tt>).
 <br/><br/>
 Now, the availability of a platform like that introduced in  
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qak.radar2020/userDocs/LabRadarGui.html#platform" target="lab">
 LabRadarGui | Building a platform</a> allows us to exploit the class 
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qak.radar2020/userDocs/LabRadarGui.html#ActorBasicFsm" target="lab">
-LabRadarGui | ActorBasicFsm</a> to write code with an explicit representation of the states and of the transitions, as happens in the diagram:
+LabRadarGui | ActorBasicFsm</a> to write code of each component with an explicit representation of the states and of the transitions:
 
 <pre>
 class robotSonar( name : String, scope : CoroutineScope  ) : <k>ActorBasicFsm</k>( name, scope ) {
@@ -395,7 +395,10 @@ transition that can 'fire' only if the given <ks>guard</ks> is true.<br/><br/></
 </ul>
  
 The class  ActorBasicFsm is expressed in a domain-specific language  by exploiting the Kotlin capability to define internal-DSL.
+See <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakactor/userDocs/ActorBasicFsm.html" target="lab">
+ActorBasicFsm</a>
     
+
 
 
  

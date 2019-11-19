@@ -45,7 +45,7 @@ is called before the class construction logic is executed.
 			state("ACTIVATE"){
 				action {
 					//Activate a receiver of ApplMessage and get the connection
- 					hlCommSupport = msgNetServer(myself).serverdWaitConn("TCP",8010) 
+ 					hlCommSupport = msgNetServer(myself).waitConnection("TCP",8010) 
 				}
 				transition(edgeName="t0",targetState="WAITING",cond=doswitch() ) //EMPTY MOVE
  			}
