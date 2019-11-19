@@ -140,10 +140,17 @@ fun alphabet2() = StringBuilder().apply {
     for (letter in 'A'..'Z')   append(letter)
 }.toString()
 
+fun myBuildStr( op : StringBuilder.() -> Unit ) = StringBuilder().apply( op )
+
+
 fun main(args: Array<String>) {
     //runCounter()
     //run00()
-    println( alphabet2() )
+    val s = myBuildStr{
+        append("a")
+        append("z")
+    }
+    println( s )
     /*
   run1()
    run2()

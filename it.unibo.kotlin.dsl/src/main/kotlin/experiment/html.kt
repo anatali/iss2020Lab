@@ -1,27 +1,36 @@
 package it.unibo.robots19.experiment
 
-open class Tag(val name: String) {
+open class Tag(val id: String, val body: String = "") {
     private val children = mutableListOf<Tag>()
+    //private var body = ""
 
     protected fun <T : Tag> doInit(child: T, init: T.() -> Unit) {
         child.init()
         children.add(child)
     }
+    fun addTag( tag : Tag ){
+         children.add( tag )
+    }
 
     override fun toString() =
-        "<$name>${children.joinToString("")}</$name>"
+        "<$id>$body${children.joinToString("")}</$id>"
 }
 
 fun table(init: TABLE.() -> Unit) = TABLE().apply(init)
 
+
+
 class TABLE : Tag("table") {
     fun tr(init: TR.() -> Unit) = doInit(TR(), init)
+    fun td(init: TD.() -> Unit) = doInit(TD(), init)
+
+    //fun tbody( tag : Tag   ) =  addTag( tag )
 }
 class TR : Tag("tr") {
     fun td(init: TD.() -> Unit) = doInit(TD(), init)
 }
-class TD : Tag("td")
 
+class TD : Tag("td", "hello")
 /*
 In the lambda passed to the table function, we can use
 the tr function to create the <tr> tag.
@@ -60,7 +69,30 @@ fun createAnotherTable() = table {
 }
 
 fun main(args: Array<String>) {
+
+/*
+    val tag1 = Tag("tr")
+    println( tag1 )     //<tr></tr>
+    tag1.addTag( Tag("b", "hello") )
+    println( tag1 )
+
+    val table1 = TABLE()
+    println( table1 )   //<table></table>
+    table1.td {  }
+    println( table1 )  //<table><td>hello</td></table>
+
+    val table2 = table{
+        td{ }
+    }
+    println( table2 )  //<table><td>hello</td></table>
+
+tag1.doInit( tag1, {})
+    var t1 = table{   }
+    println( t1 )  //<table></table>
+    println( Tag("b", "hello") )
+    println( TABLE().apply{ tbody( Tag("b", "hello ... ") ) } )
+ */
     println(createTable())
-    println(createTable1())
+    //println(createTable1())
     //println(createAnotherTable())
 }

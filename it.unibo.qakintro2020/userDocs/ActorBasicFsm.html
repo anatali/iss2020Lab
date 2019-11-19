@@ -225,6 +225,7 @@ it.unibo.qakactor.ActorBasicFsm.kt</a>. -->
 <tr>
 <td style="width:50%">
 <h3>State</h3>
+<m>A state is </m>
 </td>
 <td>
 <h3>Transition</h3>
@@ -235,17 +236,17 @@ it.unibo.qakactor.ActorBasicFsm.kt</a>. -->
 <td >
 <pre><m>
 class <k>State</k>(val stateName : String ) {
-    private val edgeList          = mutableListOf<Transition>()
-    private val stateEnterAction  = mutableListOf< (State) -> Unit>()
+    private val edgeList          = mutableListOf&lt;Transition>()
+    private val stateEnterAction  = mutableListOf&lt; <k>(State) -> Unit</k>>()
     private val myself : State    = this
 
     fun <k>transition</k>( edgeName: String, 
-		targetState: String, cond: Transition.() -> Unit) {
+		targetState: String, cond: <k>Transition.() -> Unit</k>) {
         val trans = Transition(edgeName, targetState)
-        trans.cond() //set eventHandler (given by user) See fireIf
+        trans.cond()  
         edgeList.add(trans)
     }
-     fun action(  a:  (State) -> Unit) {
+    fun action(  a:  (State) -> Unit) {
           stateEnterAction.add( a )
     }
     fun addAction (action:  (State) -> Unit) {
@@ -254,7 +255,6 @@ class <k>State</k>(val stateName : String ) {
     fun enterState() {
         stateEnterAction.forEach {  it(this) }
      }
-
     fun getTransitionForMessage(msg: ApplMessage): Transition? {
         val first = edgeList.firstOrNull { it.canHandleMessage(msg) }
         return first

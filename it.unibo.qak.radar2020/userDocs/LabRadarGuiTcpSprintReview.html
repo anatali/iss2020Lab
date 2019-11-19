@@ -347,8 +347,9 @@ machine, whose transitions are driven by high-level communication concepts, such
 For example, the design of the <em>radarGuiservice</em> can start from the state diagrams of its two main components:
 <br/><br/>
 
-<center><img src="./img/sonarRadarFsms.png" alt="noawtsupport" width="60%" height="40%"></center>
+<center><img src="./img/sonarRadarFsms.png" alt="sonarRadarFsms" width="60%" height="40%"></center>
 <br/><br/>
+
 At this level of description, low-level communication details are hidden behind the actions named <m><ks>connectToRadarGuiServer</ks></m> 
 (in the <tt>sonarRobot</tt>) and  <m> <ks>waitConnection</ks></m> (in the <tt>radarGui</tt>).
 <br/><br/>
@@ -396,7 +397,7 @@ transition that can 'fire' only if the given <ks>guard</ks> is true.<br/><br/></
  
 The class  ActorBasicFsm is expressed in a domain-specific language  by exploiting the Kotlin capability to define internal-DSL.
 See <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakactor/userDocs/ActorBasicFsm.html" target="lab">
-ActorBasicFsm</a>
+LabQak | ActorBasicFsm</a>
     
 
 

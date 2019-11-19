@@ -153,7 +153,7 @@ table, th, td {
 
 <div class="body"> 
 
-<h1>72939 - LABDsl | Kotlin Internal DSL</h1> 
+<h1>LABDsl | Kotlin Internal DSL</h1> 
 <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2019Lab/blob/master/LectureBologna1819.html" target="isslm">LabISS-lectures site</a></font> 
 
   
@@ -366,8 +366,7 @@ fun alphabet0(): String {
 </td>
 <td><m> 
 If we call <tt>println(alphabet0())</tt>, the <tt>OUTPUT</tt> is:</m>
-<pre><m>
-ABCDEFGHIJKLMNOPQRSTUVWXYZ    
+<pre><m>ABCDEFGHIJKLMNOPQRSTUVWXYZ    
 </m></pre>
 <m>In this version, we call several times the <bc>result</bc> instance.</m>
 </td>
@@ -376,15 +375,28 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ
 </tbody>	
 </table></center>
 <br/>
-Now, 
+Now, let us use <em>with</em> (a <i>lambda with receiver</i>) :
 <br/><br/>
 <center><table style="width:98%">
 <tbody>	
 <tr>
-<td style="width:50%">
+<td style="width:50%"><m>
+<em>with</em> allows us to access the receiver methods and properties 
+without any qualifier (or via <bc>this</bc>).
+Therefore, we could write: </m>
+<pre><m><k>with</k>( stringBuilder <k> , </k> <k>{ </k><kc>//this: StringBuilder </kc>
+	for (letter in 'A'..'Z') append(letter)
+	<i>this</i>.toString()  <kc>//this not necessary</kc>   
+	<k>}</k>
+)
+</m>
+</pre>
 
-<pre><m>
-fun alphabet1(): String {
+
+</td>
+<td><m> 
+However, we can <em>put the lambda is put outside of the parentheses</em></m>
+<pre><m>fun alphabet1(): String {
 	val <ks>stringBuilder</ks> = StringBuilder()
 	return <k>with( <ks>stringBuilder</ks> )</k> { <kc>//this: StringBuilder </kc>
 		for (letter in 'A'..'Z') append(letter)
@@ -392,27 +404,12 @@ fun alphabet1(): String {
 	}
 }
 </m></pre>
-</td>
-<td><m> 
-<em>with</em> is a <i>lambda with receiver</i> function that allows us to access the receiver methods and properties 
-without any qualifier (or via <bc>this</bc>).
-Therefore, we could use <em>with</em>  as follows: 
-<pre>
-with( stringBuilder <k>,</k> <k>{ </k><kc>//this: StringBuilder </kc>
-	for (letter in 'A'..'Z') append(letter)
-	<i>this</i>.toString()  <kc>//this not necessary</kc>   
-	<k>}</k>
-)
-</pre>
-An important point is that
-
+ 
+<!--
 <div class="remark"><font size="3">
-when the lambda is put outside of the parentheses, the invocation looks like
-a built-in feature of the language.</font>
+the invocation looks like a built-in feature of the language.</font>
 </div></m>
-
-
-
+-->
 </td>
 </tr>
 </tbody>	
@@ -420,30 +417,59 @@ a built-in feature of the language.</font>
 
 <h3>Apply</h3>
 <em>Apply</em> works as <em>with</em> but returns the object passed to it as argument, i.e. the receiver object.
-
+<br/><br/>
 <center><table style="width:98%">
 <tbody>	
 <tr>
 <td style="width:50%">
 
-<tr>
-<td>
 <pre><m>
-fun alphabet2() = StringBuilder().<k>apply</k> { </k><kc>//this: StringBuilder </kc>
-    for (letter in 'A'..'Z') append(letter) 
+fun alphabet2() = <ks>StringBuilder().</ks><k>apply</k> { </k><kc>//this: StringBuilder </kc>
+    for (letter in 'A'..'Z') append(letter)  
 }.toString()
 
+
+fun <ks>myBuildStr</ks>( <ks>op</ks> : <tt>StringBuilder.() -> Unit</tt> ) = 
+							<k>StringBuilder().apply</k>( <ks>op</ks> )
+
+</m></pre>
+</td>
+<td><m>If we call <tt>println(alphabet2())</tt>, the <tt>OUTPUT</tt> is:</m>
+<pre><m>ABCDEFGHIJKLMNOPQRSTUVWXYZ    
+</m></pre>
+
+<m>Let us change the call by using <em>myBuildStr</em>:</m>
+<pre><m>val s = myBuildStr{
+	append("a")
+	append("z")
+	} 
+println( s ) 		<kc>//az</kc>
+</m></pre>
+
+</td>
+</tr>
+
+</tbody>	
+</table></center>
+
+<h3>buildString</h3>
+<center><table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%">
+
+<pre><m>
 fun alphabet3() = <k>buildString</k> {
     for (letter in 'A'..'Z') { append(letter) }
 }
 
 </m></pre>
 </td>
-<td><h3>buildString</h3>
+<td> 
 
-<br/><br/>
+<m>
 The standard library function <bc>buildString</bc> takes care of creating a <tt>StringBuilder</tt> and calling <tt> toString</tt>.
-
+</m>
 </td>
 </tr>
 
@@ -452,7 +478,116 @@ The standard library function <bc>buildString</bc> takes care of creating a <tt>
 
 
 <h2>Example: HTML table</h2> 
+Let us introduce a class to represent a generic <tt>HTML Tag</tt>:
+<center><table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%">
+<pre><m>
+ <k>open</k> class <k>Tag</k>(val id: String, val body: String = "") {
+ private val children = mutableListOf<Tag>()
+	fun <ks>addTag</ks>( tag : Tag ){
+         children.add( tag )
+    }
+    protected fun &lt;T : Tag> <ks>doInit</ks>(child: T, <kc>init</kc>: <k>T.() -> Unit</k>) {
+        child.<kc>init</kc>()
+        children.add(child)
+    }
+    override fun toString() = "<$id>$body${children.joinToString("")}</$id>"
+}
+</td>
+<td>
+<pre><m>val tag1 = Tag("tr", "")
+println( tag1 )	<kc>//RESULT:  &lt;tr>&lt;/tr></kc>
+</m></pre>
 
+<m>The method <em>addTag</em> adds a tag to the children; therefore:
+</m>
+<pre><m>val tag1 = Tag("tr")
+<ks>tag1.addTag</ks>( Tag("b", "hello") )
+println( tag1 )	<kc>//RESULT:  &lt;tr>&lt;b>hello&lt;/b>&lt;/tr></kc>
+</m></pre>
+<m>
+</td>
+</tr>
+</tbody>	
+</table></center>
+<br/>
+The method <em>doInit</em> accepts in input a <k>Tag</k> and a the operation <kc>init</kc> defined as a 
+<i>Lambda with receiver</i> related to that tag.
+Its task is to use <kc>init</kc>  to build a child tag to be added to the others.
+So, let us define a class to represent a <tt>HTML Table</tt> as a specialized version of <ks>Tag</ks>:
+
+<br/><br/>
+<center><table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%">
+<pre><m>class <k>TD</k> : <ks>Tag</ks>("td", "hello")
+
+class <k>TABLE</k> : <ks>Tag</ks>("table") {
+    fun <ks>td</ks>( init: <k>TD.() -> Unit</k> ) = <ks>doInit</ks>( <b>TD()</b>, init)
+}</m></pre>
+<m>The operation <em>td</em> of <ks>TABLE</ks> accepts in input the operation <kc>init</kc> defined as a <i>Lambda with receiver</i> related to a 
+tag of type <ks>TD</ks>.
+</m>
+</td>
+<td>
+<m> Since <em>td</em> of <ks>TABLE</ks> calls the inherited method <em>doInit</em>, it adds a new child of type <ks>TD</ks>.
+</m>
+<pre><m>val table1 = TABLE()
+println( table1 )   <kc>//&lt;table>&lt;/table></kc>
+<k>table1.td</k>{  }
+println( table1 )  <kc>//&lt;table>&lt;td>hello&lt;/td>&lt;/table></kc>
+</m></pre>
+</td>
+</tr>
+
+<tr>
+<td style="width:50%">
+<m>Now, let us introduce a function that exploits <tt>apply</tt>:</m>
+<pre><m>
+fun table(init: <k>TABLE.() -> Unit</k>) = <ks>TABLE()</ks>.<k>apply</k>(init)
+</m>
+</pre>
+</td>
+<td><m> 
+
+</m>
+<pre>
+<m>table{	<kc>//this: TABLE</kc>
+	td{ }
+}
+println( table2 ) <kc>//&lt;table>&lt;td>hello&lt;/td>&lt;/table></kc>
+</m></pre>
+<m> <div class="remark"><font size="3">
+looks like a built-in feature of the language.</font>
+</div></m>
+</td>
+</tr>
+
+<tr>
+<td style="width:50%">
+<pre><m>
+class <k>TR</k> : <ks>Tag</ks>("tr") {
+    fun td( init: TD.() -> Unit ) = doInit(TD(), init)
+}
+class <k>TD</k> : Tag("td")
+</td>
+<td>
+</td>
+</tr>
+
+</tbody>	
+</table></center>
+
+<h3>Towrds an internal DSL for HTML</h3> 
+
+<br/><br/>
+<center><table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%">
 <pre><m>
  open class <k>Tag</k>(val name: String) {
     private val children = mutableListOf<Tag>()
@@ -462,35 +597,52 @@ The standard library function <bc>buildString</bc> takes care of creating a <tt>
     }
     override fun toString() = "<$name>${children.joinToString("")}</$name>"
 }
-class <k>TABLE</k> : Tag("table") {
-    fun tr( init: TR.() -> Unit ) = doInit(TR(), init)
-}
+class <k>TD</k> : Tag("td", "hello")
+
 class <k>TR</k> : Tag("tr") {
-    fun td( init: TD.() -> Unit ) = doInit(TD(), init)
+    fun <ks>td</ks>( init: <k>TD.() -> Unit</k> ) = doInit( <ks>TD()</ks>, init)
 }
-class <k>TD</k> : Tag("td")
 
-fun table(init: <k>TABLE.() -> Unit</k>) = TABLE().<k>apply</k>(init)
+class <k>TABLE</k> : Tag("table") {
+    fun <ks>tr</ks>( init: <k>TR.() -> Unit</k> ) = doInit( <ks>TR()</ks>, init)
+}
 
-/*
-In the lambda passed to the <ks>table</ks> function, we can use the <ks>tr</ks> function to create the &lt;tr> tag.
-Outside the lambda, the <ks>tr</ks> function would be unresolved.
-The lambda passed to <ks>table</ks> has a receiver of type <k>TABLE</k> which defines the <ks>tr</ks> method
- */
+fun <ks>table</ks>( <kc>init</kc>: <k>TABLE.() -> Unit</k>) = TABLE().<k>apply</k>(<kc>init</kc>)
+</m></pre> 
+</td>
+ 
+<td>
+<m>
+Now:
+<ol>
+<li>The lambda passed to <ks>table</ks> has a receiver of type <k>TABLE</k> which defines the <ks>tr</ks> method. This, in its turn ...</li>
+<li>In the lambda passed to the <ks>table</ks> function, we can use the <ks>tr</ks> function to create the &lt;tr> tag.</li>
+<li>Outside the lambda, the <ks>tr</ks> function would be unresolved.</li>
+</ol> </m>
+<pre><m>
 fun createTable() =
-    table {
+<ks>    table {
         tr {
             td {
             }
         }
     }
-
+</ks>
 fun main(args: Array<String>) {
-    println(createTable())
+    println(createTable())	<kc>//&lt;table>&lt;tr>&lt;td>hello&lt;/td>&lt;/tr>&lt;/table></kc>
 }
 
 </m></pre> 
- 
+</td>
+
+</tbody>	
+</table></center>
+<br/><br/>
+These mechanisms hev been used to build an internal DSL for the construction of actors working as Finite State Machine.
+See
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakactor/userDocs/ActorBasicFsm.html" target="lab">
+LabQak | ActorBasicFsm</a>
+
 <br/><br/>
 
 </div>  
