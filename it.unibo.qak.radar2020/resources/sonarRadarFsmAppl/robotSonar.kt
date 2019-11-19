@@ -46,22 +46,6 @@ var i = 1
 			action { //it:State
 				println("robotSonar | START in ${curThread()}, $currentState ")
 				connectToRadarGuiServer()
-//				var conn : IConnInteraction? = null
-//				val fp  = FactoryProtocol(null,"TCP","robotSonar")
-//				println("robotSonar | START in ${curThread()} , $fp, $conn")
-//				while( conn == null ){
-//					try{
-//						println("robotSonar | attempt connection ...")
-//						conn = fp.createClientProtocolSupport("localhost", 8010)
-//						println("robotSonar | $conn")
-//			 		    hlCommSupport = hlComm( conn )
-//						//activate an answer receiver with the connection just set
-//			 		    msgReceiver( myself, hlCommSupport!!, 8010  )	
-//					}catch( e : Exception){
-//						println("robotSonar |  FAIL attempt to connect in ${curThread()}... ")
-//						delay( 500 )
-//					}
-//				}
 			}
 			transition(edgeName="t0",targetState="SENDREQUEST",cond=doswitch() ) //EMPTY MOVE
  		}
