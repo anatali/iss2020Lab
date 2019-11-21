@@ -42,7 +42,7 @@ abstract class fsmAbstract( val name : String ){
 			state = nextState; return
 		}
 		try{
-			val msg      =  hlCommSupport!!.receive()
+			val msg      =  hlCommSupport!!.receive()  //WARNING !!!: too limited
 		    currentMsg   = ApplMessage( msg )
 			if( msgId.equals( currentMsg!!.msgId() ) ) state = nextState
 			else println( "radarGui | input NOT EXPECTED: $msg" )
