@@ -18,9 +18,6 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						
-						//val sonaractorfilter = itunibo.robot.rx.sonaractorfilter( "sonaractorfilter"  ) 
-						//sonaractorfilter.subscribeLocalActor( "basicrobot" )
 						println("basicrobot | starts (with robotadapter in the same context)")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )

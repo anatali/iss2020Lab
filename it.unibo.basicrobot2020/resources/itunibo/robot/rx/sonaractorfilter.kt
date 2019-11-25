@@ -1,6 +1,9 @@
 package itunibo.robot.rx
+/*
+fcor each (sonar) value V, perfoms some flitering acion
+and - if ok - emitLocalStreamEvent   sonarData:sonarData(V)
+*/
 
-import it.unibo.kactor.ActorBasicFsm
 import it.unibo.kactor.MsgUtil
 import kotlinx.coroutines.delay
 import it.unibo.kactor.ActorBasic
@@ -12,22 +15,16 @@ class sonaractorfilter (name : String,
 		var LimitDistance : Int = 12, var LastDistance : Int = 0,
 		var minDistance  : Int = 2,   var maxDistance  : Int = 50,
 		var maxDelta   : Int   = 1 
-) : ActorBasic( name ) {
+) : ApplActorDataStream( name ) {
 
 	init{
 		println("   $name |  STARTS")
  	}
-	
-    override suspend fun actorBody(msg: ApplMessage) {
- 		val vStr  = (Term.createTerm( msg.msgContent() ) as Struct).getArg(0).toString()
-        println("   $name |  handles msg= $msg  vStr=$vStr")
-		elabData( vStr )
-	}
-	
-	suspend fun elabData( data : String ){
+ 	
+	override suspend fun elabData( data : String ){
 		val Distance = Integer.parseInt( data ) 
  		val delta    = Math.abs( Distance - LastDistance )
-		//println("   $name |  elabSonarData delta = $delta isVirtualRobot = $isVirtualRobot")
+		//println("   $name |  elabData delta = $delta isVirtualRobot = $isVirtualRobot")
 		var testDelta = delta >= maxDelta  //FOR REAL ROBOT only
  		if( Distance > minDistance && Distance < maxDistance  && testDelta  ){ 
  			//println("   $name |  elabSonarData Distance = $Distance ")

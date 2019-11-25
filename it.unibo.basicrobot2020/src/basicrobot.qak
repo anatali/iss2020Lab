@@ -3,6 +3,8 @@
  * This file includes (A TEXTUAL REPRESENTATION of) A MODEL 
  * of the software system (expressed using the language/metamodel qak)
  * as the result of PROJECT PHASE.
+ * 
+ * NOV 2019: added the idea of (sonar) data stream
  * ================================================================
  */
 System  -trace basicrobot 
@@ -20,16 +22,12 @@ Context ctxBasicRobot ip [ host= "localhost"   port= 8018 ]
  * concrete robot specified in basicRobotConfig.pl
  */
 CodedQActor robotadapter context ctxBasicRobot 
-				className "itunibo.robot.robotAdapterQa"
-
+				//className "itunibo.robot.robotAdapterQa"	                 //OCT 2019
+				className "itunibo.robot.robotAdapterQaWithSonarDataFilter"  //NOV 2019
+ 
 QActor basicrobot context ctxBasicRobot{
 
 	State s0 initial{  
-["
-//val sonaractorfilter = itunibo.robot.rx.sonaractorfilter( \"sonaractorfilter\"  ) 
-//sonaractorfilter.subscribeLocalActor( \"basicrobot\" )
-"]		
-		
 		println("basicrobot | starts (with robotadapter in the same context)")
 	}
 	Goto work    
@@ -83,7 +81,11 @@ QActor basicrobot context ctxBasicRobot{
  * The actor sentinel is sensible to alarm events emitted by the external world
  */
  QActor sentinel context ctxBasicRobot{
-
+["  
+//CREATE A PIPE for the sonar-data stream
+val logger           = itunibo.robot.rx.Logger(\"logFiltered\")
+itunibo.robot.robotSupport.subscribeToFilter( logger )
+"] 
 	State s0 initial{ 
 	} 
 	Goto work

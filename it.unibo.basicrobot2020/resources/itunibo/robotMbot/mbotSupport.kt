@@ -1,27 +1,39 @@
 package itunibo.robotMbot
+/*
+ -------------------------------------------------------------------------------------------------
+ A factory that creates the support for the nano robot
+ 
+ NOV 2019:
+ The operation create creates a serial connection and a robotDataSourceArduino
+ If a non-null data-stream handler (filter) is given, it subscibes such a filter
+ to the actor that will own the support
+ -------------------------------------------------------------------------------------------------
+ */
+
 import it.unibo.kactor.ActorBasic
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import it.unibo.kactor.ActorBasicFsm
 import it.unibo.kactor.MsgUtil
+import itunibo.robot.rx.ApplActorDataStream
 
 object mbotSupport{
 	lateinit var owner   : ActorBasic
  	lateinit var conn    : SerialPortConnSupport
 	var dataSonar        : Int = 0 ; //Double = 0.0
  			
-	fun create( owner: ActorBasic, port : String  ){
+	fun create( owner: ActorBasic, port : String, filter: ActorBasic? = null   ){
 		this.owner = owner
-		initConn( port  )
+		initConn( port, filter  )
 	}
 	
-	private fun initConn( port : String ){ 
+	private fun initConn( port : String, filter: ActorBasic? ){ 
 		try {
 			//println("   	%%% mbotSupport | initConn starts port=$port")
 			val serialConn = JSSCSerialComm()
 			conn = serialConn.connect(port)	//returns a SerialPortConnSupport
 			println("   	%%% mbotSupport |  initConn port=$port conn= $conn")						
- 			robotDataSourceArduino("robotDataSourceArduino", owner,   conn)
+ 			robotDataSourceArduino("robotDataSourceArduino", owner,   conn, filter)
 		}catch(  e : Exception) {
 			println("   	%%% mbotSupport |  ERROR ${e }"   );
 		}		

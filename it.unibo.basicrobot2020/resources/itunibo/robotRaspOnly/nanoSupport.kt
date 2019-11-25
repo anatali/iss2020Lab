@@ -1,4 +1,14 @@
 package it.unibo.robotRaspOnly
+/*
+ -------------------------------------------------------------------------------------------------
+ A factory that creates the support for the nano robot
+ 
+ NOV 2019:
+ The operation create creates a support for the motors and for the sonar (if requested)
+ If a non-null data-stream handler (filter) is given, it subscibes such a filter
+ to the actor that will own the support
+ -------------------------------------------------------------------------------------------------
+ */
 
 import it.unibo.iot.baseRobot.hlmodel.BasicRobot
 import it.unibo.iot.models.commands.baseRobot.BaseRobotSpeed
@@ -13,6 +23,7 @@ import it.unibo.kactor.sysUtil
 import it.unibo.kactor.ActorBasic
 import itunibo.robotRaspOnly.sonarHCSR04Support
 import itunibo.robotRaspOnly.motorscSupport
+import itunibo.robot.rx.ApplActorDataStream
  
 object nanoSupport { 
 	
@@ -20,14 +31,12 @@ object nanoSupport {
 	val SPEED_MEDIUM  = BaseRobotSpeed(BaseRobotSpeedValue.ROBOT_SPEED_MEDIUM)
 	val SPEED_HIGH    = BaseRobotSpeed(BaseRobotSpeedValue.ROBOT_SPEED_HIGH)
 	 
-	fun create(actor: ActorBasic, withSonar : Boolean = true){
+	fun create(actor: ActorBasic, filter: ActorBasic? = null , withSonar : Boolean = true){
 		motorscSupport.create( actor )
 		println("nanoSupport | CREATING  withSonar=$withSonar actor=${actor.name}")
 		if(withSonar){
-			sonarHCSR04Support.create( actor, " ")
-			val sonaractorfilter = itunibo.robot.rx.sonaractorfilter( "sonaractorfilter"  ) 
-			actor.subscribe( sonaractorfilter )
-			//sonaractorfilter.subscribe( actor )
+			sonarHCSR04Support.create( actor, " ")	//sonar data source
+ 			if( filter != null ) actor.subscribe( filter )
 		} 
 		else println("nanoSupport | CREATING   with no Sonar ")
 	} 

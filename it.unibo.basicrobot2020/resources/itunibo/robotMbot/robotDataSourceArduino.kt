@@ -9,7 +9,9 @@ import it.unibo.kactor.ApplMessage
 import alice.tuprolog.Term
 import alice.tuprolog.Struct
 
-class  robotDataSourceArduino( name : String, val owner : ActorBasic , val conn : SerialPortConnSupport  
+
+class  robotDataSourceArduino( name : String, val owner : ActorBasic , val conn : SerialPortConnSupport,
+							   val filter: ActorBasic?  
 		  ) : ActorBasic(name, owner.scope){
 		
 	init{
@@ -38,6 +40,7 @@ class  robotDataSourceArduino( name : String, val owner : ActorBasic , val conn 
  								//println("   	%%% $name | mbotSupport sonar: ${ dataSonar }"   );						
  								val event = MsgUtil.buildEvent( name,"sonarRobot","sonar( $dataSonar )")								
  								owner.emit(  event )
+								if( filter != null ) owner.emitLocalStreamEvent( event )
 							}
 						    //JUNE 2019 (streaming)
 							//owner.scope.launch{ owner.emitLocalStreamEvent(event) }

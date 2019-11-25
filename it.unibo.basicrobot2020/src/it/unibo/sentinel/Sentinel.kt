@@ -15,6 +15,10 @@ class Sentinel ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, sc
 	}
 		
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
+		  
+		//CREATE A PIPE for the sonar-data stream
+		val logger           = itunibo.robot.rx.Logger("logFiltered")
+		itunibo.robot.robotSupport.subscribeToFilter( logger )
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State

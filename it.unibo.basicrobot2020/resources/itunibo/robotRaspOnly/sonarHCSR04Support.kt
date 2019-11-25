@@ -1,4 +1,10 @@
 package itunibo.robotRaspOnly
+/*
+ -------------------------------------------------------------------------------------------------
+ Run SonarAlone and reads data from its output
+ For each data value V, it emitLocalStreamEvent sonarRobot:sonar(V)
+ -------------------------------------------------------------------------------------------------
+ */
 
 import java.io.BufferedReader
 import java.io.InputStreamReader
