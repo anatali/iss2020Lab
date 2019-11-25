@@ -14,7 +14,7 @@ import alice.tuprolog.*
 class robotAdapterQa( name : String ) : ActorBasic( name ){
     
     init{
-		println("robotAdapterQa | start")
+		println("		--- robotAdapterQa | start")
 		val sol1 = pengine.solve( "consult('basicRobotConfig.pl')." )
 		if( ! sol1.isSuccess() ){
 			println("		--- robotAdapterQa | ERROR: basicRobotConfig.pl not found or wrong")
@@ -30,7 +30,7 @@ class robotAdapterQa( name : String ) : ActorBasic( name ){
     }
 
     override suspend fun actorBody(msg : ApplMessage){
-        //println("		--- robotAdapterQa | received  msg= $msg "  ) //msg.msgContent()=cmd(X)
+        println("		--- robotAdapterQa | received  msg= $msg "  ) //msg.msgContent()=cmd(X)
 		if( msg.isEvent() ) return	//robotAdapterQa receives the events raised by the actors in its context		
 		val move = (Term.createTerm(msg.msgContent()) as Struct).getArg(0).toString()
 		itunibo.robot.robotSupport.move( move  )

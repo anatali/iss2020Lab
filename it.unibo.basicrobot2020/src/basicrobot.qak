@@ -5,11 +5,12 @@
  * as the result of PROJECT PHASE.
  * ================================================================
  */
-System  basicrobot 
+System  -trace basicrobot 
 
-Dispatch cmd     : cmd(X)
-Event  obstacle  : obstacle( DISTANCE )
-Event  alarm     : alarm( V )   
+Dispatch cmd      : cmd(X)
+Event  obstacle   : obstacle( DISTANCE )
+Event  alarm      : alarm( V )   
+Event  sonarRobot : sonar( D )
 
 Context ctxBasicRobot ip [ host= "localhost"   port= 8018 ]
 
@@ -22,7 +23,13 @@ CodedQActor robotadapter context ctxBasicRobot
 				className "itunibo.robot.robotAdapterQa"
 
 QActor basicrobot context ctxBasicRobot{
-	State s0 initial{
+
+	State s0 initial{  
+["
+//val sonaractorfilter = itunibo.robot.rx.sonaractorfilter( \"sonaractorfilter\"  ) 
+//sonaractorfilter.subscribeLocalActor( \"basicrobot\" )
+"]		
+		
 		println("basicrobot | starts (with robotadapter in the same context)")
 	}
 	Goto work    
@@ -31,6 +38,7 @@ QActor basicrobot context ctxBasicRobot{
 	Transition t0 
 			whenMsg cmd        -> handleCmd
 			whenEvent obstacle -> handleObstacle
+			whenEvent sonarRobot -> handleSonar
    
  /*
   * REQUIREMENT req-cmd 
@@ -39,6 +47,7 @@ QActor basicrobot context ctxBasicRobot{
 		//println("basicrobot | handleCmd ")
 		printCurrentMessage 
 		onMsg( cmd : cmd(X) ){  //redirect the command to the robotadapter
+			println("basicrobot | redirect cmd to robotadapter ")
  			forward robotadapter -m cmd : cmd( $payloadArg(0 ) )
 		}
 	}
@@ -63,29 +72,37 @@ QActor basicrobot context ctxBasicRobot{
 	Transition t0 
 			whenTime 350       -> work
 			whenEvent obstacle -> farFromObstacle
+			
+	State handleSonar{
+		printCurrentMessage
+	}
+	//Goto work
 }  
 
 /*
  * The actor sentinel is sensible to alarm events emitted by the external world
  */
  QActor sentinel context ctxBasicRobot{
+
 	State s0 initial{ 
-		println("sentinel waits ..")
-	}
+	} 
+	Goto work
+	
+	State work{ println("sentinel | waits ..") }
 	Transition t0 
 		whenEvent obstacle -> handleObstacle
 		whenEvent alarm    -> handleAlarm
 
 	State handleObstacle{
 		printCurrentMessage
-		println("sentinel handleObstacle: emits alarm(obstacle) ")
+		println("sentinel | handleObstacle: emits alarm(obstacle) ")
 		emit alarm : alarm(obstacle)
 	}
  	Goto s0
  	 	
 	State handleAlarm{
 		printCurrentMessage
-		println("sentinel handleAlarm ")
+		println("sentinel | handleAlarm ")
 	}
  	Transition t0 
 		whenEvent alarm -> handleAlarm

@@ -18,15 +18,20 @@ class Sentinel ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, sc
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						println("sentinel waits ..")
 					}
-					 transition(edgeName="t04",targetState="handleObstacle",cond=whenEvent("obstacle"))
-					transition(edgeName="t05",targetState="handleAlarm",cond=whenEvent("alarm"))
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
+				}	 
+				state("work") { //this:State
+					action { //it:State
+						println("sentinel | waits ..")
+					}
+					 transition(edgeName="t05",targetState="handleObstacle",cond=whenEvent("obstacle"))
+					transition(edgeName="t06",targetState="handleAlarm",cond=whenEvent("alarm"))
 				}	 
 				state("handleObstacle") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("sentinel handleObstacle: emits alarm(obstacle) ")
+						println("sentinel | handleObstacle: emits alarm(obstacle) ")
 						emit("alarm", "alarm(obstacle)" ) 
 					}
 					 transition( edgeName="goto",targetState="s0", cond=doswitch() )
@@ -34,9 +39,9 @@ class Sentinel ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, sc
 				state("handleAlarm") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("sentinel handleAlarm ")
+						println("sentinel | handleAlarm ")
 					}
-					 transition(edgeName="t06",targetState="handleAlarm",cond=whenEvent("alarm"))
+					 transition(edgeName="t07",targetState="handleAlarm",cond=whenEvent("alarm"))
 				}	 
 			}
 		}
