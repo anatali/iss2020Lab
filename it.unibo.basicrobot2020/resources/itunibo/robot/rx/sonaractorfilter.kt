@@ -10,9 +10,10 @@ import it.unibo.kactor.ActorBasic
 import it.unibo.kactor.ApplMessage
 import alice.tuprolog.Term
 import alice.tuprolog.Struct
- 
+
+//TODO : read the linit values from a configuration file
 class sonaractorfilter (name : String,  val owner : ActorBasic, 
-		var LimitDistance : Int = 9, var LastDistance : Int = 0,
+		var LimitDistance : Int = 7, var LastDistance : Int = 0,
 		var minDistance  : Int = 2,   var maxDistance  : Int = 50,
 		var maxDelta   : Int   = 1 
 ) : ApplActorDataStream( name ) {
@@ -22,7 +23,7 @@ class sonaractorfilter (name : String,  val owner : ActorBasic,
  	}
  	
 	override suspend fun elabData( data : String ){ //
-		println("   $name |  data = $data ")		
+		//println("   $name |  data = $data ")		
 		val Distance = Integer.parseInt( data ) 
  		val delta    = Math.abs( Distance - LastDistance )
 		var testDelta = delta >= maxDelta  //FOR REAL ROBOT only

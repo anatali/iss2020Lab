@@ -12,12 +12,13 @@ System basicrobot
 mqttBroker "192.168.1.14" : 1883
 
 Dispatch cmd      : cmd(X)
+Event  userCmd    : userCmd(X)
 Event  obstacle   : obstacle( DISTANCE )
 Event  alarm      : alarm( V )   
 Event  sonarRobot : sonar( D )
 
 Context ctxRadarGui ip   [ host= "localhost"   port= 8038 ] +mqtt
-Context ctxBasicRobot ip [ host= "localhost"   port= 8018 ]
+Context ctxBasicRobot ip [ host= "localhost"   port= 8018 ] +mqtt 
 
 
 /*
@@ -31,23 +32,32 @@ CodedQActor robotadapter context ctxBasicRobot
 QActor basicrobot context ctxBasicRobot{
 
 	State s0 initial{  
-		println("basicrobot | starts (with robotadapter in the same context)")
+		println("	basicrobot | starts (with robotadapter in the same context)")
 	}
 	Goto work    
 	
 	State work{ }
 	Transition t0 
 			whenMsg cmd          -> handleCmd
+			whenEvent userCmd    -> handleUserCmd
 			whenEvent obstacle   -> handleObstacle
    
  /*
   * REQUIREMENT req-cmd 
   */
 	State handleCmd {    
-		//println("basicrobot | handleCmd ")
-		printCurrentMessage 
+ 		printCurrentMessage 
 		onMsg( cmd : cmd(X) ){  //redirect the command to the robotadapter
-			println("basicrobot | redirect cmd to robotadapter ")
+			println("	basicrobot | redirect userCmd to robotadapter ")
+ 			forward robotadapter -m cmd : cmd( $payloadArg(0 ) )
+		}
+	}
+	Goto work
+	
+	State handleUserCmd {    
+ 		printCurrentMessage 
+		onMsg( userCmd : userCmd(X) ){  //redirect the command to the robotadapter
+			//println("	basicrobot | redirect cmd to robotadapter ")
  			forward robotadapter -m cmd : cmd( $payloadArg(0 ) )
 		}
 	}
@@ -58,20 +68,21 @@ QActor basicrobot context ctxBasicRobot{
  */	
 	State handleObstacle{
 		forward robotadapter -m cmd : cmd( h )
-		println("basicrobot | stops (for safety) since  obstacle  ")
+		println("	basicrobot | stops (for safety) since  obstacle  ")
  	}
  	//Goto work
 	Goto farFromObstacle 	//Added after introducing the real robot
 
 	State farFromObstacle{
-		println("basicrobot |  going back (to avoid event-generation) ")
+		println("	basicrobot |  going back (to avoid event-generation) ")
  		forward robotadapter -m cmd : cmd( s )
-		delay 250
+		delay 150
 		forward robotadapter -m cmd : cmd( h )
 	}
-	Transition t0 
-			whenTime 350       -> work
-			whenEvent obstacle -> farFromObstacle
+	Goto work
+//	Transition t0 
+//			whenTime 350       -> work
+//			whenEvent obstacle -> farFromObstacle
 			
 }  
 
@@ -79,39 +90,43 @@ QActor basicrobot context ctxBasicRobot{
  * The actor sentinel is sensible to alarm events emitted by the external world
  */
  QActor sentinel context ctxBasicRobot{
+	State s0 initial{ 
+		delay 1000 
+		println("	sentinel | STARTS")
 ["  
 //CREATE A PIPE for the sonar-data stream
+//WARNING: use myself to denote the sentinel actor, since this refers to the state
+
 val logger   = itunibo.robot.rx.Logger(\"logger\")
-val filter   = itunibo.robot.rx.sonaractorfilter(\"filter\", this)  //generates obstacle
-val forradar = itunibo.robot.rx.sonarforradar(\"forradar\", this)  //generates polar
+val filter   = itunibo.robot.rx.sonaractorfilter(\"filter\", myself)  //generates obstacle
+val forradar = itunibo.robot.rx.sonarforradar(\"forradar\", myself)  //generates polar
 //itunibo.robot.robotSupport.subscribe( logger ).subscribe( filter )
 itunibo.robot.robotSupport.subscribe( filter ).subscribe( forradar ) 
 "]  
-	State s0 initial{ 
 	} 
 	Goto work
 	
 	State work{  }
 	Transition t0 
-		whenEvent obstacle   -> handleObstacle
-		whenEvent sonarRobot -> handleSonar
+		//whenEvent obstacle   -> handleObstacle
+		whenEvent sonarRobot -> showTheMsg
 		whenEvent alarm      -> handleAlarm
 
-	State handleSonar{
+	State showTheMsg{
 		printCurrentMessage
 	}
 	Goto work
 
 	State handleObstacle{
 		printCurrentMessage
-		println("sentinel | handleObstacle: emits alarm(obstacle) ")
+		println("	sentinel | handleObstacle: emits alarm(obstacle) ")
 		emit alarm : alarm(obstacle)
 	}
  	Goto s0
  	 	
 	State handleAlarm{
 		printCurrentMessage
-		println("sentinel | handleAlarm ")
+		println("	sentinel | handleAlarm ")
 	}
  	Transition t0 
 		whenEvent alarm -> handleAlarm

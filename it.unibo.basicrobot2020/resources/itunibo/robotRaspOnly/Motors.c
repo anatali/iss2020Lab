@@ -11,12 +11,22 @@
 #define inp1m2 12
 #define inp2m2 13
 
-
 using namespace std;
+
+int rotLeftTime  = 610;
+int rotRightTime = 610;
+int rotStepTime  = 58;
+
 
 /*
 g++  Motors.c -l wiringPi -o  Motors
  */
+void h(){
+	digitalWrite(inp1m1, LOW);
+	digitalWrite(inp2m1, LOW);
+	digitalWrite(inp1m2, LOW);
+	digitalWrite(inp2m2, LOW);
+}
 
 void w(){
 	digitalWrite(inp1m1, HIGH);
@@ -43,23 +53,29 @@ void d(){
 	digitalWrite(inp2m2, HIGH);
 }
 void r(){
+	d();
+	delay(rotRightTime);
+	h();
 }
 void l(){
+	a();
+	delay(rotLeftTime);
+	h();
 }
 void z(){
+	d();
+	delay(rotStepTime);
+	h();
 }
 void x(){
+	a();
+	delay(rotStepTime);
+	h();
 }
 
 void configureRotationTime(){
 }
 
-void h(){
-	digitalWrite(inp1m1, LOW);
-	digitalWrite(inp2m1, LOW);
-	digitalWrite(inp1m2, LOW);
-	digitalWrite(inp2m2, LOW);
-}
 
 void setup() {
 	cout << "motorsC setUp STARTS" << endl;

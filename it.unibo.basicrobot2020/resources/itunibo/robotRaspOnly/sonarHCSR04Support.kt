@@ -38,7 +38,7 @@ object sonarHCSR04Support {
 					//(streaming)
 					actor.emitLocalStreamEvent( event )  
 				}
-				delay( 100 )
+				//delay( 100 )
 			}
 		}
 	}

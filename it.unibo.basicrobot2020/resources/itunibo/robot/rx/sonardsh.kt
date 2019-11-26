@@ -12,14 +12,14 @@ import alice.tuprolog.Term
 import alice.tuprolog.Struct
  
 class sonardsh (name : String,   val owner : ActorBasic,
-		var LastDistance : Int = 0, var maxDelta:Int=1) : ApplActorDataStream( name ) {
+		var LastDistance : Int = 0, var maxDelta:Int=2) : ApplActorDataStream( name ) {
 
 	init{
 		println("   $name |  STARTS")
  	}
  	
 	override suspend fun elabData( data : String ){
-		println("   $name |  data = $data ")
+		//println("   $name |  data = $data ")
 		val Distance = Integer.parseInt( data ) 
  		val delta    = Math.abs( Distance - LastDistance )
   		if( delta >= maxDelta  ){ 

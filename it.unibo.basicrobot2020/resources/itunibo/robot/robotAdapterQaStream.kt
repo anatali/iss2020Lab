@@ -36,6 +36,7 @@ class robotAdapterQaStream( name : String ) : ActorBasic( name ){
  
     override suspend fun actorBody(msg : ApplMessage){
         //println("	--- robotAdapterQaStream | received  msg= $msg "  ) //msg.msgContent()=cmd(X)
+		sysUtil.traceprintln(" $tt $name | received  $msg "  ) //msg.msgContent()=cmd(X)
 		//robotAdapterQaStream receives the events raised by the actors in its context
 		if( msg.isEvent() ) return			
 		val move = (Term.createTerm(msg.msgContent()) as Struct).getArg(0).toString()
