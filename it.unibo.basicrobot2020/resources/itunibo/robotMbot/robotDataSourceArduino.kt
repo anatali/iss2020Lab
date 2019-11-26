@@ -10,9 +10,8 @@ import alice.tuprolog.Term
 import alice.tuprolog.Struct
 
 
-class  robotDataSourceArduino( name : String, val owner : ActorBasic , val conn : SerialPortConnSupport,
-							   val filter: ActorBasic?  
-		  ) : ActorBasic(name, owner.scope){
+class  robotDataSourceArduino( name : String, val owner : ActorBasic ,
+					val conn : SerialPortConnSupport) : ActorBasic(name, owner.scope){
 		
 	init{
 		scope.launch{  autoMsg("start","start(1)") }
@@ -40,12 +39,9 @@ class  robotDataSourceArduino( name : String, val owner : ActorBasic , val conn 
  								//println("   	%%% $name | mbotSupport sonar: ${ dataSonar }"   );						
  								val event = MsgUtil.buildEvent( name,"sonarRobot","sonar( $dataSonar )")								
  								owner.emit(  event )
-								if( filter != null ) owner.emitLocalStreamEvent( event )
+								//owner.emitLocalStreamEvent( event )
 							}
-						    //JUNE 2019 (streaming)
-							//owner.scope.launch{ owner.emitLocalStreamEvent(event) }
- 
-							//Oct2019 : emit the event obstacle
+ 							//Oct2019 : emit the event obstacle
 							
 							if( dataSonar < 7  ){ //WARNING: it generates  many events
 								if( ! obstacleEventEmitted ){ //Math.abs(dataSonar - oldSonarValue) > 3

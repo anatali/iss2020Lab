@@ -11,8 +11,8 @@ import it.unibo.kactor.ApplMessage
 import alice.tuprolog.Term
 import alice.tuprolog.Struct
  
-class sonaractorfilter (name : String,   
-		var LimitDistance : Int = 12, var LastDistance : Int = 0,
+class sonaractorfilter (name : String,  val owner : ActorBasic, 
+		var LimitDistance : Int = 9, var LastDistance : Int = 0,
 		var minDistance  : Int = 2,   var maxDistance  : Int = 50,
 		var maxDelta   : Int   = 1 
 ) : ApplActorDataStream( name ) {
@@ -21,17 +21,19 @@ class sonaractorfilter (name : String,
 		println("   $name |  STARTS")
  	}
  	
-	override suspend fun elabData( data : String ){
+	override suspend fun elabData( data : String ){ //
+		println("   $name |  data = $data ")		
 		val Distance = Integer.parseInt( data ) 
  		val delta    = Math.abs( Distance - LastDistance )
-		//println("   $name |  elabData delta = $delta isVirtualRobot = $isVirtualRobot")
 		var testDelta = delta >= maxDelta  //FOR REAL ROBOT only
- 		if( Distance > minDistance && Distance < maxDistance  && testDelta  ){ 
- 			//println("   $name |  elabSonarData Distance = $Distance ")
+ 		if( testDelta && Distance > minDistance     ){
+ 		 	emitLocalStreamEvent( "any", "any($data)" )  	//PROPAGATE data to the pipe
 			LastDistance = Distance
- 			val m1 = MsgUtil.buildEvent(name, "sonarData", "sonarData($data)")
-			println("   ${name} |  emit m1= $m1")
-	 		emitLocalStreamEvent( m1 )  					//PROPAGATE to the pipe
+			if(Distance < LimitDistance){
+	 			val m1 = MsgUtil.buildEvent(name, "obstacle", "obstacle($data)")
+				println("   ${name} |  emit m1= $m1")
+				owner.emit( m1 ) 				//emits the qak event sonarRobot
+			}
     	}else{
 			//println("   $name |  DISCARDS $Distance ")
  		}				

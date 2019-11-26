@@ -17,12 +17,13 @@ class Logger(name : String) : ActorBasic(name){
     
 	override suspend fun actorBody(msg: ApplMessage) {
  		val vStr  = (Term.createTerm( msg.msgContent() ) as Struct).getArg(0).toString()
-        println("   $name |  handles msg= $msg  vStr=$vStr")
+        //println("   $name |  handles msg= $msg  vStr=$vStr")
 		elabData( vStr )
+		emitLocalStreamEvent(msg.msgId(),"sonar($vStr)")	//wec could change the event ...
 	}
  
  	protected suspend fun elabData(data : String ){
-		println("---------------------------------------------------- Logger $name elabData $data")
+		println("	-------------------------------------------- $name data=$data")
 		saveData( data)
 	}
 	

@@ -17,8 +17,11 @@ class Sentinel ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, sc
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		  
 		//CREATE A PIPE for the sonar-data stream
-		val logger           = itunibo.robot.rx.Logger("logFiltered")
-		itunibo.robot.robotSupport.subscribeToFilter( logger )
+		val logger   = itunibo.robot.rx.Logger("logger")
+		val filter   = itunibo.robot.rx.sonaractorfilter("filter", this)  //generates obstacle
+		val forradar = itunibo.robot.rx.sonarforradar("forradar", this)  //generates polar
+		//itunibo.robot.robotSupport.subscribe( logger ).subscribe( filter )
+		itunibo.robot.robotSupport.subscribe( filter ).subscribe( forradar ) 
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -27,10 +30,16 @@ class Sentinel ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, sc
 				}	 
 				state("work") { //this:State
 					action { //it:State
-						println("sentinel | waits ..")
 					}
-					 transition(edgeName="t05",targetState="handleObstacle",cond=whenEvent("obstacle"))
+					 transition(edgeName="t04",targetState="handleObstacle",cond=whenEvent("obstacle"))
+					transition(edgeName="t05",targetState="handleSonar",cond=whenEvent("sonarRobot"))
 					transition(edgeName="t06",targetState="handleAlarm",cond=whenEvent("alarm"))
+				}	 
+				state("handleSonar") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+					}
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
 				state("handleObstacle") { //this:State
 					action { //it:State

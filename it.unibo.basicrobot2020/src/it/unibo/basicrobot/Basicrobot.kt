@@ -27,7 +27,6 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 					}
 					 transition(edgeName="t00",targetState="handleCmd",cond=whenDispatch("cmd"))
 					transition(edgeName="t01",targetState="handleObstacle",cond=whenEvent("obstacle"))
-					transition(edgeName="t02",targetState="handleSonar",cond=whenEvent("sonarRobot"))
 				}	 
 				state("handleCmd") { //this:State
 					action { //it:State
@@ -56,13 +55,8 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						stateTimer = TimerActor("timer_farFromObstacle", 
 							scope, context!!, "local_tout_basicrobot_farFromObstacle", 350.toLong() )
 					}
-					 transition(edgeName="t03",targetState="work",cond=whenTimeout("local_tout_basicrobot_farFromObstacle"))   
-					transition(edgeName="t04",targetState="farFromObstacle",cond=whenEvent("obstacle"))
-				}	 
-				state("handleSonar") { //this:State
-					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-					}
+					 transition(edgeName="t02",targetState="work",cond=whenTimeout("local_tout_basicrobot_farFromObstacle"))   
+					transition(edgeName="t03",targetState="farFromObstacle",cond=whenEvent("obstacle"))
 				}	 
 			}
 		}

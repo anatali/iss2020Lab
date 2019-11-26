@@ -7,23 +7,26 @@
  * NOV 2019: added the idea of (sonar) data stream
  * ================================================================
  */
-System  -trace basicrobot 
+System basicrobot 
+
+mqttBroker "192.168.1.14" : 1883
 
 Dispatch cmd      : cmd(X)
 Event  obstacle   : obstacle( DISTANCE )
 Event  alarm      : alarm( V )   
 Event  sonarRobot : sonar( D )
 
+Context ctxRadarGui ip   [ host= "localhost"   port= 8038 ] +mqtt
 Context ctxBasicRobot ip [ host= "localhost"   port= 8018 ]
 
+
 /*
- * The robotadapter is a QActor defined in kotlin
- * that 'transforms' a cmd:cmd(X) into a command to the
- * concrete robot specified in basicRobotConfig.pl
+ * QActor defined in kotlin that 'transforms' a cmd:cmd(X) into 
+ * a command to the concrete robot specified in basicRobotConfig.pl
  */
 CodedQActor robotadapter context ctxBasicRobot 
-				//className "itunibo.robot.robotAdapterQa"	                 //OCT 2019
-				className "itunibo.robot.robotAdapterQaWithSonarDataFilter"  //NOV 2019
+		//className "itunibo.robot.robotAdapterQa"	    //OCT 2019
+		className "itunibo.robot.robotAdapterQaStream"  //NOV 2019
  
 QActor basicrobot context ctxBasicRobot{
 
@@ -34,9 +37,8 @@ QActor basicrobot context ctxBasicRobot{
 	
 	State work{ }
 	Transition t0 
-			whenMsg cmd        -> handleCmd
-			whenEvent obstacle -> handleObstacle
-			whenEvent sonarRobot -> handleSonar
+			whenMsg cmd          -> handleCmd
+			whenEvent obstacle   -> handleObstacle
    
  /*
   * REQUIREMENT req-cmd 
@@ -71,10 +73,6 @@ QActor basicrobot context ctxBasicRobot{
 			whenTime 350       -> work
 			whenEvent obstacle -> farFromObstacle
 			
-	State handleSonar{
-		printCurrentMessage
-	}
-	//Goto work
 }  
 
 /*
@@ -83,17 +81,26 @@ QActor basicrobot context ctxBasicRobot{
  QActor sentinel context ctxBasicRobot{
 ["  
 //CREATE A PIPE for the sonar-data stream
-val logger           = itunibo.robot.rx.Logger(\"logFiltered\")
-itunibo.robot.robotSupport.subscribeToFilter( logger )
-"] 
+val logger   = itunibo.robot.rx.Logger(\"logger\")
+val filter   = itunibo.robot.rx.sonaractorfilter(\"filter\", this)  //generates obstacle
+val forradar = itunibo.robot.rx.sonarforradar(\"forradar\", this)  //generates polar
+//itunibo.robot.robotSupport.subscribe( logger ).subscribe( filter )
+itunibo.robot.robotSupport.subscribe( filter ).subscribe( forradar ) 
+"]  
 	State s0 initial{ 
 	} 
 	Goto work
 	
-	State work{ println("sentinel | waits ..") }
+	State work{  }
 	Transition t0 
-		whenEvent obstacle -> handleObstacle
-		whenEvent alarm    -> handleAlarm
+		whenEvent obstacle   -> handleObstacle
+		whenEvent sonarRobot -> handleSonar
+		whenEvent alarm      -> handleAlarm
+
+	State handleSonar{
+		printCurrentMessage
+	}
+	Goto work
 
 	State handleObstacle{
 		printCurrentMessage

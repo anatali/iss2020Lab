@@ -33,12 +33,12 @@ object sonarHCSR04Support {
 				if( data != null ){
 	 				val m1 = "sonar( $data )"
  					val event = MsgUtil.buildEvent( "sonarsupport","sonarRobot",m1)								
- 					println("sonarHCSR04Support event = $event actor=${actor.name}"   )
-					//actor.emit(  event )
+ 					//println("sonarHCSR04Support event = $event actor=${actor.name}"   )
+					//actor.emit(  event )		//AVOID: better use a stream
 					//(streaming)
 					actor.emitLocalStreamEvent( event )  
 				}
-				delay( 250 )
+				delay( 100 )
 			}
 		}
 	}
