@@ -246,7 +246,10 @@ For example, robot-sonar data can be made available by this component in differe
 
 Since a sonar usually emits data with a quite high frequency and since these data are sometimes not reliable, a good strategy (that we will
 adopt in the following) is to avoid the direct generation of qak-events by the 
-<a href="../resources/itunibo/robot/robotAdapterQaStream.kt" target="code">robotAdapterQaStream.kt</a>.
+<a href="../resources/itunibo/robot/robotAdapterQaStream.kt" target="code">robotAdapterQaStream.kt</a>
+(see also <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakintro2020/userDocs/LabQakIntro2020.html#actorasstream" target="web">
+LabQakIntro2020.html | Observable Actors</a>).
+
 <br/><br/>
 Rather, this component could better work as a data-stream source connected with a filter able to select more reliable data and
 to generate qak-events for those data only.
