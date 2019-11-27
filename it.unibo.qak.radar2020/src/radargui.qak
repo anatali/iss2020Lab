@@ -7,6 +7,9 @@ System /*-trace*/ robotradarsys
 
 mqttBroker "localhost" : 1883 
 
+/*
+ * NOTE THAT the msg polar:polar(D,A) can be sent as a dispatch, as a request or as an event
+ */
 Request  polar        : polar(D,A) 
 Dispatch polar        : polar(D,A) 
 Event    polar        : polar(D,A) 

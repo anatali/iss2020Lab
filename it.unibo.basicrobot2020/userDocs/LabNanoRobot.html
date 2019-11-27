@@ -167,14 +167,19 @@ table, th, td {
 </tr>
  
 <tr>
-<td><h3>support code for nano</h3><m>
+<td><h3>Low-level support code for nano</h3><m>
 <a href="../resources/itunibo/robot/robotSupport.kt" target="code">robotSupport.kt</a><br/>
 <a href="../resources/itunibo/robotRaspOnly/nanoSupport.kt" target="code">nanoSupport.kt</a><br/>
 <a href="../resources/itunibo/robotRaspOnly/motorscSupport.kt" target="code">motorscSupport.kt</a><br/>
 <a href="../resources/itunibo/robotRaspOnly/sonarHCSR04Support.kt" target="code">sonarHCSR04Support.kt</a><br/>
 </m></td>
-<td>
-<li> </li>
+<td> 
+<h3>High-level support code for nano</h3> 
+<li><a href="../resources/itunibo/robot/robotAdapterQaStream.kt" target="code">robotAdapterQaStream.kt</a> </li>
+<li><a href="../src/basicrobot.qak" target="code">basicrobot.qak</a></li>
+<h3>External service</h3>
+<li><a href="../../it.unibo.qak.radar2020/src/radargui.qak" target="web">radargui.qak</a></li>
+ 
 </td>
 </tr>
 
@@ -184,8 +189,6 @@ table, th, td {
 <h2>The low-level support</h2>
 The technology-dependent part of the robot is embedded in the object
 <a href="../resources/itunibo/robotRaspOnly/nanoSupport.kt" target="code">nanoSupport.kt</a> 
-(called by ,
-
 that provides two main operations:
 
 <table style="width:98%">
@@ -194,7 +197,6 @@ that provides two main operations:
 <tr>
 <td style="width:40%" >
 <pre>
-<h3>it.unibo.robotRaspOnly.nanoSupport.kt</h3>
 fun <k>create</k>(<ks>owner</ks>: ActorBasic, 
 	withSonar : Boolean = true)
 </pre> 
@@ -202,8 +204,8 @@ fun <k>create</k>(<ks>owner</ks>: ActorBasic,
 <td>
 <m>Creates a support to be used by the given <ks>owner</ks> actor.<br/>
 The flag <tt>withSonar</tt> is used to create a <a href="../resources/itunibo/robotRaspOnly/sonarHCSR04Support.kt" target="code">sonarHCSR04Support.kt</a>
-that transforms the <ks>owner</ks>  in a event stream.<br/>
-<br/><br/>
+that transforms the <ks>owner</ks>  in a event stream.
+<br/> <br/>
 Ths operation is called by the <a href="../resources/itunibo/robot/robotSupport.kt" target="code">robotSupport.kt</a>
 that creates the proper support for each specific robot type specified in the file  <m><ks>basicRobotConfig.pl</ks></m>.
 </m> 
@@ -221,7 +223,7 @@ fun <k>move</k>( cmd : String )
 <m>Send a move command to the robot by using the
  <a href="../resources/itunibo/robotRaspOnly/motorscSupport.kt" target="code">motorscSupport.kt</a> that in turn uses
  <a href="../resources/itunibo/robotRaspOnly/Motors.c" target="code">Motors.c</a>.
- .
+ 
 
 </m>  
 </td> 
@@ -231,7 +233,7 @@ fun <k>move</k>( cmd : String )
 </tbody>
 </table>
 
-<h3>The robot adpater</h3>
+<h3>The robot adapter</h3>
 The actor <a href="../resources/itunibo/robot/robotAdapterQaStream.kt" target="code">robotAdapterQaStream.kt</a>
 provides an 'adapter-utility' that allows application designers to
 send commands the robot actuators (e.g. to execute robot move-commands) without knowing any detail of their low-level configuration.
@@ -257,23 +259,34 @@ to generate qak-events for those data only.
 Moreover, we can easily add to this data-pipe another filter able to generate other events, e.g. <m><ks>obstacle : obstacle( D )</ks></m>
 when the sonar distance is under a prefixed limit.
 
-
+<h2>High-level models</h2>
+<ol>
+<li>The basic robot (project model): <a href="../src/basicrobot.qak" target="code">basicrobot.qak</a> on Raspberry
+</li>
+<li>A radar service (project model): 
+ <a href="../../it.unibo.qak.radar2020/src/radargui.qak" target="web">radargui.qak</a> in project <em>it.unibo.qak.radar2020</em></li>
+</ol>
 
 
 <h2>Run</h2>
-Activate the MATT broker (moquitto)
-<br/><br/>
-Activate <a href="../src/basicrobot.qak" target="code">basicrobot.qak</a> on Raspberry
+<ol>
+<li>Activate the MQTT broker (mosquitto)
+See  <a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.qakintro2020/userDocs/LabQakIntro2020.html#mqtt" target="web">
+LabQakIntro2020.html | Using MQTT </a></li>
+<li>Activate <a href="../src/basicrobot.qak" target="code">basicrobot.qak</a> on Raspberry
+</li>
+<li>Activate a qak radar
+ <a href="../../it.unibo.qak.radar2020/src/radargui.qak" target="web">radargui.qak</a>
+in project <em>it.unibo.qak.radar2020</em>
+</li>
+<li>Launch the Jupyter notebook <a href="./sBasicRobotUserCmdMqt.ipynb" target="code">BasicRobotUserCmdMqt.ipynb</a>
+</li>
+<li>Launch a frontend web-server(<tt>C:\Didattica2018Work\iss2019Lab\it.unibo.frontend19\nodeCode\frontend</tt>)
+and open a browser on <tt>PC-IP:8080</tt>
+</li>
+</ol>
 
-<br/><br/>
-
-Launch the Jupyter notebook <a href="./sBasicRobotUserCmdMqt.ipynb" target="code">BasicRobotUserCmdMqt.ipynb</a>
-<br/><br/>
-Launch the frontend (<tt>C:\Didattica2018Work\iss2019Lab\it.unibo.frontend19\nodeCode\frontend</tt>)
-<br/><br/>
-Open a browser on <tt>PC-IP:8080</tt>
-
-<br/><br/>
+ 
 </div>  
 
 <div style="background-color:rgba(86, 56, 253, 0.9); width:100%;text-align:center;font-size:small;color:white">

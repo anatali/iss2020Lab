@@ -55,9 +55,9 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						forward("cmd", "cmd(h)" ,"robotadapter" ) 
 						println("	basicrobot | stops (for safety) since  obstacle  ")
 					}
-					 transition( edgeName="goto",targetState="farFromObstacle", cond=doswitch() )
+					 transition( edgeName="goto",targetState="movefarFromObstacle", cond=doswitch() )
 				}	 
-				state("farFromObstacle") { //this:State
+				state("movefarFromObstacle") { //this:State
 					action { //it:State
 						println("	basicrobot |  going back (to avoid event-generation) ")
 						forward("cmd", "cmd(s)" ,"robotadapter" ) 

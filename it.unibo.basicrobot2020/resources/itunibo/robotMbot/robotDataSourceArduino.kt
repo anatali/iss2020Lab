@@ -30,8 +30,7 @@ class  robotDataSourceArduino( name : String, val owner : ActorBasic ,
 	}
 
 	suspend fun elabData(data : String ){
- 		var obstacleEventEmitted  = false
-        while (true) {
+         while (true) {
  			try {
  				var curDataFromArduino = conn.receiveALine()
 				//globalTimer.startTimer()  //TIMER ....
