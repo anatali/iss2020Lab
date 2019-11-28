@@ -109,7 +109,7 @@ kc{
 }
 pre{
 	font-family: "Helvetica";
-	font-size: 60%;
+	font-size: 100%;
 	background-color: #fcf8c7;
 	border: 1px solid blue;
 }
@@ -153,7 +153,126 @@ table, th, td {
 <h1>LabRobotUsage | Using the basicrobot  <font size="5"></font> </h1>
 </div>  
 
+<h2>Requirements</h2>
+<div class="req">
+Build a robot-radar system <em>robotAppl0</em> that includes a <em>basicrobot</em> (equipped with a <em>robot-sonar</em>), a <em>userconsole</em> 
+and a <em>radarGui</em> so that:
+<ol>
+<h3>SPRINT1</h3>
+<li><m><kc>REQ-SHOW-DATA</kc></m>: the data produced by the <em>robot-sonar</em> should be <i>properly</i> shown by the <em>radarGui</em>.</li>
+<li><m><kc>REQ-MOVE</kc></m>: an human user can move the robot by using the  <em>userconsole</em>.</li>
+<h3>SPRINT2</h3>
+<li><m><kc>REQ-TURN</kc></m>:  the <em>basicrobot</em> must be able to detect obstacles and turn left of <m><k>90</k></m> degrees when an obstacle
+is detected.</li>
+<h3>SPRINT3</h3>
+<li><m><kc>REQ-STEP</kc></m>:  the <em>basicrobot</em> must be able to execute a command <m><k>step(T)</k></m> that moves the robot for
+the given time <m><k>T</k></m>.
+</ol>
+</div>
+
+<h1>SPRINT1</h1>
+<h2>Requirements</h2> 
+<div class="req">
+<ol>
+<li><m><kc>REQ-SHOW-DATA</kc></m>: the data produced by the <em>robot-sonar</em> should be <i>properly</i> shown by the <em>radarGui</em>.</li>
+<li><m><kc>REQ-MOVE</kc></m>: an human user can move the robot by using the  <em>userconsole</em>.</li>
+ </ol>
+</div>
+<h2>Requirement analysis</h2> 
+No requirement is given for the robot-radar interaction and for the console-robot interaction. Thus we can formalize the requirements as follows:
+<br/><br/>
+ <table style="width:98%">
+<tbody>	
+
+<tr>
+<td style="width:55%" >
+<pre><m>System sprint1req
+Context ctxBasicRobot ip [ host= "192.168.43.171" port= 8018 ]  
+Context ctxRobotAppl0 ip [ host= "localhost"      port= 8033 ]
+Context ctxRadarGui   ip [ host= "192.168.43.5"   port= 8038 ]  
+
+ExternalQActor <ks>basicrobot</ks> context ctxBasicRobot
+ExternalQActor <ks>radargui</ks> context ctxRadarGui
+
+QActor <ks>robotappl0</ks> context ctxRobotAppl0{
+	State s0 initial{
+		println("robotappl0 START")
+		<kc>//REQ-MOVE: an human user can move the robot by using the userconsole.
+		//REQ-SHOW-DATA: the robot-sonar data should be properly shown by the radarGui.</kc>
+	}
+}
+</m></pre> 
+<td>
+<m>The system is composed of three components. <br/><br/>
+The <em>basicrobot</em> and the <em>radarGui</em> are external with respect to the application system.<br/><br/>
+The <em>userconsole</em> is supposed to be an 'alien' component, i.e. a component built without the qak metamodel<br/><br/>
+
+No specification is given as regars interaction. This part has to be covered by problem analysis.
+</m>
+ </td>
+</tr>
+</tbody>
+</table>
+
+<h2>Problem analysis</h2> 
+
+
+ <table style="width:98%">
+<tbody>	
+
+<tr>
+<td style="width:55%" >
+<pre><m>System sprint1analysis
+Context ctxBasicRobot ip [ host= "192.168.43.171" port= 8018 ]  
+Context ctxRobotAppl0 ip [ host= "localhost"      port= 8033 ]
+Context ctxRadarGui   ip [ host= "192.168.43.5"   port= 8038 ]  
+
+ExternalQActor <ks>basicrobot</ks> context ctxBasicRobot
+ExternalQActor <ks>radargui</ks> context ctxRadarGui
+
+QActor <ks>robotappl0</ks> context ctxRobotAppl0{
+	State s0 initial{
+		println("robotappl0 START")
+		<kc>//REQ-MOVE: an human user can move the robot by using the userconsole.
+		//REQ-SHOW-DATA: the robot-sonar data should be properly shown by the radarGui.</kc>
+	}
+}
+</m></pre> 
+<td>
+<m>The system is composed of three components. <br/><br/>
+The <em>basicrobot</em> and the <em>radarGui</em> are external with respect to the application system.<br/><br/>
+The <em>userconsole</em> is supposed to be an 'alien' component, i.e. a component built without the qak metamodel<br/><br/>
+
+No specification is given as regars interaction. This part has to be covered by problem analysis.
+</m>
+ </td>
+</tr>
+</tbody>
+</table>
+
+
 <div class="body"> 
+
+<h1>SPRINT2</h1>
+<h2>Requirements</h2> 
+<div class="req">
+<ol>
+<li><m><kc>REQ-TURN</kc></m>:  the<em>basicrobot</em> must be able to detect obstacles and turn left of <m><k>90</k></m> degrees when an obstacle
+is detected.</li>
+ </ol>
+</div>
+<div class="body"> 
+
+<h1>SPRINT3</h1>
+<h2>Requirements</h2>
+<div class="req">
+<ol>
+<li><m><kc>REQ-STEP</kc></m>:  the <em>basicrobot</em> must be able to execute a command <m><k>step(T)</k></m> that moves the robot for
+the given time <m><k>T</k></m>.
+ </ol>
+</div>
+<div class="body"> 
+
 
  <table style="width:98%">
 <tbody>	
@@ -169,9 +288,6 @@ table, th, td {
 <tr>
 <td><h3>support code for nano</h3><m>
 <a href="../resources/itunibo/robot/robotSupport.kt" target="code">robotSupport.kt</a><br/>
-<a href="../resources/itunibo/robotRaspOnly/nanoSupport.kt" target="code">nanoSupport.kt</a><br/>
-<a href="../resources/itunibo/robotRaspOnly/motorscSupport.kt" target="code">motorscSupport.kt</a><br/>
-<a href="../resources/itunibo/robotRaspOnly/sonarHCSR04Support.kt" target="code">sonarHCSR04Support.kt</a><br/>
 </m></td>
 <td>
 <li> </li>

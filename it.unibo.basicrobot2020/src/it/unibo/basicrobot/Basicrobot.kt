@@ -18,6 +18,14 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
+						  
+						//The PIPE could be completetly created by the robotAdapterQaStream
+						//WARNING: use myself to denote the basicrobot actor, since this refers to the state
+						 
+						//val filter   = itunibo.robot.rx.sonaractorfilter("filter", myself)  //generates obstacle
+						//val logger   = itunibo.robot.rx.Logger("logger")
+						val forradar = itunibo.robot.rx.sonarforradar("forradar", myself)  //generates polar
+						itunibo.robot.robotSupport.subscribe( forradar ) 
 						println("	basicrobot | starts (with robotadapter in the same context)")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )

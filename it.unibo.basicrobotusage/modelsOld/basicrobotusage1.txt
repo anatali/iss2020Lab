@@ -1,6 +1,6 @@
 /*
  * ================================================================
- * This exmaple shows that
+ * This example shows that
  * the caller of an External QActor can perceive events emitted
  * by (any actor working in the context of ) the External QActor.
  * These events can be perceived also by any QActor working
