@@ -15,6 +15,7 @@ class Robotappl0 ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 	}
 		
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
+		var StepTime=0L
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -25,26 +26,35 @@ class Robotappl0 ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 				state("work") { //this:State
 					action { //it:State
 					}
-					 transition(edgeName="t00",targetState="handleUserCmd",cond=whenDispatch("cmd"))
-					transition(edgeName="t01",targetState="show",cond=whenEvent("polar"))
+					 transition(edgeName="t00",targetState="handleObstacle",cond=whenEvent("obstacle"))
+					transition(edgeName="t01",targetState="doStep",cond=whenEvent("step"))
 				}	 
-				state("handleUserCmd") { //this:State
+				state("handleObstacle") { //this:State
 					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						if( checkMsgContent( Term.createTerm("cmd(X)"), Term.createTerm("cmd(CMD)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								forward("cmd", "cmd(${payloadArg(0)})" ,"basicrobot" ) 
-						}
+						emit("userCmd", "userCmd(a)" ) 
+						delay(500) 
+						emit("userCmd", "userCmd(a)" ) 
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
-				state("show") { //this:State
+				state("doStep") { //this:State
 					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						if( checkMsgContent( Term.createTerm("polar(D,Angle)"), Term.createTerm("polar(D,A)"), 
+						if( checkMsgContent( Term.createTerm("step(T)"), Term.createTerm("step(T)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								emit("polar", "polar(${payloadArg(0)},${payloadArg(1)})" ) 
+								StepTime = payloadArg(0).toLong()
+								startTimer()
+								emit("userCmd", "userCmd(w)" ) 
 						}
+						stateTimer = TimerActor("timer_doStep", 
+							scope, context!!, "local_tout_robotappl0_doStep", StepTime )
+					}
+					 transition(edgeName="t02",targetState="endStep",cond=whenTimeout("local_tout_robotappl0_doStep"))   
+					transition(edgeName="t03",targetState="handleObstacle",cond=whenEvent("obstacle"))
+				}	 
+				state("endStep") { //this:State
+					action { //it:State
+						emit("userCmd", "userCmd(h)" ) 
+						println("robotappl0 | step DONE")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 

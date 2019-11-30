@@ -19,7 +19,7 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 				state("s0") { //this:State
 					action { //it:State
 						  
-						//The PIPE could be completetly created by the robotAdapterQaStream
+						//The PIPE could be completely created by the robotAdapterQaStream
 						//WARNING: use myself to denote the basicrobot actor, since this refers to the state
 						 
 						//val filter   = itunibo.robot.rx.sonaractorfilter("filter", myself)  //generates obstacle
@@ -42,7 +42,6 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						println("$name in ${currentState.stateName} | $currentMsg")
 						if( checkMsgContent( Term.createTerm("cmd(X)"), Term.createTerm("cmd(X)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								println("	basicrobot | redirect userCmd to robotadapter ")
 								forward("cmd", "cmd(${payloadArg(0)})" ,"robotadapter" ) 
 						}
 					}
@@ -67,7 +66,7 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 				}	 
 				state("movefarFromObstacle") { //this:State
 					action { //it:State
-						println("	basicrobot |  going back (to avoid event-generation) ")
+						println("	basicrobot | going back (to avoid event-generation) ")
 						forward("cmd", "cmd(s)" ,"robotadapter" ) 
 						delay(150) 
 						forward("cmd", "cmd(h)" ,"robotadapter" ) 
