@@ -68,7 +68,7 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 					action { //it:State
 						println("	basicrobot | going back (to avoid event-generation) ")
 						forward("cmd", "cmd(s)" ,"robotadapter" ) 
-						delay(150) 
+						delay(100) 
 						forward("cmd", "cmd(h)" ,"robotadapter" ) 
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )

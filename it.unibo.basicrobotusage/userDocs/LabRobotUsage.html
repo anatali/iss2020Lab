@@ -371,10 +371,10 @@ Goto work</m>
 </tr>
 </tbody>
 </table>
-<br/> 
-Of course, the introduction of higher-level layers that can subsume and extend the behavior of lower-level layers must be carefully designed
+<div  class="remark">
+The introduction of a layer that subsumes and extends the behavior of a lower-layer must be carefully designed
 after a careful analysis of the problem.
-
+</div>
 <div class="body"> 
 
 <h1>SPRINT2</h1>
@@ -386,14 +386,27 @@ The requirements set for the SPRINT2 is an example of some new behavior that we 
 is detected. </m> 
 </div>
 
-The discussion at the end of the previous section already tell us how to solve this problem.
+The discussion at the end of the previous section already tell us how to solve this problem. The only problem that arises in this case is whether the robot
+first stops (lower-level) and then rotate (high-level) or first rotates and then stops.
 
 <h1>SPRINT3</h1>
 <h2>Requirements</h2>
 <div class="req"><m><kc>REQ-STEP</kc></m>:  the <em>basicrobot</em> must be able to execute a command <m><k>step(T)</k></m> that moves the robot for
-the given time <m><k>T</k></m>.
+the given time <m><k>T</k></m>. <br/>
+<m><kc>REQ-STEPABORT</kc></m>: if an <em>obstacle</em> is detected while performing a <m><k>step(T)</k></m>, the robot must return to its initial position.
+The same must happen also when the user sends to the robot a command to <ks>stop</ks>.
 </div>
  
+<h2>Problem analysis</h2>
+Now, the application layer does introduce new commands for the the robot. As a consequence, the possibility to move the <em>basicrobot</em>
+by emitting <em>usercmd</em> events should be excluded. To achieve this goal:
+<ol>
+<li>the application layer could be able to <i>inhibit</i> the behavior of the <em>basicrobot</em> (as suggested by the subsumption model)
+or to <i>intercept</i> <em>usercmd</em> events;</li>
+<li>the application layer could provide an <i>user-console</i> able to impose proper constraints to the interaction.</li>
+</ol>
+
+In the following, we will adopt the second strategy.
 
 
  <table style="width:98%">
@@ -401,18 +414,63 @@ the given time <m><k>T</k></m>.
 
 <tr>
 <td style="width:50%" >
-<img src="./img/robotSkeleton.png" alt="robotSkeleton.png" width="100%"  />
+<pre><m><k>mqttBroker</k> "localhost" : 1883 
+Event <ks>userCmd</ks>	: userCmd(X)			<kc>//by user interface</kc>
+Event <ks>obstacle</ks>	: obstacle( DISTANCE )	<kc>//by sonaractorfilter</kc>
+Event <ks>polar</ks>	: polar( D,Angle)		<kc>//by sonarforradar</kc>
+Event <ks>step</ks>     : step(T)			<kc>//emitted by user interface</kc>
+Context ctxRadarGui ip [ host= "localhost"  port= 8038 ] <k>+mqtt</k>
+QActor robotappl0 context ctxRobotAppl0{
+["
+var <ks>StepTime=0L</ks>
+var <ks>StepDuration=0L</ks>
+"]
+...
+ State work{}
+ Transition t0 
+	whenEvent obstacle -> handleObstacle
+	whenEvent step     -> doStep
+	 
+ <kc>//REQ-MOVE</kc>: fulfilled by the basicrobot  
+ <kc>//REQ-SHOW-DATA</kc>: fulfilled by the basicrobot   	
+ <kc>//REQ-TURN</kc>
+ State handleObstacle{ emit userCmd:userCmd(a)} Goto work
+ <kc>//REQ-STEP</kc>
+ State doStep{
+	onMsg( step : step(T ) ){
+		["StepTime = payloadArg(0).toLong()"]
+		["startTimer()"]	 
+		emit userCmd:userCmd(w)	
+	}		 
+ }
+ Transition t0
+	<k>whenTimeVar</k> <ks>StepTime</ks> -> endStep
+	whenEvent <ks>obstacle</ks>   -> handleObstacleInStep
+</m></pre> 
 <td>
-<img src="./img/robotConnections.png" alt="robotConnections.png" width="100%"  />
+<m><kc>REQ-STEP</kc>: fulfilled when the given <ks>StepDuration</ks> expires:</m>
+<pre><m><h3>Step done with success</h3>		
+ State endStep{ emit userCmd:userCmd(h) } Goto work 
+</m>
+</pre>
+<m><kc>REQ-STEPABORT</kc></m>: the robot returns to its initial position.</m>
+<pre><m><h3>Step aborted for an obstacle</h3>	
+ State handleObstacleInStep{
+	["<ks>StepDuration</ks> = getDuration().toLong()"]	 
+	emit userCmd:userCmd(s)  <kc>#back step</kc>
+ }
+ Transition t0 
+	<k>whenTimeVar</k> StepDuration -> endStep
+</m>
+</pre>
  </td>
 </tr>
  
 <tr>
-<td><h3>support code for nano</h3><m>
-<a href="../resources/itunibo/robot/robotSupport.kt" target="code">robotSupport.kt</a><br/>
-</m></td>
+<td> <m>
+ </m></td>
 <td>
-<li> </li>
+ 
 </td>
 </tr>
 

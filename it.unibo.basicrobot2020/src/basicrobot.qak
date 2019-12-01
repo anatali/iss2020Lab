@@ -28,7 +28,7 @@ CodedQActor robotadapter context ctxBasicRobot
 		//className "itunibo.robot.robotAdapterQa"	    //OCT 2019
 		className "itunibo.robot.robotAdapterQaStream"  //NOV 2019
 
-QActor basicrobot context ctxBasicRobot{
+QActor basicrobot context ctxBasicRobot{ 
 
 	State s0 initial{  
 ["  
@@ -83,10 +83,10 @@ itunibo.robot.robotSupport.subscribe( forradar )
 	State movefarFromObstacle{
 		println("	basicrobot | going back (to avoid event-generation) ")
  		forward robotadapter -m cmd : cmd( s )
-		delay 150
+		delay 100
 		forward robotadapter -m cmd : cmd( h )
 	}
-	Goto work	
+	Goto work	 
 }  
 
 /*
