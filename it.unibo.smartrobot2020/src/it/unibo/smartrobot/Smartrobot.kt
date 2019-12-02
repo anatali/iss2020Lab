@@ -17,7 +17,7 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		 
 		var StepTime = 1000L;  
-		var Duration=0 
+		var Duration = 0 
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -47,7 +47,7 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 				}	 
 				state("ignoreObstacle") { //this:State
 					action { //it:State
-						println("smartrobot | IGNORE obstacle event in normal work ")
+						println("smartrobot | IGNORE obstacle event")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
@@ -66,8 +66,9 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						println("$name in ${currentState.stateName} | $currentMsg")
 						if( checkMsgContent( Term.createTerm("step(DURATION)"), Term.createTerm("step(T)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								StepTime = payloadArg(0).toLong()
-								startTimer()
+								StepTime = payloadArg(0).toLong() 
+											  println("smartrobot | doStep StepTime =$StepTime ")
+											  startTimer()
 								forward("cmd", "cmd(w)" ,"basicrobot" ) 
 						}
 						stateTimer = TimerActor("timer_doStep", 
@@ -99,7 +100,6 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						Duration=getDuration()
 						answer("step", "stepfail", "stepfail($Duration,obstacle)"   )  
 						println("smartrobot | stepFail Duration=$Duration ")
-						emit("alarm", "alarm(stepobstacle)" ) 
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 

@@ -292,14 +292,23 @@ Context <ks>ctxRadarGui</ks>	ip [ host= "localhost" port= 8038 ] <k>+mqtt</k>
 </pre>
 
 Now a console can be built as an 'alien' component that connects to the <m><k>mqttBroker</k></m> and then publish message 
-in the qak standard representation on the topic <tt>unibo/qak/events</tt>. For example, using Python:
+in the qak standard representation on the topic <tt>unibo/qak/events</tt>. For example:
 
+<h3 id="consolepython">A prototype of a console </h3>
+Let us introduce a prototype of a console in Python:
+
+<br/><br/>
+ <table style="width:98%">
+<tbody>	
+
+<tr>
+<td style="width:50%" ><m>
 <pre>
 <m>import time
 import paho.mqtt.client as paho
 brokerAddr	= "localhost"
-topic		= <k>"unibo/qak/events"</k>   <kc>#WARNING: we must known an infrastructural detail</kc>
-eventTemplate	= <ks>"msg(userCmd,event,python,none,userCmd(<kc>CMDVAL</kc>),1)"</ks> <kc>#qak standard mag representation</kc>
+topic		= <ks>"unibo/qak/events"</ks>   <k>#WARNING:</k> <kc>infrastructural detail!!!</kc>
+eventTemplate	= <ks>"msg(userCmd,event,python,none,userCmd(<kc>CMDVAL</kc>),1)"</ks> <kc>#qak msg-rep</kc>
 
 def <ks>emit</ks>( cmd ) :
     message = eventTemplate.replace("<kc>CMDVAL</kc>", cmd)
@@ -317,8 +326,25 @@ client.connect(brokerAddr)
 console()</m>
 </pre>
 
+</m></td>
+<td><m>
+<h3>WARNING</h3>
+The console code 'knows' the name of the topic used to emit/perceive qak events.
+This detail is allowable here, since we are just introducing a console prototype during system development. However:
+<div class="remark">
+The final console should consist in a user-GUI that completely hides any detail related to the interaction with the application.
+</div>
+
 This code can be executed by using the <i>jupyter file</i>
-<a href="Appl0Console.ipynb" target="code">Appl0Console.ipynb</a>
+<a href="Appl0ConsoleMqtt.ipynb" target="code">Appl0ConsoleMqtt.ipynb</a>
+</m>
+</td>
+</tr>
+</tbody>
+</table>
+
+
+
 
 <h3>Towards systems based on the Subsumption architecture</h3>
 Now, the actor <ks>robotappl0</ks> of the <em>robotAppl0</em> application is introduced just to 'extend' the behavior of the <em>basicrobot</em>.
@@ -382,11 +408,11 @@ after a careful analysis of the problem.
 The requirements set for the SPRINT2 is an example of some new behavior that we must add to that of the basic robot. 
 
 
-<div class="req"><m><kc>REQ-TURN</kc></m>:  the<em>basicrobot</em> must be able to detect obstacles and turn left of <m><k>90</k></m> degrees when an obstacle
+<div class="req"><m><kc>REQ-TURN</kc></m>: the<em>basicrobot</em> must be able to detect obstacles and turn left of <m><k>90</k></m> degrees when an obstacle
 is detected. </m> 
 </div>
 
-The discussion at the end of the previous section already tell us how to solve this problem. The only problem that arises in this case is whether the robot
+The discussion at the end of the previous section already tells us how to solve this problem. The only problem that arises in this case is whether the robot
 first stops (lower-level) and then rotate (high-level) or first rotates and then stops.
 
 <h1>SPRINT3</h1>
@@ -398,7 +424,7 @@ The same must happen also when the user sends to the robot a command to <ks>stop
 </div>
  
 <h2>Problem analysis</h2>
-Now, the application layer does introduce new commands for the the robot. As a consequence, the possibility to move the <em>basicrobot</em>
+Now, the application layer does introduce its own way to move the the robot. As a consequence, the possibility to move the <em>basicrobot</em>
 by emitting <em>usercmd</em> events should be excluded. To achieve this goal:
 <ol>
 <li>the application layer could be able to <i>inhibit</i> the behavior of the <em>basicrobot</em> (as suggested by the subsumption model)
@@ -406,21 +432,28 @@ or to <i>intercept</i> <em>usercmd</em> events;</li>
 <li>the application layer could provide an <i>user-console</i> able to impose proper constraints to the interaction.</li>
 </ol>
 
-In the following, we will adopt the second strategy.
+In the following, we will adopt the second strategy, by supposing that the console provided by the application
+interacts with <em>robotappl0</em>  in a direct way, using a <tt>Dispatch</tt> <m><ks>cmd : cmd(MOVE)</ks></m>.
 
-
+<br/><br/>
  <table style="width:98%">
 <tbody>	
 
 <tr>
-<td style="width:50%" >
+<td style="width:50%" ><m>
 <pre><m><k>mqttBroker</k> "localhost" : 1883 
-Event <ks>userCmd</ks>	: userCmd(X)			<kc>//by user interface</kc>
-Event <ks>obstacle</ks>	: obstacle( DISTANCE )	<kc>//by sonaractorfilter</kc>
+Dispatch <ks>cmd</ks>   : cmd(X)	<kc>//sent by the user interface</kc>
+Dispatch <ks>step</ks>  : step(T)	<kc>//sent by the user interface</kc>
+Dispatch <ks>stop</ks>  : stop(V)	<kc>//sent by the user interface</kc>
+
+Event <ks>userCmd</ks>	: userCmd(X)			<kc>//to move the basicrobot</kc>
+Event <ks>obstacle</ks>	: obstacle( DISTANCE )	<kc>//from the basicrobot</kc>
 Event <ks>polar</ks>	: polar( D,Angle)		<kc>//by sonarforradar</kc>
 Event <ks>step</ks>     : step(T)			<kc>//emitted by user interface</kc>
+
 Context ctxRadarGui ip [ host= "localhost"  port= 8038 ] <k>+mqtt</k>
-QActor robotappl0 context ctxRobotAppl0{
+
+QActor <ks>robotappl0</ks> context ctxRobotAppl0{
 ["
 var <ks>StepTime=0L</ks>
 var <ks>StepDuration=0L</ks>
@@ -438,19 +471,28 @@ var <ks>StepDuration=0L</ks>
  <kc>//REQ-STEP</kc>
  State doStep{
 	onMsg( step : step(T ) ){
-		["StepTime = payloadArg(0).toLong()"]
-		["startTimer()"]	 
-		emit userCmd:userCmd(w)	
+	["	StepDuration = 0L
+		StepTime = payloadArg(0).toLong()
+		startTimer()
+	"]
+		emit userCmd:userCmd(w)	<kc>#move the basicrobot</kc>
 	}		 
  }
  Transition t0
 	<k>whenTimeVar</k> <ks>StepTime</ks> -> endStep
 	whenEvent <ks>obstacle</ks>   -> handleObstacleInStep
 </m></pre> 
+</m>
 <td>
-<m><kc>REQ-STEP</kc>: fulfilled when the given <ks>StepDuration</ks> expires:</m>
+<m>
+The <ks>robotappl0</ks> moves the <em>basicrobot</em> by emitting <ks>userCmd</ks> events
+(hidden to the final user).
+<br/><br/>
+<kc>REQ-STEP</kc>: fulfilled when the given <ks>StepDuration</ks> expires:</m>
 <pre><m><h3>Step done with success</h3>		
- State endStep{ emit userCmd:userCmd(h) } Goto work 
+ State endStep{ 
+	emit userCmd:userCmd(h) <kc>#stop the basicrobot</kc>
+ } Goto work 
 </m>
 </pre>
 <m><kc>REQ-STEPABORT</kc></m>: the robot returns to its initial position.</m>
@@ -464,19 +506,58 @@ var <ks>StepDuration=0L</ks>
 </m>
 </pre>
  </td>
-</tr>
  
-<tr>
-<td> <m>
- </m></td>
-<td>
  
-</td>
+ 
 </tr>
 
 </tbody>
 </table>
+<h3 id="console1">A new console prototype</h3>
+The previous <a href="consolepython">prototype of console</a> must be now modified:
+<br/><br/>
+ <table style="width:98%">
+<tbody>	
 
+<tr>
+<td style="width:50%" ><m>
+<pre><m>brokerAddr     = "localhost"
+robotName      = "robotappl0"
+appl0topic     = <ks>"unibo/qak/"+robotName</ks>     <k>#WARNING</k>: <kc>infrastructural detail</kc>
+cmdTemplate    = "msg(cmd,dispatch, python,"+ robotName +",cmd(CMDVAL),1)"
+stepMsg        = "msg(step,dispatch,python,"+ robotName +",step(300),1)"
+stopMsg        = "msg(stop,dispatch,python,"+ robotName +",stop(user),1)"
+
+def <ks>forward</ks>( cmd ) :
+    message = cmdTemplate.replace("CMDVAL", cmd) + "\n"
+    client.publish(appl0topic, message)
+def <ks>doStep</ks>():
+    msg = stepMsg + "\n"
+    client.publish(appl0topic, msg)
+def <ks>doStop</ks>():
+    msg = stopMsg + "\n"
+    client.publish(appl0topic, msg)
+	
+...
+#################################################   
+client= paho.Client("sender")      
+client.connect(brokerAddr)      
+console()
+</m></pre>
+</m></td>
+<td><m>
+<div class="remark">
+The final console should consist in a user-GUI that completely hides any detail related to the interaction with the application.
+</div>
+This code can be executed by using the <i>jupyter file</i>
+<a href="Appl0ConsoleMqtt.ipynb" target="code">Appl0ConsoleMqtt.ipynb</a> 
+or
+<a href="Appl0Console.ipynb" target="code">Appl0Console.ipynb</a> (that uses the TCP connection with <em>robotAppl0</em> )
+</m>
+</td>
+</tr>
+</tbody>
+</table>
 
 
 

@@ -62,7 +62,7 @@ var StepDuration=0L
 		whenEvent obstacle   -> abortTheStep
 		whenMsg stop         -> abortTheStep
 		
-	State endStep{   
+	State endStep{    
 		emit userCmd:userCmd(h)	
 		["StepDuration = 0L"]   //reset the value
 		println("robotappl0 | step DONE $StepTime")
@@ -79,7 +79,7 @@ var StepDuration=0L
 		whenTimeVar StepDuration -> endStep
 		
 	
-}
+} 
 
 QActor consolesimulator context ctxRobotAppl0{
 	State s0 initial{
