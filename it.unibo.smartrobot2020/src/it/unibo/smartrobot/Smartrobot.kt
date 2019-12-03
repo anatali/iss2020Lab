@@ -21,12 +21,18 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
+						kotlincode.resServer.init(  )
+						kotlincode.coapSupport.init( "coap://localhost:5683"  )
 						delay(1000) 
+						kotlincode.resourceObserver.init( "coap://localhost:5683", "robot/pos"  )
 						forward("cmd", "cmd(a)" ,"basicrobot" ) 
 						delay(1000) 
 						forward("cmd", "cmd(d)" ,"basicrobot" ) 
 						delay(1000) 
 						forward("cmd", "cmd(h)" ,"basicrobot" ) 
+						kotlincode.coapSupport.updateResource( "robot/pos", "w"  )
+						kotlincode.coapSupport.readResource( "robot/pos"  )
+						kotlincode.coapSupport.readResource( "robot/sonar"  )
 						println("smartrobot started")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
@@ -82,6 +88,7 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 					action { //it:State
 						forward("cmd", "cmd(h)" ,"basicrobot" ) 
 						println("smartrobot | step DONE")
+						kotlincode.coapSupport.updateResource( "robot/pos", "w"  )
 						answer("step", "stepdone", "stepdone(ok)"   )  
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )

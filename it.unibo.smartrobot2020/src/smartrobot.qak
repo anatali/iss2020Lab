@@ -20,7 +20,7 @@ Dispatch stop      :  stop(V)
 Event  obstacle    : obstacle( DISTANCE )  
 Event  alarm       : alarm(V)           
   
-Context ctxSmartRobot ip [ host= "localhost"        port= 8020 ] //+mqtt  
+Context ctxSmartRobot ip [ host= "localhost"     port= 8020 ] +mqtt  
 Context ctxBasicRobot ip [ host= "192.168.1.5"   port= 8018 ] +mqtt      
 
 ExternalQActor basicrobot context ctxBasicRobot   
@@ -37,13 +37,21 @@ var StepTime = 1000L;
 var Duration = 0 
 "]  	
 	State s0 initial{
-		delay 1000
-		forward basicrobot -m cmd : cmd( a )
+		run kotlincode.resServer.init()
+		run kotlincode.coapSupport.init("coap://localhost:5683")
+		delay 1000 
+		run kotlincode.resourceObserver.init("coap://localhost:5683","robot/pos") 
+		forward basicrobot -m cmd : cmd( a ) 
 		delay 1000
 		forward basicrobot -m cmd : cmd( d )
 		delay 1000
 		forward basicrobot -m cmd : cmd( h )
+		//
+		run kotlincode.coapSupport.updateResource("robot/pos", "w")
+		run kotlincode.coapSupport.readResource("robot/pos") 
+		run kotlincode.coapSupport.readResource("robot/sonar") 
 		println("smartrobot started")
+		
 	}
 	Goto work
 	
@@ -83,7 +91,7 @@ var Duration = 0
 			  startTimer()"]	//REQUIREMENT req-step-time
 			forward basicrobot -m cmd : cmd( w )
 		}  
-	} 
+	}  
 	Transition t0 
 		whenTimeVar StepTime  -> endStep	
 		whenMsg stop          -> stepStop		  
@@ -92,6 +100,7 @@ var Duration = 0
 	State endStep{  //REQUIREMENT  req-step-info
 		forward basicrobot -m cmd : cmd( h ) 
 		println("smartrobot | step DONE")
+		run kotlincode.coapSupport.updateResource("robot/pos", "w")
 		replyTo step with stepdone : stepdone(ok)
   	}
 	Goto work
