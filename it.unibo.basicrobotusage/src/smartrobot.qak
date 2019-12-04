@@ -25,7 +25,7 @@ Event  obstacle    : obstacle( DISTANCE )
 Event  alarm       : alarm(V)           
   
 Context ctxSmartRobot ip [ host= "localhost"     port= 8020 ] +mqtt  
-Context ctxBasicRobot ip [ host= "192.168.1.5"   port= 8018 ] +mqtt      
+Context ctxBasicRobot ip [ host= "127.0.0.1"   port= 8018 ] +mqtt      
 
 ExternalQActor basicrobot context ctxBasicRobot   
  

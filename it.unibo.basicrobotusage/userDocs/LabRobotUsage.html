@@ -279,7 +279,7 @@ without introducing such a re-direction? </div></m>
 </tbody>
 </table>
 
-<h2>Avoiding redirection</h2>
+<h2 id="avoidredir">Avoiding redirection</h2>
 If we add to the default P2P qak-infrastructure the MQTT-based interaction support, any event can be directly perceived
 by any QActor of the system. Therefore a <em>robotAppl0</em> system can be set-up by simply declaring the  <em>basicrobot</em>
 and the <em>radarGui</em> with the specification of the MQTT support:
@@ -346,7 +346,7 @@ This code can be executed by using the <i>jupyter file</i>
 
 
 
-<h3>Towards systems based on the Subsumption architecture</h3>
+<h3 id="subsumption">Towards systems based on the Subsumption architecture</h3>
 Now, the actor <ks>robotappl0</ks> of the <em>robotAppl0</em> application is introduced just to 'extend' the behavior of the <em>basicrobot</em>.
 In other words, we could structure the behavior of the system
 by following the principles of <a href="https://en.wikipedia.org/wiki/Subsumption_architecture" target="web">Subsumption architecture</a>.
@@ -559,8 +559,55 @@ or
 </tbody>
 </table>
 
+<h2>Towards a smart robot</h2>
+Let us return to the idea of building a <i>smart robot</i> introduced in 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.smartrobot2020/userDocs/Lab3_2020.html" target="lab">
+Lab3_2020 | A smartrobot</a>.
+<br/><Br/>
+Our <em>smartrobot</em> :
+<ol>
+<li>Is an interpreter of commands of form  <m><ks>cmd:cmd(MOVE)</ks></m> sent to it as a <i>dispatch</i>. </li>
+<li>Accepts also commands of form  <m><ks>step:step(TIME)</ks></m> sent to it either as a <i>dispatch</i> or as a <i>request</i>.<br/>
+<m>
+In the case of a <i>request</i>, it sends a reply of form <ks>stepdone:stepdone(ok)</ks> in case of success or
+of form <ks>stepfail:stepfail(DURATION, CAUSE)</ks> in case of failure. <br/>
+A <ks>step</ks>  command can fail
+if an obstacle does not allow the move or if a command <ks>stop:stop(CAUSE)</ks> is sent to the robot as a <i>dispatch</i>.
+</m>
+</li>
+<li>Updates a <k>resource</k> that keeps track of the robot position, when a <m><ks>step</ks></m> command is executed with success.
+Such a resource is implemented as a <m><k>CoAP resource</k></m> with url=<m><ks>coap://localhost:5683/robot/pos</ks></m>.</li>
+<li>Is able to start the <m><k>CoAP resource</k></m> in automatic way, together with a <em>resourceObserver</em>.
+However, another way to look at the resource evolution can be done also via 'alien' components, including Copper. </li>
+<li>Can receive commands from a 'conventional' console (for example a console written in python) or from  a <tt>CoAP client</tt>
+that sends to the resource <m><k>PUT</k></m> commands with argument <tt>"p"</tt>.</li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+</ol>
 
 
+To see the code,  <a href="../src/smartrobot.qak" target="code">smartrobot.qak</a>.
+
+<br/><br/>
+ <table style="width:98%">
+<tbody>	
+
+<tr>
+<td style="width:50%" ><m>
+<pre><m>
+
+</m></pre>
+</m></td>
+<td><m>
+ </m>
+</td>
+</tr>
+</tbody>
+</table>
 			   
 </div>  
 
