@@ -6,8 +6,9 @@ import org.eclipse.californium.core.coap.CoAP.ResponseCode.CHANGED;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode.CREATED;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode.DELETED;
 import org.eclipse.californium.core.CoapServer
+import it.unibo.kactor.ActorBasic
 
-class resRobotSonar( name : String) : CoapResource( name ){
+class resRobotSonar( val owner: ActorBasic, name : String) : CoapResource( name ){
 	var distance = "0";
 	
 	init{

@@ -3,6 +3,7 @@ package kotlincode
 import org.eclipse.californium.core.CoapClient
 import org.eclipse.californium.core.coap.MediaTypeRegistry
 import org.eclipse.californium.core.CoapResponse
+import it.unibo.kactor.ActorBasic
 
 object coapSupport{
 lateinit var client : CoapClient
@@ -18,14 +19,14 @@ lateinit var host   : String
 		client.setTimeout( 1000L )
 	}
 	
-	fun updateResource( path: String, msg : String ){
+	fun updateResource( owner : ActorBasic, path: String, msg : String ){
 		setClientForPath( path )
-		println("coapSupport | updateResource $msg")
+		//println("coapSupport | updateResource $msg")
 		val resp : CoapResponse = client.put(msg, MediaTypeRegistry.TEXT_PLAIN)
 		//println("coapSupport | updateResource respCode=${resp.getCode()}")
 	}
 	
-	fun readResource( path : String ){
+	fun readResource(  owner : ActorBasic, path : String ){
 		setClientForPath( path )
 		val respGet : CoapResponse = client.get( )
 		val v = respGet.getResponseText()

@@ -16,24 +16,31 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 		
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		 
-		var StepTime = 1000L;  
+		var StepTime = 0L 
 		var Duration = 0 
+		var WithResource = true
+		var DoStepAnswer = false	//avoid to send answer after a step
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						kotlincode.resServer.init(  )
-						kotlincode.coapSupport.init( "coap://localhost:5683"  )
-						delay(1000) 
 						kotlincode.resourceObserver.init( "coap://localhost:5683", "robot/pos"  )
 						forward("cmd", "cmd(a)" ,"basicrobot" ) 
 						delay(1000) 
 						forward("cmd", "cmd(d)" ,"basicrobot" ) 
 						delay(1000) 
 						forward("cmd", "cmd(h)" ,"basicrobot" ) 
-						kotlincode.coapSupport.updateResource( "robot/pos", "w"  )
-						kotlincode.coapSupport.readResource( "robot/pos"  )
-						kotlincode.coapSupport.readResource( "robot/sonar"  )
 						println("smartrobot started")
+					}
+					 transition( edgeName="goto",targetState="activateResource", cond=doswitchGuarded({WithResource}) )
+					transition( edgeName="goto",targetState="work", cond=doswitchGuarded({! WithResource}) )
+				}	 
+				state("activateResource") { //this:State
+					action { //it:State
+						kotlincode.resServer.init(myself)
+						kotlincode.coapSupport.init( "coap://localhost:5683"  )
+						delay(1000) 
+						kotlincode.coapSupport.readResource(myself ,"robot/pos" )
+						kotlincode.coapSupport.readResource(myself ,"robot/sonar" )
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
@@ -41,9 +48,10 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 					action { //it:State
 					}
 					 transition(edgeName="s00",targetState="handleCmd",cond=whenDispatch("cmd"))
-					transition(edgeName="s01",targetState="doStep",cond=whenRequest("step"))
-					transition(edgeName="s02",targetState="handleStopNotExpected",cond=whenDispatch("stop"))
-					transition(edgeName="s03",targetState="ignoreObstacle",cond=whenEvent("obstacle"))
+					transition(edgeName="s01",targetState="doStepNoAnswer",cond=whenDispatch("step"))
+					transition(edgeName="s02",targetState="doStepWithAnswer",cond=whenRequest("step"))
+					transition(edgeName="s03",targetState="handleStopNotExpected",cond=whenDispatch("stop"))
+					transition(edgeName="s04",targetState="ignoreObstacle",cond=whenEvent("obstacle"))
 				}	 
 				state("handleStopNotExpected") { //this:State
 					action { //it:State
@@ -62,34 +70,52 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						println("$name in ${currentState.stateName} | $currentMsg")
 						if( checkMsgContent( Term.createTerm("cmd(X)"), Term.createTerm("cmd(X)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								forward("cmd", "cmd(${payloadArg(0)})" ,"basicrobot" ) 
+								var Move = payloadArg(0)
+								forward("cmd", "cmd($Move)" ,"basicrobot" ) 
+								if(( WithResource )){ kotlincode.coapSupport.updateResource(myself ,"robot/pos", "u$Move" )
+								 }
 						}
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
-				state("doStep") { //this:State
+				state("doStepNoAnswer") { //this:State
 					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
 						if( checkMsgContent( Term.createTerm("step(DURATION)"), Term.createTerm("step(T)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								StepTime = payloadArg(0).toLong() 
-											  println("smartrobot | doStep StepTime =$StepTime ")
-											  startTimer()
-								forward("cmd", "cmd(w)" ,"basicrobot" ) 
+								 StepTime = payloadArg(0).toLong(); DoStepAnswer = false 
 						}
+					}
+					 transition( edgeName="goto",targetState="doStep", cond=doswitch() )
+				}	 
+				state("doStepWithAnswer") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("step(DURATION)"), Term.createTerm("step(T)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								StepTime = payloadArg(0).toLong(); DoStepAnswer = true 
+						}
+					}
+					 transition( edgeName="goto",targetState="doStep", cond=doswitch() )
+				}	 
+				state("doStep") { //this:State
+					action { //it:State
+						println("smartrobot | doStep StepTime=$StepTime ")
+						 startTimer()
+						forward("cmd", "cmd(w)" ,"basicrobot" ) 
 						stateTimer = TimerActor("timer_doStep", 
 							scope, context!!, "local_tout_smartrobot_doStep", StepTime )
 					}
-					 transition(edgeName="t04",targetState="endStep",cond=whenTimeout("local_tout_smartrobot_doStep"))   
-					transition(edgeName="t05",targetState="stepStop",cond=whenDispatch("stop"))
-					transition(edgeName="t06",targetState="stepFail",cond=whenEvent("obstacle"))
+					 transition(edgeName="t05",targetState="endStep",cond=whenTimeout("local_tout_smartrobot_doStep"))   
+					transition(edgeName="t06",targetState="stepStop",cond=whenDispatch("stop"))
+					transition(edgeName="t07",targetState="stepFail",cond=whenEvent("obstacle"))
 				}	 
 				state("endStep") { //this:State
 					action { //it:State
 						forward("cmd", "cmd(h)" ,"basicrobot" ) 
 						println("smartrobot | step DONE")
-						kotlincode.coapSupport.updateResource( "robot/pos", "w"  )
-						answer("step", "stepdone", "stepdone(ok)"   )  
+						if(WithResource){ kotlincode.coapSupport.updateResource(myself ,"robot/pos", "up" )
+						 }
+						if(DoStepAnswer){ answer("step", "stepdone", "stepdone(ok)"   )  
+						 }
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
@@ -97,7 +123,8 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 					action { //it:State
 						Duration=getDuration()
 						forward("cmd", "cmd(h)" ,"basicrobot" ) 
-						answer("step", "stepfail", "stepfail($Duration,stopped)"   )  
+						if(DoStepAnswer){ answer("step", "stepfail", "stepfail($Duration,stopped)"   )  
+						 }
 						println("smartrobot | stepStop Duration=$Duration ")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
@@ -106,7 +133,8 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 					action { //it:State
 						Duration=getDuration()
 						answer("step", "stepfail", "stepfail($Duration,obstacle)"   )  
-						println("smartrobot | stepFail Duration=$Duration ")
+						if(DoStepAnswer){ println("smartrobot | stepFail Duration=$Duration ")
+						 }
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 

@@ -1,13 +1,15 @@
 package kotlincode
 
 import org.eclipse.californium.core.CoapServer
+import it.unibo.kactor.ActorBasic
 
 object resServer{
-		fun init(){
+		fun init(owner: ActorBasic){
 			val server = CoapServer();
 			server.add( 
-				 resRobot("robot").add(	//robot
-					 resRobotPosition("pos"), resRobotSonar("sonar") )  //robot/pos, robot/sonar
+				 resRobot(owner,  "robot").add(	//robot
+					 resRobotPosition(owner, "pos"),
+					 resRobotSonar(owner, "sonar") )  //robot/pos, robot/sonar
 			)
 			server.start();			
 		}
