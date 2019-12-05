@@ -1924,7 +1924,7 @@ but this goes contrary to common sense that results must be returned from functi
 There is a convenient coroutine builder named <bc>produce</bc> that makes it easy to do it right on producer side, 
 and an extension function <bc>consumeEach</bc>, that replaces a for loop on the consumer side.
 <br/><br/>
-A <em>Producer</em> is associated with the channel that it sends elements to (a <bc>ReceiveChannel</bc>) and works as follows:
+A <em>Producer</em> is associated with the channel that it sends elements to (a <bc>ReceiveChannel</bc> interface) and works as follows:
 <ul>
 <li>suspends after a value is produced and  resumes when a new value is requested (similar to suspending sequences and iterators)</li>
 <li>can be built with the coroutine builder <bc>produce</bc> and 
@@ -2125,7 +2125,7 @@ As a consequence, our previous <a href="#concur">concurrency problem</a> can be 
 <ul>
 <li>confines the access of a state to a single Coroutine</li>
 <li>is associated with the <bc>channel</bc> (<tt>unbuffered</tt> by default ) that it receives messages from</li>
-<li>has type <bc>SendChannel&ltT></bc> where <tt>T</tt> is the type of message it can handle</li>
+<li>has type <bc>SendChannel&ltT></bc> (interface) where <tt>T</tt> is the type of message it can handle</li>
 <li>modifies the state by handling the messages received on its <bc>channel</bc> </li>
 </ul>
 
@@ -2150,7 +2150,9 @@ val <ks>counter</ks> = <k>GlobalScope.actor&lt;CounterMsg></k> {
     var localCounter = 0 <kc>// actor state</kc>
     for (<k>msg in channel</k>) { <kc>// iterate over incoming messages</kc>
 	     if( localCounter % 10000 == 0 ) 
-			println("${msg.cmd} | $localCounter in ${curThread()}")
+			println("${msg.cmd} | $localCounter 
+						in ${curThread()} 
+						channel full=${channel.isFull}")
         <k>when</k> ( msg.cmd ) {
             "INC" -> localCounter++
             "DEC" -> localCounter--
@@ -2197,20 +2199,20 @@ and <tt>response</tt> bound to an object that will include the response, once av
 <pre>
 <kc>//OUTPUT</kc>
 BEGINS CPU=4 thread=main / nthreads=5
-GET | 0 in thread=DefaultDispatcher-worker-3 / nthreads=5
+GET | 0 in thread=DefaultDispatcher-worker-2 / nthreads=5 channel full=true
 Counter INITIAL VALUE=0
-INC | 0 in thread=DefaultDispatcher-worker-3 / nthreads=6
-INC | 10000 in thread=DefaultDispatcher-worker-4 / nthreads=6
-INC | 20000 in thread=DefaultDispatcher-worker-3 / nthreads=6
-INC | 30000 in thread=DefaultDispatcher-worker-2 / nthreads=6
-INC | 40000 in thread=DefaultDispatcher-worker-4 / nthreads=6
-INC | 50000 in thread=DefaultDispatcher-worker-4 / nthreads=6
-INC | 60000 in thread=DefaultDispatcher-worker-4 / nthreads=6
-INC | 70000 in thread=DefaultDispatcher-worker-2 / nthreads=6
-INC | 80000 in thread=DefaultDispatcher-worker-2 / nthreads=6
-INC | 90000 in thread=DefaultDispatcher-worker-3 / nthreads=6
-Completed 100000 actions in 1519 ms
-GET | 100000 in thread=DefaultDispatcher-worker-3 / nthreads=6
+INC | 0 in thread=DefaultDispatcher-worker-3 / nthreads=5 channel full=true
+INC | 10000 in thread=DefaultDispatcher-worker-1 / nthreads=6 channel full=true
+INC | 20000 in thread=DefaultDispatcher-worker-2 / nthreads=6 channel full=true
+INC | 30000 in thread=DefaultDispatcher-worker-4 / nthreads=6 channel full=true
+INC | 40000 in thread=DefaultDispatcher-worker-2 / nthreads=6 channel full=true
+INC | 50000 in thread=DefaultDispatcher-worker-1 / nthreads=6 channel full=true
+INC | 60000 in thread=DefaultDispatcher-worker-3 / nthreads=6 channel full=true
+INC | 70000 in thread=DefaultDispatcher-worker-2 / nthreads=6 channel full=true
+INC | 80000 in thread=DefaultDispatcher-worker-2 / nthreads=6 channel full=true
+INC | 90000 in thread=DefaultDispatcher-worker-2 / nthreads=6 channel full=true
+Completed 100000 actions in 1639 ms
+GET | 100000 in thread=DefaultDispatcher-worker-2 / nthreads=6 channel full=true
 Counter FINAL VALUE= = 100000
 ENDS thread=main / nthreads=6
 </pre>

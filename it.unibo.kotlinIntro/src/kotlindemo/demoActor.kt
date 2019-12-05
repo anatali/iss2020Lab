@@ -14,9 +14,10 @@ class CounterMsg(
 
 val counterActor = GlobalScope.actor<CounterMsg> {
     var localCounter = 0 // actor state
+    //val v = channel.receive()
     for (msg in channel) { // iterate over incoming messages
         if( localCounter % 10000 == 0 )
-            println("${msg.cmd} | $localCounter in ${curThread()}")
+            println("${msg.cmd} | $localCounter in ${curThread()} channel full=${channel.isFull}")
         when ( msg.cmd ) {
             "INC" -> localCounter++
             "DEC" -> localCounter--
