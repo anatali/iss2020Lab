@@ -42,7 +42,7 @@ QActor smartrobot context ctxSmartRobot{
 [" 
 var StepTime = 0L 
 var Duration = 0 
-var WithResource = true
+var WithResource = false
 var DoStepAnswer = false	//avoid to send answer after a step
 "]  	
 	State s0 initial{
@@ -144,6 +144,33 @@ var DoStepAnswer = false	//avoid to send answer after a step
   	}
 	Goto work  	
 
+}
+
+QActor walker context ctxSmartRobot{
+["var NumOfRotations = 0"]
+	State s0 initial{
+		println("walker ON") 
+	}
+	Transition t0 
+		whenEvent boundary -> walk
+		 
+	State walk{
+		delay 500
+		request smartrobot -m step : step(370)
+	}
+	Transition t0 
+		whenReply stepdone -> walk
+		whenReply stepfail -> rotate
+	
+	State rotate{
+		printCurrentMessage
+		["NumOfRotations++"]
+		forward smartrobot -m cmd : cmd(a)
+		delay 1000
+	}
+	Goto s0 if "(NumOfRotations==4)" else walk
+	
+ 
 }
 
  

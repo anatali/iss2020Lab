@@ -7,7 +7,7 @@
  * NOV 2019: added the idea of (sonar) data stream
  * ================================================================
  */ 
-System basicrobot  
+System basicrobot   
   
 mqttBroker "localhost" : 1883  
 
@@ -44,7 +44,7 @@ itunibo.robot.robotSupport.subscribe( forradar )
 	}
 	Goto work    
 	
-	State work{ }
+	State work{ println("basicrobot waiting ... ")}
 	Transition t0 
 			whenMsg cmd          -> handleCmd
 			whenEvent userCmd    -> handleUserCmd

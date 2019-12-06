@@ -18,7 +18,7 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 		 
 		var StepTime = 0L 
 		var Duration = 0 
-		var WithResource = true
+		var WithResource = false
 		var DoStepAnswer = false	//avoid to send answer after a step
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
