@@ -33,14 +33,15 @@ class resRobotPosition( val owner: ActorBasic, name : String) : CoapResource( na
 //	}
 	override fun handlePUT( exchange : CoapExchange) {
 		val msg = exchange.getRequestText()
-		println("resource $name  | PUT: $msg")
+		//println("resource $name  | PUT: $msg")
 		when( msg ){
 			"p" ->  { moving = true;   stepTheOwner( )  }
-			"a" ->  { moving = false;  rotateLeft( )    }
-			"d" ->  { moving = false;  rotateRight()    }
+			"a" ->  { moving = false;  cmdToOwner("a")  }
+			"d" ->  { moving = false;  cmdToOwner("d")  }
 			"h" ->  { moving = false;  cmdToOwner("h")  }
 			"w" ->  { moving = true;   cmdToOwner("w")  }
 			"s" ->  { moving = true;   cmdToOwner("s")  }
+			"b" ->  { moving = true;   emit("boundary","boundary(do)")  }
 			"up" -> { updatePos()                       }
 			"ua" -> { rotateLeft( )                     }
 			"ud" -> { rotateRight()                     }
@@ -53,6 +54,11 @@ class resRobotPosition( val owner: ActorBasic, name : String) : CoapResource( na
 	fun cmdToOwner(msg: String){
 		owner.scope.launch{ MsgUtil.sendMsg("cmd","cmd($msg)",owner) }
 	}
+	
+	fun emit(evId: String, payload : String ){
+		owner.scope.launch{  owner.emit(evId,payload) }
+	}
+	
 	fun stepTheOwner( ){
 		val msg = MsgUtil.buildDispatch(owner.name,"step","step(370)",owner.name )
 		owner.scope.launch{ MsgUtil.sendMsg(msg,owner) }

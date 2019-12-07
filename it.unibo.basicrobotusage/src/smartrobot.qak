@@ -21,7 +21,7 @@ Dispatch stop      :  stop(V)   		//sent by an external user to block the step
 Event    boundary  : boundary(V)
 
 Event  obstacle    : obstacle( DISTANCE )  
-Event  alarm       : alarm(V)           
+Event  alarm       : alarm(V)             
   
 Context ctxSmartRobot ip [ host= "localhost"     port= 8020 ] +mqtt  
 Context ctxBasicRobot ip [ host= "127.0.0.1"   port= 8018 ] +mqtt      
@@ -42,7 +42,7 @@ QActor smartrobot context ctxSmartRobot{
 [" 
 var StepTime = 0L 
 var Duration = 0 
-var WithResource = false
+var WithResource = true
 var DoStepAnswer = false	//avoid to send answer after a step
 "]  	
 	State s0 initial{
@@ -169,8 +169,7 @@ QActor walker context ctxSmartRobot{
 		delay 1000
 	}
 	Goto s0 if "(NumOfRotations==4)" else walk
-	
- 
 }
+
 
  
