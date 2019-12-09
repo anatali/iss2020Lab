@@ -593,21 +593,115 @@ that sends to the resource <m><k>PUT</k></m> commands with argument <tt>"p"</tt>
 To see the code,  <a href="../src/smartrobot.qak" target="code">smartrobot.qak</a>.
 
 <br/><br/>
+<h2>Incremental building</h2>
  <table style="width:98%">
 <tbody>	
 
 <tr>
-<td style="width:50%" ><m>
-<pre><m>
-
-</m></pre>
-</m></td>
+<td style="width:50%" >
+<h3>The basicrobot layer</h3>
+<img src="./img/basicrobot.png" alt="basicrobot.png" width="100%"  />
+<m>
+The model: <a href="../modelsOld/basicrobot.txt" target="code">basicrobot.qak</a>  
+</m>
+</td>
 <td><m>
+The <em>basicrobot</em>:
+<ul>
+<li>accepts commands for the actuators (motors) via MQTT or via the TCP-port 8018</li>
+<li>handles sensor data (sonar) by using a reactive pipe (made of components of <tt>ActorBasic</tt> type) and emits events related
+to the perceived distance.
+<li>can be used by means of a console working as a TCP-client or as a MQTT-publisher
+<center><img src="./img/jupConsole.png" alt="jupConsole.png" width="40%"  /> </center>
+</li>
+</ul>
  </m>
 </td>
 </tr>
+
+
+<tr>
+<td style="width:50%" >
+<h3>The smartrobot layer</h3>
+<img src="./img/smartrobot.png" alt="smartrobot.png" width="100%"  />
+<m>
+The model: <a href="../src/smartrobot.qak" target="code">smartrobot.qak</a>  
+</m></td>
+<td><m>
+The  <em>smartrobot</em>
+<ul>
+<li> works as a new layer built upon the <em>basicrobot</em> that adds the new command <ks>step</ks>.</li>
+<li>can be used by means of a console working as a TCP-client (port <tt>8020</tt>)  or as a MQTT-publisher</li>
+</ul>
+
+ </m>
+ </td>
+</tr>
+
+
+<tr>
+<td style="width:50%" >
+<h3>The system as a (CoAP) resource</h3>
+<img src="./img/smartrobotcoap.png" alt="smartrobotcoap.png" width="100%"  />
+<m>
+The resources: <br/>
+<a href="../resources/kotlincode/resRobotPosition.kt" target="code">resRobotPosition.kt</a>   <br/>
+<a href="../resources/kotlincode/resRobotSonar.kt" target="code">resRobotSonar.kt</a>
+</m></td>
+<td><m>
+The  <em>smartrobot</em>:
+<ul>
+<li>accepts commands on the url-path <ks>robot/pos</ks></li>
+<li>updates distance on the url-path <ks>robot/sonar</ks>.
+<li>can be used by means of a console working as a CoAP-client <br/>
+ <img src="./img/userconsole.png" alt="userconsole.png" width="40%"  /> 
+ <a href="../resources/consolegui/consoleGui.kt" target="code">consoleGui.kt</a> 
+<img src="./img/copper.png" alt="copper.png" width="40%"  /> 
+</li>
+</ul>
+ </m>
+ </td>
+</tr>
+
+<tr>
+<td style="width:50%" >
+<h3>A Web-frontend server (in Node)</h3>
+<img src="./img/smartrobotfrontendcoap.png" alt="smartrobotfrontendcoap.png" width="100%"  />
+<m>
+See the project  <ks>it.unibo.frontend20</ks>
+</m></td>
+<td>
+ <img src="./img/webpage.png" alt="webpage.png" width="40%"  /> <br/>
+<m>
+The Web-page uses a <ks>socket-io</ks> and is updated by a CoAP client observer written in Node
+that sends the received information on the <ks>socket-io</ks>.
+<br/><br/>
+It could be updated also by a mqtt support, but the usage of the CoAP resource will exclude the knowledge of
+any implementation detail (e.g. the topic <tt>unibo/qak/events</tt>).
+<!--
+as follows:
+<ol>
+<li>the frontend server mqtt-subscribes on the topic <tt>unibo/qak/events</tt></li>
+<li>when the mqtt support receives an event, it sends information on the <ks>socket-io</ks> </li>
+</ol>
+
+It could use also a CoAP client observer written in Node.
+-->
+ </m>
+
+ 
+ </td>
+</tr>
+
+
 </tbody>
 </table>
+<h2>Architecture</h2>
+<hr/> 
+<center><img src="./img/smartrobotall.png" alt="smartrobotall.png" width="80%"  /></center>
+<hr/> 
+
+<br/><br/> 
 			   
 </div>  
 

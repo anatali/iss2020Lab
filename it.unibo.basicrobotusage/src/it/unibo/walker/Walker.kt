@@ -16,26 +16,39 @@ class Walker ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scop
 		
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		var NumOfRotations = 0
+		  var Stopped = false 
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						println("walker ON")
 					}
-					 transition(edgeName="t08",targetState="walk",cond=whenEvent("boundary"))
+					 transition(edgeName="t09",targetState="walk",cond=whenEvent("boundary"))
 				}	 
 				state("walk") { //this:State
 					action { //it:State
+						Stopped = false 
 						delay(500) 
 						request("step", "step(370)" ,"smartrobot" )  
 					}
-					 transition(edgeName="t09",targetState="walk",cond=whenReply("stepdone"))
-					transition(edgeName="t010",targetState="rotate",cond=whenReply("stepfail"))
+					 transition(edgeName="t010",targetState="walk",cond=whenReply("stepdone"))
+					transition(edgeName="t011",targetState="handeStepFail",cond=whenReply("stepfail"))
+				}	 
+				state("handeStepFail") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+						if( checkMsgContent( Term.createTerm("stepfail(DURATION,CAUSE)"), Term.createTerm("stepfail(D,stopped)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								Stopped = true
+						}
+					}
+					 transition( edgeName="goto",targetState="walk", cond=doswitchGuarded({Stopped}) )
+					transition( edgeName="goto",targetState="rotate", cond=doswitchGuarded({! Stopped}) )
 				}	 
 				state("rotate") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 						NumOfRotations++
-						forward("cmd", "cmd(a)" ,"smartrobot" ) 
+						forward("cmd", "cmd(l)" ,"smartrobot" ) 
 						delay(1000) 
 					}
 					 transition( edgeName="goto",targetState="s0", cond=doswitchGuarded({(NumOfRotations==4)}) )

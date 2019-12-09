@@ -13,7 +13,7 @@ mqttBroker "localhost" : 1883
 Request  polar        : polar(D,A) 
 Dispatch polar        : polar(D,A) 
 Event    polar        : polar(D,A) 
-Reply    fromRadarGui : fromRadarGui(X)    
+Reply    fromRadarGui : fromRadarGui(X)     
  
 Context ctxRadarGui ip [ host= "localhost"   port= 8038 ] +mqtt
   

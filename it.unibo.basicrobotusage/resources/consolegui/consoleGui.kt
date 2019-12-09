@@ -10,7 +10,7 @@ import org.eclipse.californium.core.CoapClient
 import org.eclipse.californium.core.coap.MediaTypeRegistry
 import org.eclipse.californium.core.CoapResponse
  
-class guiSupport : IObserver {
+class consoleGui : IObserver {
 	
 	companion object{
 		val buttonLabels = arrayOf("f","w", "s", "a", "d", "z", "x", "b", "p", "h")
@@ -19,7 +19,7 @@ class guiSupport : IObserver {
 		
 		fun create(   ){
   			val concreteButton = ButtonAsGui.createButton( buttonLabels )
-            concreteButton.addObserver( guiSupport() )
+            concreteButton.addObserver( consoleGui() )
 			val url = "coap://localhost:5683/robot/pos"
 			client = CoapClient( url )
 			client.setTimeout( 1000L )
@@ -34,6 +34,6 @@ class guiSupport : IObserver {
       }//update
 }
 fun main(){
-	guiSupport.create(   )
+	consoleGui.create(   )
 }
  
