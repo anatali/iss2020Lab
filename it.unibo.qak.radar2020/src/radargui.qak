@@ -85,7 +85,7 @@ QActor radargui context ctxRadarGui{
  * A simulator of sonar-data values that helps debugging
  */
 QActor sonarsimulator context ctxRadarGui {
-[" val ResultMap =   hashMapOf( \"key1\" to \"item1\" ) "]  //init a map to store the results of run
+[" val ResultMap =   hashMapOf( \"key1\" to \"item1\" ) "]  //init a map to store results of run
 	State s0 initial{
 		println("demo STARTS working using dispatch on 45")
 		delay 4000 //give time to start the GUI

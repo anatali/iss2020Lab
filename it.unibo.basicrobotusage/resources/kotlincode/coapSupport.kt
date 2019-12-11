@@ -15,6 +15,7 @@ lateinit var host   : String
 	
 	private fun setClientForPath( path : String ){
 		val url = host + "/" + path
+		println("coapSupport | setClientForPath url=$url")
 		client = CoapClient( url )
 		client.setTimeout( 1000L )
 	}

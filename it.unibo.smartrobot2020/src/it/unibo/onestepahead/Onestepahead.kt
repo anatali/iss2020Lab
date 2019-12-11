@@ -30,12 +30,12 @@ class Onestepahead ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name
 				state("work") { //this:State
 					action { //it:State
 					}
-					 transition(edgeName="t02",targetState="doStep",cond=whenRequest("step"))
+					 transition(edgeName="t00",targetState="doStep",cond=whenRequest("onestep"))
 				}	 
 				state("doStep") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						if( checkMsgContent( Term.createTerm("step(DURATION)"), Term.createTerm("step(T)"), 
+						if( checkMsgContent( Term.createTerm("onestep(DURATION)"), Term.createTerm("onestep(T)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								StepTime = payloadArg(0).toLong() 
 											  println("smartrobot | doStep StepTime =$StepTime ")
@@ -45,14 +45,14 @@ class Onestepahead ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name
 						stateTimer = TimerActor("timer_doStep", 
 							scope, context!!, "local_tout_onestepahead_doStep", StepTime )
 					}
-					 transition(edgeName="t03",targetState="endStep",cond=whenTimeout("local_tout_onestepahead_doStep"))   
-					transition(edgeName="t04",targetState="stepStop",cond=whenDispatch("stop"))
-					transition(edgeName="t05",targetState="stepFail",cond=whenEvent("obstacle"))
+					 transition(edgeName="t01",targetState="endStep",cond=whenTimeout("local_tout_onestepahead_doStep"))   
+					transition(edgeName="t02",targetState="stepStop",cond=whenDispatch("stop"))
+					transition(edgeName="t03",targetState="stepFail",cond=whenEvent("obstacle"))
 				}	 
 				state("endStep") { //this:State
 					action { //it:State
 						forward("cmd", "cmd(h)" ,"basicrobot" ) 
-						answer("step", "stepdone", "stepdone(ok)"   )  
+						answer("onestep", "stepdone", "stepdone(ok)"   )  
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
@@ -60,14 +60,14 @@ class Onestepahead ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name
 					action { //it:State
 						Duration=getDuration()
 						forward("cmd", "cmd(h)" ,"basicrobot" ) 
-						answer("step", "stepfail", "stepfail($Duration,stopped)"   )  
+						answer("onestep", "stepfail", "stepfail($Duration,stopped)"   )  
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
 				state("stepFail") { //this:State
 					action { //it:State
 						Duration=getDuration()
-						answer("step", "stepfail", "stepfail($Duration,obstacle)"   )  
+						answer("onestep", "stepfail", "stepfail($Duration,obstacle)"   )  
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 

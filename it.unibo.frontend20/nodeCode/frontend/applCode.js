@@ -68,7 +68,7 @@ app.get('/', function(req, res) {
 	
  	
 //APPLICATION
- app.post("/0", function(req, res,next) { handlePostMove( "0", "reset",     req, res, next)});		
+ app.post("/0", function(req, res,next) { handlePostMove( "0", "reset",    req, res, next)});		
  app.post("/p", function(req, res,next) { handlePostMove( "p", "step",     req, res, next)});		
  app.post("/k", function(req, res,next) { handlePostMove( "k", "stepstop", req, res ,next)});	
  app.post("/b", function(req, res,next) { handlePostMove( "b", "boundary", req, res ,next)});	
