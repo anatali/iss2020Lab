@@ -3,7 +3,9 @@
  */
 package it.unibo.xtextIntro20.validation;
 
+import it.unibo.xtextIntro20.iot.BrokerSpec;
 import it.unibo.xtextIntro20.validation.AbstractIotValidator;
+import org.eclipse.xtext.validation.Check;
 
 /**
  * This class contains custom validation rules.
@@ -12,4 +14,10 @@ import it.unibo.xtextIntro20.validation.AbstractIotValidator;
  */
 @SuppressWarnings("all")
 public class IotValidator extends AbstractIotValidator {
+  @Check
+  public void borkerPortNum(final BrokerSpec bs) {
+    if (((bs.getBrokerPort() < 1000) || (bs.getBrokerPort() > 3000))) {
+      this.warning("Broker port must be between 1000-3000", null);
+    }
+  }
 }
