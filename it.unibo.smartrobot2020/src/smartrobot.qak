@@ -3,6 +3,9 @@
  * This file includes A TEXTUAL REPRESENTATION of A MODEL 
  * of the required software system expressed using 
  * the language (metamodel) qak as the result of PROJECT PHASE.
+ * 
+ * It has been updated in order to show the possibility to remove
+ * obstacles in a virtual env (project it.unibo.virtualRobot2020)
  * ================================================================
  */ 
 System smartrobot  
@@ -11,7 +14,7 @@ mqttBroker "localhost" : 1883
  
 Dispatch cmd       : cmd(X)
 
-Dispatch  step     :  step(DURATION)	//sent by the CoAP resource
+//Dispatch  step     :  step(DURATION)	//sent by the CoAP resource
 Request  onestep   :  onestep(DURATION)	//internal
 Reply    stepdone  :  stepdone(V)  
 Reply    stepfail  :  stepfail(DURATION, CAUSE)
@@ -29,94 +32,28 @@ Context ctxSmartRobot ip [ host= "localhost"     port= 8020 ] +mqtt
 Context ctxBasicRobot ip [ host= "127.0.0.1"   port= 8018 ] +mqtt      
 
 ExternalQActor basicrobot context ctxBasicRobot   
-   
- 
- /*
- * ====================================================================
- * onestepahead
- * ====================================================================
- */
-QActor onestepahead context ctxSmartRobot {
-[" 
-var foundObstacle = false; 
-var StepTime = 0L; 
-var Duration=0 
-"]    
-	State s0 initial {	  
-		println("onestepahead STARTED")  
-		["foundObstacle = false "]
-	}Goto work 
- 	
- 	State work{		
- 	}
- 	Transition t0 whenRequest onestep  -> doStep
- 	
-	State doStep{ 
- 		//printCurrentMessage  
-		onMsg( onestep : onestep( T ) ){
-			["StepTime = payloadArg(0).toLong() 
-			  //println(\"smartrobot | doStep StepTime =$StepTime \")
-			  startTimer()"]	//REQUIREMENT req-onestep-time
-			println("smartrobot | doStep StepTime =$StepTime ")
-			forward basicrobot -m cmd : cmd( w )  //ATTEMPT TO MOVE ...
-		}  
-	}  
-	Transition t0 
-		whenTimeVar StepTime  -> endStep	
-		whenMsg stop          -> stepStop		  
- 	    whenEvent virtualobstacle -> stepFailVirtual 
-		whenEvent obstacle    -> stepFail
- 	
-	State endStep{  //REQUIREMENT  req-onestep-info
-		forward basicrobot -m cmd : cmd( h ) 
- 		replyTo onestep with stepdone : stepdone(ok)
-  	}
-	Goto work
-	 
-	State stepStop{ //REQUIREMENT req-stop, req-onestep-time, req-onestep-info
-		["Duration=getDuration()"]  
-		//getDuration: built-in (with ref. to startTimer)
-		forward basicrobot -m cmd : cmd( h ) 
-		replyTo onestep with stepfail : stepfail($Duration, stopped)
-		//println("onestepahead | stepStop Duration=$Duration ")
- 	}
-	Goto work  	 
-
-	State stepFail{ //REQUIREMENT req-onestep-time, req-onestep-info
-		["Duration=getDuration()"]  
-		//getDuration(): built-in (with ref. to startTimer)
-		replyTo onestep with stepfail : stepfail($Duration, obstacle)
-		//println("onestepahead | stepFail Duration=$Duration ")
-   	}
-	Goto work 
-
-	State stepFailVirtual{ //REQUIREMENT req-onestep-time, req-onestep-info
-		onMsg( virtualobstacle : virtualobstacle( OBJNAME )) {
-			["Duration=getDuration()  "]	
-			//getDuration(): built-in (with ref. to startTimer)  			
-            println("onestepahead | !!!stepFailVirtual dt=$Duration obj=${payloadArg(0)}") 
-			replyTo onestep with stepfail : stepfail($Duration, $payloadArg(0))   
-		} 
-   	}
-	Goto work 
-
-}    
- 
+    
 /*  
  * ---------------------------------------------------------------------------
  * smartrobot
  * ACTIVATES A CoAP resource
- * ACCEPTS COMMANDS from a console  (see SmartRobotUsage.ipynb)
+ * ACCEPTS COMMANDS from a console  (see SmartRobotUsage.ipynb or consolegui.consoleGui)
  * ACCEPTS COMMANDS from Copper 
  * UPDATES the resource robot/pos at each onestep and rotation
+ * 
+ * THE step command (p) could last an unpredicateble time, 
+ * since obstacles take som time to be removed
  * ---------------------------------------------------------------------------
  */ 
  
 QActor smartrobot context ctxSmartRobot{
 [" 
-var StepTime = 0L 
-var WithResource = true
-var IsBottle = false
+var foundObstacle = false
+var StepTime      = 0L
+var Duration      = 0 
+
+var TimeToEndStep = 0L  
+var IsBottle      = false
 "]  	
 	State s0 initial{
  		println("smartrobot starts")
@@ -130,13 +67,12 @@ var IsBottle = false
 		println("smartrobot started")
 		
 	}
-	Goto activateResource  if "WithResource" else work
+	Goto activateResource 
 	
 	State activateResource{  
 	   run kotlincode.resServer.init(myself)
 	   run kotlincode.coapSupport.init("coap://localhost:5683")  //TO CHANGE!!!
-//	   delay 1000 
-//	   run kotlincode.resourceObserver.init("coap://localhost:5683","robot/pos")
+ 	   run kotlincode.resourceObserver.init("coap://127.0.0.1:5683","robot/pos")
 		//run kotlincode.coapSupport.readResource(myself, "robot/pos") 
 		//run kotlincode.coapSupport.readResource(myself, "robot/sonar")
  		run consolegui.consoleGui.create()	//AFTER Resource creation
@@ -146,21 +82,17 @@ var IsBottle = false
 	State work{	} 
 	Transition s0 
  			whenMsg cmd        -> handleCmd
-			whenMsg step       -> doStep
+ 			whenRequest onestep -> doStep
+			//whenMsg step       -> doStep
 			whenMsg stop       -> handleStopNotExpected		 
-// 		    whenEvent obstacle -> ignoreObstacle 
-// 		    whenEvent virtualobstacle -> handleVirtualObstacle 
-  			whenEvent polar    -> updateDistanceResource
+   			whenEvent polar    -> updateDistanceResource
   			
   	State updateDistanceResource{
   		//printCurrentMessage
 		onMsg( polar : polar(D,A)){			
-			if "WithResource"{
-				run kotlincode.coapSupport.updateResource(
-					myself, "robot/sonar", "distance(${payloadArg(0)})"
-				)
-			}   
-		}
+			run kotlincode.coapSupport.updateResource(
+					myself, "robot/sonar", "distance(${payloadArg(0)})")
+		}   
 	}
   	Goto work
   	
@@ -169,16 +101,7 @@ var IsBottle = false
  	}
  	Goto work
  	
-// 	State ignoreObstacle{ 
-//  		println("smartrobot | IGNORE obstacle event")
-// 	}Goto work
- 	
-// 	State handleVirtualObstacle{
-// 		onMsg( virtualobstacle : virtualobstacle( OBJNAME )){
-//  			println("smartrobot | IGNORE virtual obstacle ${payloadArg(0)}")
-//  		}
-// 	}Goto work
- 
+  
  /* 
   * REQUIREMENT req-cmd: redirection
   */
@@ -187,9 +110,7 @@ var IsBottle = false
 		onMsg( cmd : cmd(X) ){ 
 			["var Move = payloadArg(0)"]
 			forward basicrobot -m cmd : cmd( $Move )
-			if "( WithResource )" {
-				run kotlincode.coapSupport.updateResource(myself, "robot/pos", "u$Move")
-			}
+			run kotlincode.coapSupport.updateResource(myself, "robot/pos", "u$Move")
 		}
 	} Goto work 
 
@@ -198,42 +119,68 @@ var IsBottle = false
   * REQUIREMENT req-onestep 
   * ---------------------------------------------------------------------------
   */ 
-    State doStep{       	 
-    	onMsg( step : step( T ) ){
-	    	[" StepTime = payloadArg(0).toLong() "]  
-	    	request onestepahead -m onestep : onestep($StepTime) 
-    	}
-    }
-    Transition t0 
-       		whenReply stepdone -> updateStepDone
-     		whenReply stepfail -> stepFailed
-       	
-     State updateStepDone{
-		if "WithResource"{
-		  run kotlincode.coapSupport.updateResource(myself, "robot/pos", "up")
-		}   
-     }
-     Goto work
   
-  
-	State stepFailed{ //REQUIREMENT req-onestep-time, req-onestep-info
- 		onMsg( stepfail : stepfail(D,C) ){
- 			["IsBottle = payloadArg(1).startsWith(\"bottle\")"]
-				//COMPENSATE
-				["var DT = payloadArg(0).toLong() / 10"]
-				forward basicrobot -m cmd : cmd(s)
-				delayVar DT
-				forward basicrobot -m cmd : cmd(h)
- 			    println(" --- smartrobot stepFailed ${payloadArg(1)} $IsBottle")
- 			if "IsBottle" {  //remove the bottle
- 				forward basicrobot -m cmd : cmd( $payloadArg(1) )
- 				delay 100  //give time to remove  the object payloadArg(1) TODO: request?
- 				forward smartrobot -m step : step(370)  //AUTOMSG
-    		} 
-  		}
+	State doStep{ 
+ 		//printCurrentMessage  
+		onMsg( onestep : onestep( T ) ){
+			["StepTime = payloadArg(0).toLong() 
+ 			  startTimer()"]	//REQUIREMENT req-onestep-time
+			//println("smartrobot | doStep StepTime =$StepTime ")
+			forward basicrobot -m cmd : cmd( w )  //ATTEMPT TO MOVE ...
+		}  
+	}  
+	Transition t0 
+		whenTimeVar StepTime  -> stepDone	
+		whenMsg stop          -> stepStop		  
+ 	    whenEvent virtualobstacle -> stepFailVirtual 
+		whenEvent obstacle    -> stepFail
+ 	
+	State stepDone{  //REQUIREMENT  req-onestep-info
+		forward basicrobot -m cmd : cmd( h ) 
+		run kotlincode.coapSupport.updateResource(myself, "robot/pos", "up")
+ 		replyTo onestep with stepdone : stepdone(ok)
+  	}
+	Goto work
+	 
+	State stepStop{ //REQUIREMENT req-stop, req-onestep-time, req-onestep-info
+		["Duration=getDuration()"]  
+		//getDuration: built-in (with ref. to startTimer)
+		forward basicrobot -m cmd : cmd( h ) 
+		replyTo onestep with stepfail : stepfail($Duration, stopped)
+		//println("smartrobot | stepStop Duration=$Duration ")
+ 	}
+	Goto work  	 
+
+	State stepFail{ //REQUIREMENT req-onestep-time, req-onestep-info
+		["Duration=getDuration()"]  
+		//getDuration(): built-in (with ref. to startTimer)
+		replyTo onestep with stepfail : stepfail($Duration, obstacle)
+		//println("smartrobot | stepFail Duration=$Duration ")
    	}
 	Goto work 
-    
+
+	State stepFailVirtual{ //REQUIREMENT req-onestep-time, req-onestep-info
+		onMsg( virtualobstacle : virtualobstacle( OBJNAME )) {
+			[" Duration=getDuration()  
+			  IsBottle = payloadArg(0).startsWith(\"bottle\")
+			  TimeToEndStep = StepTime - Duration   //100L is the backtime of basicrobot
+			"] //getDuration(): built-in (with ref. to startTimer)  			
+      println("smartrobot | !!!stepFailVirtual dt=$Duration, $TimeToEndStep, obj=${payloadArg(0)}") 
+ 			if "IsBottle" {  //remove the bottle
+ 				forward basicrobot -m cmd : cmd( $payloadArg(0) )
+ 				delay 100  //give time to remove  the object payloadArg(1) TODO: request?
+ 				//forward smartrobot -m step : step(TimeToStep)  //AUTOMSG
+  				forward basicrobot -m cmd : cmd(w)
+ 				delayVar TimeToEndStep  //give time to remove  the object payloadArg(1)  
+ 				forward basicrobot -m cmd : cmd(h)
+ 				replyTo onestep with stepdone : stepdone(ok)
+    		} else{
+ 				replyTo onestep with stepfail : stepfail($Duration, $payloadArg(0))  			
+ 			} 
+		} 
+   	}
+	Goto work 
+  
 }
 
 /*
@@ -241,40 +188,27 @@ var IsBottle = false
  * by removing the obstacles
  */
 QActor walker context ctxSmartRobot{
-["var NumOfRotations = 0
-  var Stopped   = false 
-  var RobotPos  : String
-  var RobotDir  : String
-  var PosChanged = false
-  val ResultMap =   hashMapOf( 1 to \"-\", 2 to \"-\" )
-"]
+["var NumOfRotations = 0 "]
 	State s0 initial{
 	}
  	Transition t0  whenEvent boundary -> walk
 	
 	State walk{
-		["PosChanged  = false "]
-		//delay 300   
-		[" kotlincode.coapSupport.readPos( \"robot/pos\", ResultMap ) 
-           RobotPos = ResultMap.get(1)!!
-           RobotDir = ResultMap.get(2)!!
-	     "]
-        println("WALKER | walk pos =  ${ResultMap.get(1)} ")		 
-		forward smartrobot -m  step :  step(370)  //longer when bottle remove
- 		delay 1000   //TODO: do better
-		["		  
-          kotlincode.coapSupport.readPos( \"robot/pos\", ResultMap ) 
-          PosChanged = ResultMap.get(1)!! != RobotPos
- 		"]
-         println("WALKER | RobotPos =  ${ResultMap.get(1)} changed=$PosChanged")		 
+ 		delay 1000   
+		request smartrobot -m  onestep :  onestep(380)   
 	} 
-	Goto walk if "PosChanged" else rotate 
+	Transition t0 
+		whenReply stepdone -> walk
+		whenReply stepfail -> rotate
  	
+ 	
+// 	State stepCompleted{}
+// 	State stepFailed{}
 	State rotate{
 		println("WALKER | ==================================== rotate ")
 		["NumOfRotations++"]
 		forward smartrobot -m cmd : cmd(l)
-		delay 300
+		delay 500
 	}
 	Goto s0 if "(NumOfRotations==4)" else walk
 	

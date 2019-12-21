@@ -37,9 +37,7 @@ class Onestepahead ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name
 						if( checkMsgContent( Term.createTerm("onestep(DURATION)"), Term.createTerm("onestep(T)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								StepTime = payloadArg(0).toLong() 
-											  //println("smartrobot | doStep StepTime =$StepTime ")
-											  startTimer()
-								println("smartrobot | doStep StepTime =$StepTime ")
+								 			  startTimer()
 								forward("cmd", "cmd(w)" ,"basicrobot" ) 
 						}
 						stateTimer = TimerActor("timer_doStep", 

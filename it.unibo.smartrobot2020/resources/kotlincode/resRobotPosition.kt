@@ -70,9 +70,10 @@ class resRobotPosition( val owner: ActorBasic, name : String) : CoapResource( na
 	fun emit(evId: String, payload : String ){
 		owner.scope.launch{  owner.emit(evId,payload) }
 	}
-	
+	 
 	fun stepTheOwner( ){
-		val msg = MsgUtil.buildDispatch(owner.name,"step","step($stepTime)",owner.name ) 
+		//val msg = MsgUtil.buildDispatch(owner.name,"step","step($stepTime)",owner.name )
+		val msg = MsgUtil.buildRequest(owner.name,"onestep","onestep($stepTime)",owner.name )
 		owner.scope.launch{ MsgUtil.sendMsg(msg,owner) }
 		//The result of the move is given by the position of the robot
 	}

@@ -32,6 +32,7 @@ const config = {
             centerPosition: { x: 0.55, y: 0.8 },
             size: { x: 0.05, y: 0.05      }
 		},
+		
         {
             name: "bottle2",
             centerPosition: { x: 0.18, y: 0.20},
