@@ -18,6 +18,7 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 		 
 		var StepTime = 0L 
 		var WithResource = true
+		var IsBottle = false
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -37,23 +38,20 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 					action { //it:State
 						kotlincode.resServer.init(myself)
 						kotlincode.coapSupport.init( "coap://localhost:5683"  )
-						delay(1000) 
-						kotlincode.resourceObserver.init( "coap://localhost:5683", "robot/pos"  )
+						consolegui.consoleGui.create(  )
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
 				state("work") { //this:State
 					action { //it:State
 					}
-					 transition(edgeName="s04",targetState="handleCmd",cond=whenDispatch("cmd"))
-					transition(edgeName="s05",targetState="doStep",cond=whenDispatch("step"))
-					transition(edgeName="s06",targetState="handleStopNotExpected",cond=whenDispatch("stop"))
-					transition(edgeName="s07",targetState="ignoreObstacle",cond=whenEvent("obstacle"))
+					 transition(edgeName="s05",targetState="handleCmd",cond=whenDispatch("cmd"))
+					transition(edgeName="s06",targetState="doStep",cond=whenDispatch("step"))
+					transition(edgeName="s07",targetState="handleStopNotExpected",cond=whenDispatch("stop"))
 					transition(edgeName="s08",targetState="updateDistanceResource",cond=whenEvent("polar"))
 				}	 
 				state("updateDistanceResource") { //this:State
 					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
 						if( checkMsgContent( Term.createTerm("polar(D,Angle)"), Term.createTerm("polar(D,A)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								if(WithResource){ kotlincode.coapSupport.updateResource(myself ,"robot/sonar", "distance(${payloadArg(0)})" )
@@ -64,19 +62,12 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 				}	 
 				state("handleStopNotExpected") { //this:State
 					action { //it:State
-						println("smartrobot | WARNING: the stop command should not be sent here")
-					}
-					 transition( edgeName="goto",targetState="work", cond=doswitch() )
-				}	 
-				state("ignoreObstacle") { //this:State
-					action { //it:State
-						println("smartrobot | IGNORE obstacle event")
+						println("smartrobot | WARNING: stop command should not be sent here")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
 				state("handleCmd") { //this:State
 					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
 						if( checkMsgContent( Term.createTerm("cmd(X)"), Term.createTerm("cmd(X)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								var Move = payloadArg(0)
@@ -109,10 +100,16 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 					action { //it:State
 						if( checkMsgContent( Term.createTerm("stepfail(DURATION,CAUSE)"), Term.createTerm("stepfail(D,C)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								var DT = payloadArg(0).toLong() / 4
+								IsBottle = payloadArg(1).startsWith("bottle")
+								var DT = payloadArg(0).toLong() / 10
 								forward("cmd", "cmd(s)" ,"basicrobot" ) 
 								delay(DT)
 								forward("cmd", "cmd(h)" ,"basicrobot" ) 
+								println(" --- smartrobot stepFailed ${payloadArg(1)} $IsBottle")
+								if(IsBottle){ forward("cmd", "cmd(${payloadArg(1)})" ,"basicrobot" ) 
+								delay(100) 
+								forward("step", "step(370)" ,"smartrobot" ) 
+								 }
 						}
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )

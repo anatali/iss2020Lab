@@ -35,7 +35,7 @@ class resRobotPosition( val owner: ActorBasic, name : String) : CoapResource( na
 	}
 	override fun handlePUT( exchange : CoapExchange) {
 		val msg = exchange.getRequestText()
-		println("resource $name  | PUT: $msg")
+		//println("resource $name  | PUT: $msg")
 		when( msg ){
 			"0" ->  { moving = false;  resetPos()       }
 			"a" ->  { moving = false;  cmdToOwner("a")  }
@@ -119,7 +119,8 @@ class resRobotPosition( val owner: ActorBasic, name : String) : CoapResource( na
 	
 	fun stepStopped(){
 		println("resource $name  | stepStopped")
-		val ev = MsgUtil.buildEvent("resource","modelContent","content(robot(state(pos(stepstopped))))" )
+		val ev = MsgUtil.buildEvent(
+		  "resource","modelContent","content(robot(state(pos(stepstopped))))" )
 		emit( ev.msgId(), ev.msgContent() )
 	}
 	
