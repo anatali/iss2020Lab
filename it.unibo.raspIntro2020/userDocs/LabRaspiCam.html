@@ -152,7 +152,7 @@ table, th, td {
 <div id="body">
 <h1>LabRaspiCam | Using the Raspberry webCam <font size="5"></font> </h1>
 
-<h2>Start up</h2>
+<h2>Start up RaspiCam</h2>
 
 
 <table style="width:98%">
@@ -188,7 +188,91 @@ raspivid -o video.h264 -t 5000		//in msecs
 </table> 
 
  
+<h2>Start up USBCam</h2>
 
+
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" >
+See 
+
+<ul>
+<li><a href="https://www.youtube.com/watch?v=rfscVS0vtbw" target="web">
+Python intro video</a><br/><br/>
+</li>
+<li><a href="https://projects.raspberrypi.org/en/projects/getting-started-with-picamera" target="web">
+Getting started with the Raspberry Pi  Camera Module</a>
+</li>
+</ul>
+
+<!-- <img src="./img/raspSonarCoap.png" alt="raspSonarCoap.png" width="100%"  /> -->
+</td>
+<td> 
+<pre>
+sudo route add default gw 192.168.1.1 wlan0
+
+sudo  apt-get  install  rpi.gpio  -y
+mkdir  cam-robot
+cd   cam-robot
+wget  http://osoyoo.com/driver/WebIOPi-0.7.1.tar.gz
+wget  http://osoyoo.com/driver/mjpg-streamer.tar.gz
+wget  http://osoyoo.com/driver/robot.tar.gz
+tar  -xzvf  robot.tar.gz
+.....................................................
+--- WebIOPI server Installation
+tar  -xzvf  WebIOPi-0.7.1.tar.gz
+cd  WebIOPi-0.7.1/
+wget   http://osoyoo.com/driver/webiopi-pi2bplus.patch
+patch    -p1   -i  webiopi-pi2bplus.patch
+--- Install WebIOPi
+sudo  ./setup.sh
+webiopi  -h             TEST
+sudo  webiopi  -d  -c  /etc/webiopi/config    RUN
+"Ctrl" + "C" then "Ctrl" + "Z" 				  END  WebIOPi running
+
+sudo   nano  /etc/modules
+add kine bcm2835-v4l2
+
+.....................................................
+--- download and install mjpg-streamer support library
+sudo apt-get update
+sudo apt-get install libv4l-dev libjpeg8-dev -y
+sudo apt-get install subversion -y
+--- Compile mjpg-streamer
+tar  -xzvf   mjpg-streamer.tar.gz
+
+<!-- NO: dec 2019
+cd  mjpg-streamer/plugins/input_uvc
+sudo  nano  input_uvc.c
+"ctrl" + "W" to search V4L2_PIX_FMT_MJPEG
+int width=640, height=480, fps=5, format=V4L2_PIX_FMT_MJPEG,i
+Replace the string V4L2_PIX_FMT_MJPEG with new string V4L2_PIX_FMT_YUYV
+-->
+--- compile
+cd  cam-robot/mjpg-streamer
+make all
+
+--- test camera
+ls   /dev/video* 
+the device is on /dev/video0
+
+sudo ./start.sh			RUN
+
+.....................................................
+--- combine webiopi and  mjpg-streamer into same webpage
+sudo  nano  /etc/webiopi/config
+REPLACE lines:
+myscript = /home/pi/osoyoo-robot/cam-robot/robot/script.py
+doc-root = /home/pi/osoyoo-robot/cam-robot/robot
+.....................................................
+
+tar  -xzvf  robot.tar.gz
+</pre>
+</td>
+</tr>
+</tbody>
+</table> 
  
 <h2>Using mjpg-streamer server</h2>
  
