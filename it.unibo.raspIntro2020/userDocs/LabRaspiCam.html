@@ -158,9 +158,17 @@ table, th, td {
 <table style="width:98%">
 <tbody>	
 <tr>
-<td style="width:60%" >
-See <a href="https://projects.raspberrypi.org/en/projects/getting-started-with-picamera" target="web">
+<td style="width:50%" >
+See 
+
+<ul>
+<li><a href="https://www.youtube.com/watch?v=rfscVS0vtbw" target="web">
+Python intro video</a><br/><br/>
+</li>
+<li><a href="https://projects.raspberrypi.org/en/projects/getting-started-with-picamera" target="web">
 Getting started with the Raspberry Pi  Camera Module</a>
+</li>
+</ul>
 
 <!-- <img src="./img/raspSonarCoap.png" alt="raspSonarCoap.png" width="100%"  /> -->
 </td>
@@ -183,13 +191,22 @@ raspivid -o video.h264 -t 5000		//in msecs
 
  
 <h2>Using mjpg-streamer server</h2>
-<br/><br/>
+ 
 <table style="width:98%">
 <tbody>	
 <tr>
-<td style="width:60%" >
-See <a href="https://github.com/cncjs/cncjs/wiki/Setup-Guide:-Raspberry-Pi-%7C-MJPEG-Streamer-Install-&-Setup-&-FFMpeg-Recording" target="web">
-Setup Guide: Raspberry Pi | MJPEG Streamer Install & Setup & FFMpeg Recording</a>
+<td style="width:50%" >
+See 
+<ul>
+<li><a href="https://github.com/cncjs/cncjs/wiki/Setup-Guide:-Raspberry-Pi-%7C-MJPEG-Streamer-Install-&-Setup-&-FFMpeg-Recording" target="web">
+Setup Guide: Raspberry Pi | MJPEG Streamer Install & Setup & FFMpeg Recording</a><br/><br/>
+</li>
+<li><a href="https://en.wikipedi0.org/wiki/Motion_JPEG" target="web">Motion JPEG</a><br/><br/>
+</li>
+
+<li><a href="https://whatismyipaddress.com/" target="web">My IP Address</a></li>
+</ul>
+
 
 <!-- <img src="./img/raspSonarCoap.png" alt="raspSonarCoap.png" width="100%"  /> -->
 </td>
@@ -228,12 +245,50 @@ Oppure, DOPO make install:
 </pre>
 </td>
 </tr>
+
+<tr>
+<td><h3>Start on boot</h3></td>
+<td><pre>
+nano /home/pi/mjpg-streamer.sh
+
+# Make Executable
+chmod +x /home/pi/mjpg-streamer.sh
+
+# Open Cron Job
+crontab -e
+
+# Add line
+@reboot /home/pi/mjpg-streamer.sh start
+</pre></td>
+</tr>
+
 </tbody>
 </table> 
  
 
 
 <br/><br/>
+<h2>Opencv</h2>
+<br/><br/>
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" >
+<!-- <img src="./img/raspSonarCoap.png" alt="raspSonarCoap.png" width="100%"  /> -->
+ 
+</td>
+<td> 
+<pre>
+ sudo apt-get install build-essential cmake unzip pkg-config
+
+sudo apt-get install libjpeg-dev libpng-dev libtiff-dev
+
+<m></m>
+</pre>
+</td>
+</tr>
+</tbody>
+</table>
 </div>  
 
  
