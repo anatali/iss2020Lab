@@ -9,7 +9,7 @@ private static CoapClient client = new CoapClient();
   	
  	
  	public static void produce(  ) {
- 		String uriStr = "coap://192.168.43:5683/GPIO/17/value";
+ 		String uriStr = "coap://192.168.1.7:5683/GPIO/17/value";
   		client.setURI( uriStr );
  		String arg = "{ \"activationCode\"  :  \"ACTIVATION_CODE\" }";
  		System.out.println("USING: " + uriStr);

@@ -2,7 +2,7 @@ from webiopi.protocols.coap import *
 from time import sleep
 
 client = COAPClient()
-client.sendRequest(COAPPost("coap://192.168.1.3:5683/GPIO/17/function/out"))
+client.sendRequest(COAPPost("coap://192.168.1.7:5683/GPIO/17/function/out"))
 state = True
 
 for x in range(0, 5): 
