@@ -258,16 +258,22 @@ ls   /dev/video*
 the device is on /dev/video0
 
 sudo ./start.sh			RUN
+http://192.168.43.170:8899/
 
 .....................................................
 --- combine webiopi and  mjpg-streamer into same webpage
+tar  -xzvf  robot.tar.gz
 sudo  nano  /etc/webiopi/config
-REPLACE lines:
-myscript = /home/pi/osoyoo-robot/cam-robot/robot/script.py
-doc-root = /home/pi/osoyoo-robot/cam-robot/robot
+INSERT lines:
+myscript = /home/pi/nat/cam-robot/robot/script.py
+doc-root = /home/pi/nat/cam-robot/robot
+pwm0     = PCA9685 slave:0x40
+
+sudo webiopi -d -c /etc/webiopi/config
+http://192.168.43.170:8000/
 .....................................................
 
-tar  -xzvf  robot.tar.gz
+
 </pre>
 </td>
 </tr>
