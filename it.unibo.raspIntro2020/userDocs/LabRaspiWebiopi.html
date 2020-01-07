@@ -342,17 +342,39 @@ chmod 0755 /usr/bin/webiopi
 </m>
 </td>
 </tr>
+
+<tr>
+<td>
+<h3>Service start</h3>
+<pre>
+sudo /etc/init.d/webiopi start
+sudo /etc/init.d/webiopi stop
+</pre>
+
+<h3>AUTOMATIC Service Startup</h3>
+<pre>
+sudo update-rc.d webiopi defaults   <kc>//Startup</kc>
+sudo update-rc.d webiopi remove  	<kc>//Startup remove</kc>
+</pre>
+</td>
+<td>
+<h3>Usage</h3>
+<pre>
+http://192.168.x.y:8000/
+username: webiopi
+pswwd   : raspberry
+</pre></td>
+</tr>
  </tbody>
 </table>
 
 
 <h2>Native interaction</h2>
-
- <br/><br/>
 <table style="width:98%">
 <tbody>	
 <tr>
 <td style="width:50%" >
+See <a href="../resources/webiopi/led17/testgpionativeclient.py" target="code">testgpionativeclient.py</a>.
 <pre>
 # -------------------------------------------------------------------------------
 # testgpionativeclient.py
@@ -383,6 +405,60 @@ for x in range(0, 6):
 </tr>
  </tbody>
 </table>
+
+<h2>CoAP interaction</h2>
+See <a href="../resources/webiopi/led17/testcoapclient.py" target="code">testcoapclient.py</a>.
+ <br/><br/>
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" >
+ <pre>
+# -------------------------------------------------------------------------------
+# testcoapclient.py
+# Run this on Raspberry /home/pi/nat/cam-robot/WebIOPi-0.7.1/nat
+# -------------------------------------------------------------------------------
+
+from protocols.coap import *
+from time import sleep
+
+client = COAPClient()
+client.sendRequest(COAPPost("coap://192.168.1.4/GPIO/17/function/out")) <kc>#init</kc>
+state = True
+
+for x in range(0, 6): 	<kc>#blink</kc>
+    response = client.sendRequest(
+		COAPPost("coap://192.168.1.7/GPIO/17/value/%d" % state))
+    if response:
+        print("POST | Received response:\n%s" % response)
+        state = not state
+    else:
+        print("No response received")
+    response = client.sendRequest(COAPGet("coap://192.168.1.4/GPIO/17/value" ))
+    if response:
+        print("GET | Received response: %s" % response.payload)
+    else:
+        print("No response received")
+    sleep(1.0)
+
+</pre>
+</td>
+<td>
+<h3>A test</h3>
+
+<ol>
+<li>Open a browser on <tt>http://192.168.1.4:8000/app/gpio-list</tt>. <br/>
+<img src="./img/webiopi/webiopiGpioList.png" alt="webiopiGpioList" width="30%"/><br/>
+and set <kc>pin 17</kc> to the state <ks>IN</ks>.<br/><br/>
+</li>
+<li>Execute  <ks>python3 testcoapclient.py</ks>.<br/><br/></li>
+<li>You will see <kc>pin 17</kc> to become <ks>OUT</ks> and the Led blinking for a while</li>
+</ol>
+</td>
+</tr>
+ </tbody>
+</table>
+
 <h2>User-defined applications</h2>
 
  <br/><br/>
@@ -409,102 +485,141 @@ python -m webiopi -d -c nat/config    -s nat/scriptLed17.py
  <br/><br/>
  
  
-<h2>The behavior</h2>
+<h1>WebIoPi behavior</h1>
 
- <br/><br/>
-<table style="width:98%">
-<tbody>	
-<tr>
-<td style="width:50%" >
-<pre>
-</pre> 
-
-</td>
-<td>
-</td>
-</tr>
- </tbody>
-</table>
- <br/><br/>
+The output of WebIoPi is mainly related to the usage of the Python logger 
+(see <a href="https://docs.python.org/3.5/howto/logging-cookbook.html" target="web">Logging Cookbook</a>) from 
+ <a href="../resources/webiopi/logger.py" target="code">WebIOPi-0.7.1\python\webiopi\utils\logger.py</a>.
  <br/><br/>
  
-<br/><br/>
 <table style="width:98%">
 <tbody>	
 <tr>
 <td style="width:50%" >
-<!-- <img src="./img/raspSonarCoap.png" alt="raspSonarCoap.png" width="100%"  /> -->
-
-</td>
-<td> 
+1) The user writes:
 <pre>
-sudo route add default gw 192.168.1.1 wlan0
-sudo rfkill list all
-
-Download WebIOPi-0.7.1.tar.gz
-tar xvzf WebIOPi-0.7.1.tar.gz
-cd  WebIOPi-0.7.1 
-wget https://raw.githubusercontent.com/doublebind/raspi/master/webiopi-pi2bplus.patch
-patch -p1 -i webiopi-pi2bplus.patch
-sudo ./setup.sh					<kc>//Install</kc>
-Do you want to access WebIOPi over the Internet? [y/n]” ---> n
-reboot
-.........................................................................
-DEBUG MODE
-sudo webiopi -d -c /etc/webiopi/config -s /home/pi/nat/cam-robot/WebIOPi-0.7.1/nat/scriptLed17.py
-.........................................................................
-sudo /etc/init.d/webiopi start
-sudo /etc/init.d/webiopi stop
-
-sudo update-rc.d webiopi defaults   AUTOMATIC Startup
-sudo update-rc.d webiopi remove  	AUTOMATIC Startup remove
-
-.........................................................................
-http://192.168.1.10:8000/
-username: webiopi
-pswwd   : raspberry
+sudo python3 -m webiopi -c ./config
+</pre> 
+</td>
+<td>
+The commands puts in execution the <a href="../resources/webiopi/__main__.py" target="code">WebIOPi-0.7.1\python\webiopi\__main__.py</a>
+of the module <i>webiopi</i> that:
+<ol>
+<li>prints the python version (e.g. <tt>WebIOPi - INFO - Starting WebIOPi/0.7.1/Python3.5</tt>)</li>
+<li>executes:
+<pre>
+ server = Server(port=port, configfile=configfile, scriptfile=scriptfile)
+ runLoop()		<kc>//defined in utils.thread</kc>
+ server.stop()
 </pre>
+</li>
+
+
+</ol>
 </td>
 </tr>
 
-
-</tbody>
-</table>
-
-<h2>CoAP interaction</h2>
- <br/><br/>
-<table style="width:98%">
-<tbody>	
 <tr>
 <td style="width:50%" >
- <pre>
-# -------------------------------------------------------------------------------
-# testcoapclient.py
-# Run this on Raspberry /home/pi/nat/cam-robot/WebIOPi-0.7.1/nat
-# -------------------------------------------------------------------------------
-
-from protocols.coap import *
-from time import sleep
-
-client = COAPClient()
-client.sendRequest(COAPPost("coap://192.168.1.7/GPIO/17/function/out"))
-state = True
-
-for x in range(0, 6): 
-    response = client.sendRequest(COAPPost("coap://192.168.1.7/GPIO/17/value/%d" % state))
-    if response:
-        print("POST | Received response:\n%s" % response)
-        state = not state
-    else:
-        print("No response received")
-    response = client.sendRequest(COAPGet("coap://192.168.1.7/GPIO/17/value" ))
-    if response:
-        print("GET | Received response: %s" % response.payload)
-    else:
-        print("No response received")
-    sleep(1.0)
-
+2) The server:
+<ol>
+<li>calls the function <k><m>addDeviceInstance</m></k><tt>(("GPIO", NativeGPIO(), []))</tt> of <tt>webiopi\devices\manager.py</tt> that prints messages like:
+<pre>
+Mapping GPIO.digitalRead to REST GET /GPIO/%(channel)d/value
+...
+DEBUG - Mapping GPIO.wildcard to REST GET /GPIO/*
+INFO - GPIO - Native mapped to REST API /GPIO
 </pre>
+ </li>
+<li>looks (using <tt>webiopi\utils\config.py</tt> ) information written in the given <ks>config</ks> file and prints:
+<pre>
+logger.info("Loading configuration from %s" % configfile)
+</pre>
+</li>
+
+<li>looks at the passwd file and prints some message, e.g.
+<pre>
+ERROR - Passwd file /etc/webiopi/passwd not found
+WARNING - Access unprotected
+</pre>
+</li>
+
+<li>
+Activates the <ks>HTTPServer</ks> by calling
+<k><m>HTTPServer</m></k><tt>(self.host, http_port, self.restHandler, context, docroot, index, auth, realm)</tt>
+of <tt>webiopi\protocols\http.py</tt>:
+<pre>
+INFO - HTTP Server binded on http://192.168.1.4:8000/
+</pre>
+</li>
+
+<li>
+Activates the <ks>CoapServer</ks> by calling
+<k><m>COAPServer</m></k><tt>(self.host, coap_port, self.restHandler)</tt>
+of <tt>webiopi\protocols\coap.py</tt>:
+<pre>
+INFO - CoAP Server binded on coap://192.168.1.4:5683/
+</pre>
+
+</li>
+
+</ol>
+If the user hits <ks>CTRL-C CTRL-Z</ks>, the server prints:
+<ul><li>
+<pre>
+WebIOPi - INFO - Stopping...
+WebIOPi - DEBUG - Closing device GPIO - GPIO
+WebIOPi - INFO - CoAP Server stopped
+</pre>
+</li></ul>
+
+  
+</td>
+<td>
+<pre><m><h3>Example of OUTPUT at starting time</h3>
+2020-01-06 22:30:50 - WebIOPi - INFO - Starting WebIOPi/0.7.1/Python3.5
+
+2020-01-06 22:30:50 - WebIOPi - DEBUG - Mapping GPIO.digitalCount to REST GET /GPIO/count
+2020-01-06 22:30:50 - WebIOPi - DEBUG - Mapping GPIO.digitalRead to REST GET /GPIO/%(channel)d/value
+2020-01-06 22:30:50 - WebIOPi - DEBUG - Mapping GPIO.digitalWrite to REST POST /GPIO/%(channel)d/value/%(value)d
+2020-01-06 22:30:50 - WebIOPi - DEBUG - Mapping GPIO.getFunctionString to REST GET /GPIO/%(channel)d/function
+2020-01-06 22:30:50 - WebIOPi - DEBUG - Mapping GPIO.getPulse to REST GET /GPIO/%(channel)d/pulse
+2020-01-06 22:30:50 - WebIOPi - DEBUG - Mapping GPIO.outputSequence to REST POST /GPIO/%(channel)d/sequence/%(args)s
+2020-01-06 22:30:50 - WebIOPi - DEBUG - Mapping GPIO.portRead to REST GET /GPIO/*/integer
+2020-01-06 22:30:50 - WebIOPi - DEBUG - Mapping GPIO.portWrite to REST POST /GPIO/*/integer/%(value)d
+2020-01-06 22:30:50 - WebIOPi - DEBUG - Mapping GPIO.pulse to REST POST /GPIO/%(channel)d/pulse/
+2020-01-06 22:30:50 - WebIOPi - DEBUG - Mapping GPIO.pulseAngle to REST POST /GPIO/%(channel)d/pulseAngle/%(value)f
+2020-01-06 22:30:50 - WebIOPi - DEBUG - Mapping GPIO.pulseRatio to REST POST /GPIO/%(channel)d/pulseRatio/%(value)f
+2020-01-06 22:30:50 - WebIOPi - DEBUG - Mapping GPIO.setFunctionString to REST POST /GPIO/%(channel)d/function/%(value)s
+2020-01-06 22:30:50 - WebIOPi - DEBUG - Mapping GPIO.wildcard to REST GET /GPIO/*
+2020-01-06 22:30:50 - WebIOPi - INFO - GPIO - Native mapped to REST API /GPIO
+
+2020-01-06 22:30:50 - WebIOPi - INFO - Loading configuration from ./config
+
+2020-01-06 22:30:50 - WebIOPi - ERROR - Passwd file /etc/webiopi/passwd not found
+2020-01-06 22:30:50 - WebIOPi - WARNING - Access unprotected
+
+2020-01-06 22:30:50 - WebIOPi - INFO - HTTP Server binded on http://192.168.1.4:8000/
+
+2020-01-06 22:30:50 - WebIOPi - INFO - CoAP Server binded on coap://192.168.1.4:5683/
+2020-01-06 22:30:50 - WebIOPi - INFO - CoAP Server binded on coap://224.0.1.123:5683/ (MULTICAST)
+</m></pre>
+</td>
+</tr>
+
+<tr>
+<td style="width:50%" >
+<h3>Human interaction</h3>
+3) The user opens a browser and ... <br/>
+3a) ... writes: <ks><m>http://192.168.1.4:8000/</m></ks>. The server prints:
+<pre>
+HTTP - DEBUG - "GET / HTTP/1.1" - 200 OK 
+	<m>(Client: ::ffff:192.168.1.6 &lt;Mozilla/5.0 (...) Chrome/79.0.3945.79 Safari/537.36>)</m>
+</pre> 
+3b) ... writes: <ks><m>http://192.168.1.4:8000/GPIO/17/value</m></ks>. The server prints:
+<pre>
+HTTP - DEBUG - "GET /GPIO/17/value HTTP/1.1" - 200 OK ... 
+</pre> 
 </td>
 <td>
 </td>
@@ -513,9 +628,13 @@ for x in range(0, 6):
 </table>
 
 
-
-
-<br/><br/>
+<!--
+An @ symbol at the beginning of a line is used for class, function and method decorators.
+Decorators dynamically alter the functionality of a function, method, or class without having to directly use subclasses 
+or change the source code of the function being decorated.<br/>
+See <a href="https://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators" target="web">Python Decorators</a>
+-->
+  <br/><br/>
 
 
  <br/><br/>
