@@ -379,25 +379,51 @@ and set <kc>pin 17</kc> to the state <ks>IN</ks>.<br/><br/>
 
 <h2>User-defined applications</h2>
 
- <br/><br/>
+<h3>Prepare</h3>
+<ol>
+<li>Create a new folder on your Pi, for instance <m><ks>/home/pi/nat/project0</ks></m> and include your configuration file, e.g.
+<a href="../resources/webiopi/project0/p0config" target="code">p0config</a> in it.</li>
+<li>Create the folder <m><ks>/home/pi/nat/project0/html</ks></m> and include your 
+<a href="../resources/webiopi/project0/html/index.html"  target="code">index.html</a> in it.</li>
+<li>Create the folder <m><ks>/home/pi/nat/project0/python</ks></m> and include your Led application script (i.e.
+<a href="../resources/webiopi/project0/python/scriptLed17.py" target="code">scriptLed17.py</a> ) in it.
+This file will be loaded and executed by the WebIOPi server (No HTTP boring stuff.).</li>
+</ol>
+
+<h3>Run</h3>
 <table style="width:98%">
-<a href="../resources/webiopi/led17/config" target="code">config</a><br/>
-<a href="../resources/webiopi/led17/index.htmltxt" target="code">index.html</a><br/>
-<a href="../resources/webiopi/led17/scriptLed17.py" target="code">scriptLed17.py</a><br/>
 
 <tbody>	
 <tr>
 <td style="width:50%" >
+Run the application described in the user-defined configuration file 
+<a href="../resources/webiopi/project0/p0config" target="code">p0config</a>
+</td>
+<td>
 <pre>
-python3 -m webiopi -c /home/pi/nat/WebIOPi-0.7.1/nathtdocs/config
-python -m webiopi -d -c /home/pi/nat/WebIOPi-0.7.1/tutorials/1.basis/config    
--s nat/scriptLed17.py
+<ks>sudo python3 -m webiopi</ks> <k>-d -c /home/pi/nat/project0/p0config</k> 
 </pre> 
+</td>
+</tr>
+
+
+<tr>
+<td style="width:50%" >
+We can also avoid the specification of a script in the configuration file, and specify it when launching the application.
+For example, we could define the configuration <a href="../resources/webiopi/project0/p0confignoscript" target="code">p0confignoscript</a>
+and with the script <a href="../resources/webiopi/project0/python/scriptLed17Blink.py" target="code">scriptLed17Blink.py</a>
 
 </td>
 <td>
+<pre>
+<ks>sudo python3 -m webiopi 
+	-d -c /home/pi/nat/project0/p0confignoscript<ks> 
+	<k>-s /home/pi/nat/project0/python/scriptLed17Blink.py</k>
+</pre>
+
 </td>
 </tr>
+
  </tbody>
 </table>
 
