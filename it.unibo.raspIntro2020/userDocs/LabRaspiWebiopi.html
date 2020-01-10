@@ -224,7 +224,7 @@ We will use <ks>pyhton3</ks>.
 
 <h3>Install Python modules</h3>
 The modules that compose the application WebIOPi-0.7.1 can be installed by using the script 
-<a href="../resources/webiopi/setup.py" target="code"><br/>
+<a href="../webiopipython/setup.py" target="code"><br/>
 <k>WebIOPi-0.7.1/python/setup.py</k></a>.
 <br/><br/>
 The required modules include the specification of extension modules written in C.
@@ -397,7 +397,8 @@ This file will be loaded and executed by the WebIOPi server (No HTTP boring stuf
 <tr>
 <td style="width:50%" >
 Run the application described in the user-defined configuration file 
-<a href="../resources/webiopi/project0/p0config" target="code">p0config</a>
+<a href="../resources/webiopi/project0/p0config" target="code">p0config</a><br/>
+<img src="./img/webiopi/userdefapp.png" alt="userdefapp" width="30%"/>
 </td>
 <td>
 <pre>
@@ -436,7 +437,7 @@ and with the script <a href="../resources/webiopi/project0/python/scriptLed17Bli
 <tbody>	
 <tr>
 <td style="width:50%" >
-The  script <a href="../resources/webiopi/setup.sh" target="code">
+The  script <a href="../webiopipython/setup.sh" target="code">
 <k>WebIOPi-0.7.1/python/setup.sh</k></a> performs in automatic way:
 <ol>
 <li>The installation of the Python WebIoPi modules under all the versions of Python found in the current RaspberryPi.</li>
@@ -521,9 +522,57 @@ pswwd   : raspberry
  
 <h1>WebIoPi behavior</h1>
 
+
+<h2>Overview</h2>
+<ol>
+<li>The <a href="../webiopipython/webiopi/__main__.py" target="code">__main__.py</a> starts a 
+<a href="../webiopipython/webiopi/server/__init__.py" target="code">server (__init__.py)</a>
+<br/><br/></li>
+
+<li>The <a href="../webiopipython/webiopi/server/__init__.py" target="code">server</a>:
+
+	<ol>
+	<li>looks at the configuration file <a href="../webiopipython/config" target="code">config</a> and
+configures the GPIO.</li>
+	<li>sets the routes
+into a <tt>RESTHandler</tt> defined in
+<a href="../webiopipython/webiopi/protocols/rest.py" target="code">rest.py</a></li>
+	<li>starts
+(if enabled in the configuration file)
+a <a href="../webiopipython/webiopi/protocols/http.py" target="code">HTTP server (http.py)</a>
+and a <a href="../webiopipython/webiopi/protocols/coap.py" target="code">CoAP server (coap.py)</a></li>
+ 	</ol>
+<br/><br/>
+</li>
+
+ 
+<li>The <a href="../webiopipython/webiopi/protocols/http.py" target="code">HTTP server</a> 
+handles (see <tt>processRequest</tt>) a <tt>GET/POST</tt> request from the browser by redirecting  it to 
+<tt>do_GET/do_POST</tt> of <a href="../webiopipython/webiopi/protocols/rest.py" target="code">rest.py</a>
+that implements the action. <br/>
+
+For example, a request <tt>/GPIO/value</tt> is implemented by calling
+the function <tt>callDeviceFunction</tt> that 
+<ul>
+<li>finds a pair (<tt>(func, args)</tt>) by using the route (<tt>getDeviceRoute</tt>)</li>
+<li> calls <tt>func(**args)</tt></li>
+<li>sets the response</li>
+</ul>
+
+<br/><br/>
+</li>
+<li>The <a href="../webiopipython/webiopi/protocols/coap.py" target="code">CoAP server</a>
+<br/><br/>
+</li>
+<li>
+<br/><br/>
+</li>
+</ol>
+
+<h2>A more detailed description</h2>
 The output of WebIoPi is mainly related to the usage of the Python logger 
 (see <a href="https://docs.python.org/3.5/howto/logging-cookbook.html" target="web">Logging Cookbook</a>) from 
- <a href="../resources/webiopi/logger.py" target="code">WebIOPi-0.7.1\python\webiopi\utils\logger.py</a>.
+ <a href="../webiopipython/webiopi/utils/logger.py" target="code">WebIOPi-0.7.1\python\webiopi\utils\logger.py</a>.
  <br/><br/>
  
 <table style="width:98%">
@@ -666,7 +715,7 @@ HTTP - DEBUG - "GET /GPIO/17/value HTTP/1.1" - 200 OK ...
 <tr>
 <td style="width:50%" >
 <h3>Internal behavior: an example</h3>
-The user writes: <tt>http://192.168.1.4:8000/GPIO/17/value</tt>
+The user writes: <tt>http://192.168.1.4:8000/GPIO/17/value</tt>. The server outputs:
 <pre>
 http.py | processRequest ['/GPIO/17/value']
 
