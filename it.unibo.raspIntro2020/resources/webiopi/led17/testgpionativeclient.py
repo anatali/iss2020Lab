@@ -1,12 +1,12 @@
 # -------------------------------------------------------------------------------
 # testgpionativeclient.py
-# Run this on Raspberry /home/pi/nat/cam-robot/WebIOPi-0.7.1/nat
+# Run this on Raspberry /home/pi/nat/WebIOPi-0.7.1/nathtdocs
 # -------------------------------------------------------------------------------
 
 from webiopi.clients import *
 from time import sleep
 
-client = PiHttpClient("192.168.1.7")
+client = PiHttpClient("192.168.1.4")
 #client.setCredentials("webiopi", "raspberry")
 
 # RPi native GPIO

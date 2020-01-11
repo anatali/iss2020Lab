@@ -160,6 +160,11 @@ table, th, td {
 
 <h2>Starting</h2>
 
+
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" >
 See 
 <ol>
 <li><a href="http://webiopi.trouch.com/" target="web">WebIoPi </a><br/> </li>
@@ -173,11 +178,6 @@ WebIoPi Tutorial : Framework basis</a><br/></li>
 WebIoPi video</a><br/>
 </li>
 </ol>
-
-<table style="width:98%">
-<tbody>	
-<tr>
-<td style="width:50%" >
 
 <pre><h3>Download</h3>
 <ks>wget</ks> http://sourceforge.net/projects/webiopi/files/WebIOPi-0.7.1.tar.gz
@@ -247,10 +247,14 @@ Note that <k>pip</k> will use <kc>setup.py</kc> to install the modules; it avoid
 <pre>
 cd WebIOPi-0.7.1/python
 python3 -m webiopi  -h                                  <kc>//TEST</kc>
+</pre>
+<div class="remark">
+<pre>
 <ks>sudo python3 -m webiopi -d -c ./config</ks>   <kc>//-d LAUNCH IN DEBUG MODE</kc>
 </pre>
 The command <k>python3 -m</k> runs a library module as a script. 
 
+</div>
 </td>
 <td>
 <m>
@@ -287,6 +291,47 @@ If we click on GPIOList ...
 <tbody>	
 <tr>
 <td style="width:50%" >
+<h3>Lowest Level (see <a href="../resources/webiopi/led17/testgpionative.py" target="code">testgpionative.py</a>) </h3>
+The access to the GPIO level is given by the module <kc>_webiopi</kc>
+see <a href="https://github.com/wuestkamp/raspberry-gpio-python" target="web">raspberry-gpio-python</a>).<br/><br/>
+It is a <k>.so</k> dynamic library file (linked during the runtime,
+see <a href="https://en.wikipedia.org/wiki/Library_%28computing%29#Shared_libraries" target="web">shared libray</a>)
+stored in the <ks>build</ks> directory of the WebIoPi distribution.
+<br/><br/>
+The code that follows can be launched alone, without the intervention of the WebIoPi application.
+
+
+<pre>import _webiopi.GPIO as GPIO
+channel=17
+GPIO.setup(channel, GPIO.OUT, GPIO.LOW)
+GPIO.digitalWrite(channel, GPIO.HIGH)
+v = GPIO.digitalRead(channel)
+print("testgpionative read 17="+ str(v))
+</pre>
+
+<h3>Using a WebIoPi client (see <a href="../resources/webiopi/led17/testgpionativeclient.py" target="code">testgpionativeclient.py</a>)</h3>
+The code on the left  
+show how to handle a GPIO by using a WebIoPi client.
+It makes use of a <ks>PiHttpClient</ks> defined in <a href="../webiopipython/webiopi/clients/__init__.py" target="code">clients/__init__.py</a>
+
+ <ol>
+<li>sudo python3 -m webiopi -d -c ./config</li>
+<li>python3 testgpionativeclient.py</li>
+</ol>
+<!--
+OPENCV
+https://www.alatortsev.com/2018/04/27/installing-opencv-on-raspberry-pi-3-b/
+https://en.wikipedia.org/wiki/Library_%28computing%29#Shared_libraries
+http://www.yolinux.com/TUTORIALS/LibraryArchives-StaticAndDynamic.html
+-->
+
+</td>
+
+<td>
+
+
+
+
 <pre>
 # -------------------------------------------------------------------------------
 # testgpionativeclient.py
@@ -311,15 +356,7 @@ for x in range(0, 6):
 </pre> 
 
 </td>
-<td>
-<h3>Run (in /nat/WebIOPi-0.7.1/nathtdocs)</h3>
-<ol>
-<li>sudo python3 -m webiopi -d -c ./config</li>
-<li>python3 <a href="../resources/webiopi/led17/testgpionativeclient.py" target="code">testgpionativeclient.py</a></li>
-</ol>
 
-
-</td>
 </tr>
  </tbody>
 </table>
@@ -547,27 +584,42 @@ and a <a href="../webiopipython/webiopi/protocols/coap.py" target="code">CoAP se
 
  
 <li>The <a href="../webiopipython/webiopi/protocols/http.py" target="code">HTTP server</a> 
-handles (see <tt>processRequest</tt>) a <tt>GET/POST</tt> request from the browser by redirecting  it to 
-<tt>do_GET/do_POST</tt> of <a href="../webiopipython/webiopi/protocols/rest.py" target="code">rest.py</a>
+handles (see <tt>processRequest</tt>) a <tt>GET/POST</tt> request from the browser by redirecting  it <br/>
+to <tt>do_GET/do_POST</tt> of <a href="../webiopipython/webiopi/protocols/rest.py" target="code">rest.py</a>
 that implements the action. <br/>
 
-For example, a request <tt>/GPIO/value</tt> is implemented by calling
-the function <tt>callDeviceFunction</tt> that 
-<ul>
-<li>finds a pair (<tt>(func, args)</tt>) by using the route (<tt>getDeviceRoute</tt>)</li>
-<li> calls <tt>func(**args)</tt></li>
-<li>sets the response</li>
-</ul>
 
 <br/><br/>
 </li>
-<li>The <a href="../webiopipython/webiopi/protocols/coap.py" target="code">CoAP server</a>
+<li>The <a href="../webiopipython/webiopi/protocols/coap.py" target="code">CoAP server</a> 
+handles <i>CoAP requests</i> (in <tt>processMessage</tt>) that calls (via a local <tt>COAPHandler</tt> ) 
+<tt>do_GET/do_POST</tt> <br/>
+of 
+<a href="../webiopipython/webiopi/protocols/rest.py" target="code">RESTHandler</a>
+according to the <tt>request.code</tt>;
+afterwards, it sends the response on the socket.
 <br/><br/>
 </li>
 <li>
+The <a href="../webiopipython/webiopi/protocols/rest.py" target="code">RESTHandler</a> implements a
+<tt>do_GET/do_POST</tt> by calling the function <tt>callDeviceFunction</tt> that:
+<ul>
+<li>finds a pair (<tt>(func, args)</tt>) by getting (<tt>getDeviceRoute</tt>) the route set in the configuration phase</li>
+<li>calls <k>func(**args)</k> (<tt>**args</tt>: idiom to allow arbitrary number of arguments to functions). 
+<br/>
+An example of a possible <tt>func</tt> is
+<a href="../webiopipython/webiopi/devices/digital/gpio.py" target="code">NativeGPIO (in <tt>webiopi/devices/digital/gpio.py</tt>) ) </a>
+</li>
+<li>sets the response</li>
+</ul>
+For an example, see: <a href="#callexample">Internal behavior: an example</a>.
 <br/><br/>
 </li>
 </ol>
+
+
+ 
+
 
 <h2>A more detailed description</h2>
 The output of WebIoPi is mainly related to the usage of the Python logger 
@@ -714,12 +766,16 @@ HTTP - DEBUG - "GET /GPIO/17/value HTTP/1.1" - 200 OK ...
 
 <tr>
 <td style="width:50%" >
-<h3>Internal behavior: an example</h3>
+<h3 id="callexample">Internal behavior: an example</h3>
+
+
+ 
+
 The user writes: <tt>http://192.168.1.4:8000/GPIO/17/value</tt>. The server outputs:
 <pre>
-http.py | processRequest ['/GPIO/17/value']
+http.py | processRequest ['/GPIO/17/value']						<kc><a href="../webiopipython/webiopi/protocols/http.py" target="code">HTTP server (http.py)</a></kc>
 
-rest.py | do_GET GPIO/17/value
+rest.py | do_GET GPIO/17/value								<kc><a href="../webiopipython/webiopi/protocols/rest.py" target="code">RESTHandler</a></kc>
 rest.py | callDeviceFunction method=GET path=GPIO/17/value
 
 rest.py | <ks>getDeviceRoute</ks> deviceName=GPIO 
@@ -731,6 +787,14 @@ rest.py | getDeviceRoute functionName=17/value
 rest.py | <k>callDeviceFunction</k> func=&lt;bound method <ks>GPIOPort.digitalRead</ks> of 
     &lt;<ks>webiopi.devices.digital.gpio.NativeGPIO</ks> object at 0x769907f0>> 
 	args={'channel': 17}
+<k>------------------------------------------------------- Low level</k>	
+	digital init.py | channel= 17			<kc><a href="../webiopipython/webiopi/devices/digital/__init__.py" target="code">devices/digital/__init__.py</a></kc>(GPIO.port)
+	gpio.py | __digitalRead__ channel= 17   <kc><a href="../webiopipython/webiopi/devices/digital/gpio.py" target="code">devices/digital/gpio.py</a></kc>(extends GPIO.port)
+	gpio.py | calls GPIO.digitalRead in  	<kc>import _webiopi.GPIO as GPIO</kc>
+	&lt;module '_webiopi.GPIO' from '/usr/local/lib/python3.5/dist-packages/
+	WebIOPi-0.7.1-py3.5-linux-armv7l.egg/
+	_webiopi/GPIO.cpython-35m-arm-linux-gnueabihf.so'>
+<k>-------------------------------------------------------</k>
 rest.py | callDeviceFunction result=True	
 rest.py | callDeviceFunction response=1
 
