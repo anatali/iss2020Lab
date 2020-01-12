@@ -23,7 +23,7 @@
 # name = sourcefile
 #   each sourcefile may have setup, loop and destroy functions and macros
 #myscript = /home/pi/webiopi/examples/scripts/macros/script.py
-myscript = /home/pi/nat/project0/python/scriptLed17.py
+myscript = /home/pi/nat/project0/scriptp0.py
 
 #------------------------------------------------------------------------#
 
@@ -42,7 +42,7 @@ prompt = "WebIOPi"
 # Use doc-root to change default HTML and resource files location
 #doc-root = /home/pi/webiopi/examples/scripts/macros
 #doc-root = /home/pi/nat/WebIOPi-0.7.1/htdocs
-doc-root = /home/pi/nat/project0/html
+doc-root = /home/pi/nat/project0
 
 # Use welcome-file to change the default "Welcome" file
 #welcome-file = index.html
