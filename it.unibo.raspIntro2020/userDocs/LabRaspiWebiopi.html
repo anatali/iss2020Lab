@@ -618,10 +618,43 @@ For an example, see: <a href="#callexample">Internal behavior: an example</a>.
 </ol>
 
 
- 
+<h3>More about the configuration phase</h3> 
+During the configuration phase, the <a href="../webiopipython/webiopi/server/__init__.py" target="code">server</a>:
+<ol>
+<li>creates the utility object 
+<a href="../webiopipython/webiopi/utils/config.py" target="code">Config.py</a> to look at the different <ks>items</ks> 
+(sections <tt>[GPIO],[SCRIPTS]</tt>, etc. see <a href="http://zetcode.com/python/configparser/" target="web">Python ConfigParser tutorial</a> ) 
+of the <a href="../webiopipython/config" target="code">config</a> file and :
+	<ul>
+	<li>performs <tt><a href="../webiopipython/webiopi/devices/digital/gpio.py" target="code">NativeGPIO</a>)().addSetups</tt> of <tt>[GPIO],[~GPIO]</tt></li>
+	<li>performs <tt><a href="../webiopipython/webiopi/devices/manager.py" target="code">manager</a>.addDevice</tt> of  <tt>[DEVICES]</tt></li>
+	<li>calls the <tt><a href="../webiopipython/webiopi/utils/loader.py" target="code">loader</a>.loadScript</tt> to load the <tt>[SCRIPT]</tt> files.
+	The loader  looks into the <k>script file</k> (for an example see <a href="../webiopipython/example/script.py" target="code">script.py</a> )
+	(using the Python Function <a href="https://www.w3schools.com/python/ref_func_hasattr.asp" target="web">hasattr</a>) 
+		<ul>
+		<li>to call <ks>setUp</ks> of the script  </li>
+		<li>to add to the given <tt>hander</tt> (if any) the script parts qualified as <k>macros</k>  (using the Python Functions 
+	<a href="https://www.w3schools.com/python/ref_func_callable.asp" target="web">callable</a>
+	and
+	<a href="https://www.w3schools.com/python/ref_func_dir.asp" target="web">hasattr</a>)
+	</li>
+	<li>to launch a <tt><a href="../webiopipython/webiopi/utils/thread.py" target="code">thread</a>.runLoop</tt> for the script parts qualified as <k>loop</k> </li>
+		</ul>
+	</li>
+	</ul>
+	
+
+</li>
+<li>performs <tt>device_mapping</tt> in the <a href="../webiopipython/webiopi/protocols/rest.py" target="code">RESTHandler</a></li>
+<li>reads from <a href="../webiopipython/config" target="code">config</a> information related to the activation of the <tt>HTTP</tt> and <tt>CoAP</tt> servers</li>
+<li>reads from <a href="../webiopipython/config" target="code">config</a> the section <k>[ROUTES]</k> and calls <ks>addRoute</ks>
+in <a href="../webiopipython/webiopi/protocols/rest.py" target="code">RESTHandler</a> </li>
+<li>reads authorization info (if any)</li>
+<li>starts the <tt>HTTP</tt> and <tt>CoAP</tt> servers</tt>
+</ol>
 
 
-<h2>A more detailed description</h2>
+<h2>Looking at the output</h2>
 The output of WebIoPi is mainly related to the usage of the Python logger 
 (see <a href="https://docs.python.org/3.5/howto/logging-cookbook.html" target="web">Logging Cookbook</a>) from 
  <a href="../webiopipython/webiopi/utils/logger.py" target="code">WebIOPi-0.7.1\python\webiopi\utils\logger.py</a>.

@@ -229,7 +229,8 @@ patch    -p1   -i  webiopi-pi2bplus.patch
 sudo  ./setup.sh
 webiopi  -h             TEST
 sudo  webiopi  -d  -c  /etc/webiopi/config    RUN
-sudo webiopi -d -c nat/config -s nat/scriptLed17.py -l aaa.txt
+python __main.py -d -c nat/config -s nat/scriptLed17.py -l aaa.txt
+sudo apt-get –purge remove webiopi
 "Ctrl" + "C" then "Ctrl" + "Z" 				  END  WebIOPi running
 
 sudo   nano  /etc/modules
@@ -266,9 +267,9 @@ http://192.168.43.170:8899/
 tar  -xzvf  robot.tar.gz
 sudo  nano  /etc/webiopi/config
 INSERT lines:
-myscript = /home/pi/nat/cam-robot/robot/script.py
+## myscript = /home/pi/nat/cam-robot/robot/script.py		##osoyo ONLY
 doc-root = /home/pi/nat/cam-robot/robot
-pwm0     = PCA9685 slave:0x40
+##pwm0     = PCA9685 slave:0x40		##osoyo ONLY
 
 sudo webiopi -d -c /etc/webiopi/config
 http://192.168.43.170:8000/
@@ -380,6 +381,87 @@ sudo apt-get install libjpeg-dev libpng-dev libtiff-dev
 </tr>
 </tbody>
 </table>
+
+
+<h2>Notes</h2>
+Python 3.0 was released on 3 December 2008. See
+<a href="https://en.wikipedia.org/wiki/Python_(programming_language)" target="web">Python wikipedia</a>
+and
+<a href="https://en.wikipedia.org/wiki/Zen_of_Python" target="web">Zen of Python</a>
+
+
+
+<br/><br/>
+An @ symbol at the beginning of a line is used for class, function and method decorators.
+See 
+<a href="https://www.python.org/dev/peps/pep-0318/" target="web">PEP 318</a>
+and 
+<a href="https://wiki.python.org/moin/PythonDecorators" target="web">PythonDecorators</a>.
+The name 'decorator' is not consistent with its use in the GoF book.
+<h3>Motivation</h3>
+The current method of applying a <k>transformation to a function or method</k> places the actual transformation 
+after the function body. 
+<pre>
+def foo(cls):
+    pass
+foo = synchronized(lock)(foo)
+foo = classmethod(foo)				<kc>#<ks>classmethod</ks>: inbuilt function which returns a class method for given function</kc>
+</pre>
+For large functions this separates a key component of the function's behavior 
+from the definition of the rest of the function's external interface.
+The intent of the new syntax is to replace the above code with:
+<pre>
+@classmethod
+@synchronized(lock)
+def foo(cls):
+    pass
+</pre>
+
+<pre>
+@dec2
+@dec1
+def func(arg1, arg2, ...):
+    pass
+</pre>
+is equivalent to
+<pre>
+def func(arg1, arg2, ...):
+    pass
+func = dec2(dec1(func))
+</pre>
+<br/>
+A @ in the middle of a line means matrix multiplication.
+
+<h3>Example</h3>
+
+<pre>
+class Pizza(object):
+    def __init__(self):   <ks>#initialise newly created object, and receives arguments used to do that</ks>
+        self.toppings = []
+
+    def __call__(self, topping):    <ks>#implements function call operator</ks>
+        <kc># When using '@instance_of_pizza' before a function definition
+        # the function gets passed onto 'topping'.</kc>
+        self.toppings.append(topping())
+
+    def __repr__(self):
+        return str(self.toppings)
+
+pizza = Pizza()
+
+@pizza
+def cheese():
+    return 'cheese'
+@pizza
+def sauce():
+    return 'sauce'
+
+print pizza
+# ['cheese', 'sauce']
+</pre>
+The function/method/class you're defining after a decorator is just basically passed on as an argument to the 
+function/method immediately after the @ sign.
+<br/><br/>
 </div>  
 
  
