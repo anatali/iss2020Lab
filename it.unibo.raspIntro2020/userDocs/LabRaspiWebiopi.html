@@ -850,6 +850,46 @@ Decorators dynamically alter the functionality of a function, method, or class w
 or change the source code of the function being decorated.<br/>
 See <a href="https://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators" target="web">Python Decorators</a>
 -->
+
+<h1>A front-end for the BasicRobot </h1>
+
+<h2>Starting</h2>
+On the Raspberry:
+<ol>
+
+<li><ks>Launch the mjpg streamer</ks>: 
+<pre>
+cd /home/pi/nat/mjpg-streamer
+
+export LD_LIBRARY_PATH=.
+nohup sudo ./start.sh &
+
+http://192.168.1.12:8899
+</pre>
+
+</li>
+
+<li><ks>Launch the basic robot application</ks>:  
+<pre>
+cd /nat/basicrobot2020/it.unibo.basicrobot2020-1.0/bin
+
+bash  it.unibo.basicrobot2020</pre>
+</li>
+
+
+<li>
+<ks>Launch the webiopi server</ks>:  
+<pre>
+sudo python3 -m webiopi -d -c /home/pi/nat/basicRobotWebiopi/brwiopiConfig</pre>
+</li>
+where:
+
+<a href="../resources/basicRobotWebiopi/index.html" target="code">index.html</a> <br/>
+<a href="../resources/basicRobotWebiopi/scriptpbrwpiopi.py" target="code">scriptpbrwpiopi.py</a>
+</ol>
+ 
+
+
   <br/><br/>
 
 
