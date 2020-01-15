@@ -873,19 +873,43 @@ http://192.168.1.12:8899
 <pre>
 cd /nat/basicrobot2020/it.unibo.basicrobot2020-1.0/bin
 
-bash  it.unibo.basicrobot2020</pre>
+nohup  bash  it.unibo.basicrobot2020 &
+
+</pre>
 </li>
 
 
 <li>
 <ks>Launch the webiopi server</ks>:  
 <pre>
-sudo python3 -m webiopi -d -c /home/pi/nat/basicRobotWebiopi/brwiopiConfig</pre>
-</li>
+sudo python3 -m webiopi -d -c /home/pi/nat/basicRobotWebiopi/brwiopiConfig
+</pre>
+
 where:
 
 <a href="../resources/basicRobotWebiopi/index.html" target="code">index.html</a> <br/>
 <a href="../resources/basicRobotWebiopi/scriptpbrwpiopi.py" target="code">scriptpbrwpiopi.py</a>
+</li>
+
+<li>
+<ks>Serial (Arduino)</ks>:  
+<pre>
+dmesg | tail
+	<m>
+[  705.879063] usb 1-1.1.2: New USB device found, idVendor=1a86, idProduct=7523, bcdDevice= 2.54
+[  705.879080] usb 1-1.1.2: New USB device strings: Mfr=0, Product=2, SerialNumber=0
+[  705.879089] usb 1-1.1.2: Product: USB2.0-Serial
+[  705.930613] usbcore: registered new interface driver usbserial_generic
+[  705.930685] usbserial: USB Serial support registered for generic
+[  705.933711] usbcore: registered new interface driver ch341
+[  705.933821] usbserial: USB Serial support registered for ch341-uart
+[  705.933907] ch341 1-1.1.2:1.0: ch341-uart converter detected
+[  705.935782] usb 1-1.1.2: ch341-uart converter now attached to ttyUSB0
+[  711.676029] Voltage normalised (0x00000000)	
+	</m>
+sudo python3 -m webiopi -d -c /home/pi/nat/arduinoRobotWebiopi/arduinoConfig
+</pre>
+</li>
 </ol>
  
 
