@@ -22,7 +22,7 @@ state = GPIO.HIGH
 
 for x in range(0, 6): 
     v = GPIO.digitalRead(channel)
-    print("testgpionative | read %s=%s", %channel, %str(v))
+    #print("testgpionative | read %s=%s", %channel, %str(v))
     GPIO.digitalWrite(channel, state)     
     state = not state
     sleep(0.5)

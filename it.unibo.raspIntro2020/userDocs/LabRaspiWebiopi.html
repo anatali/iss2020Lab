@@ -907,8 +907,53 @@ dmesg | tail
 [  705.935782] usb 1-1.1.2: ch341-uart converter now attached to ttyUSB0
 [  711.676029] Voltage normalised (0x00000000)	
 	</m>
+	
+ls /dev/tty*
+	
 sudo python3 -m webiopi -d -c /home/pi/nat/arduinoRobotWebiopi/arduinoConfig
+
+curl http://ipecho.net/plain
+
+traceroute -n bbc.co.uk
 </pre>
+ In the list below I (192.168.0.99) send my packets to a gateway router on 192.168.0.254 to be forwarded to the internet. 
+ The hops following (shown as stars) mean that the router/firewall will not reveal any addresses, 
+ so I cant see my external address from that source. You might.
+ 
+ <h3>Platformio</h3>
+ Install pip and platformio
+ <pre>
+ sudo python3 -c "$(curl -fsSL https://raw.githubusercontent.com/platformio/platformio/develop/scripts/get-platformio.py)"
+ 
+ python3 -c "import os; print(os.path.join(os.getenv('PLATFORMIO_CORE_DIR', os.path.join(os.path.expanduser('~'), '.platformio')), 'penv'))"
+ 
+ sudo pip install virtualenv
+ 
+ -- export PlatformIO executables’ directory to the PATH environmental variable
+ -- using  Bash as  default shell
+ export PATH=$PATH:~/.platformio/penv/bin
+ sudo reboot
+ 
+ 
+platformio boards linux
+platformio init -d /home/pi/nat/pio  -b raspberrypi_3b
+
+platformio run						<ks>//BUILD</ks>
+.pio/build/raspberrypi_3b/program	<ks>//RUN</ks>
+
+ 
+
+<ks>platformio run</ks>.  Process (build) all environments specified in “platformio.ini” (Project Configuration File)
+<ks>platformio run --target upload</ks>. Build project and upload firmware to the all devices specified in “platformio.ini” (Project Configuration File)
+<ks>platformio run --target clean</ks>. Clean project (delete compiled objects)
+<ks>platformio run -e raspberrypi_3b</ks>. Process only <ks>raspberrypi_3b</ks> environment
+<ks>platformio run -e uno -t upload</ks>. Build project only for uno and upload firmware.
+
+
+<k>//CI</k>
+https://en.wikipedia.org/wiki/Comparison_of_continuous_integration_software
+https://docs.travis-ci.com/user/tutorial/
+ </pre>
 </li>
 </ol>
  

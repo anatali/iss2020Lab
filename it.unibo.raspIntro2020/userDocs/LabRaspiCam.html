@@ -236,13 +236,12 @@ sudo apt-get –purge remove webiopi
 sudo   nano  /etc/modules
 add kine bcm2835-v4l2
 
-.....................................................
---- download and install mjpg-streamer support library
-sudo apt-get update
-sudo apt-get install libv4l-dev libjpeg8-dev -y
-sudo apt-get install subversion -y
---- Compile mjpg-streamer
-tar  -xzvf   mjpg-streamer.tar.gz
+
+===================== su Raspian Buster lite ======================================
+sudo apt-get install build-essential libjpeg8-dev imagemagick libv4l-dev cmake -y
+git clone https://github.com/jacksonliam/mjpg-streamer.git 
+CD mjpg-streamer/mjpg-streamer-experimental # the Make 
+make all
 
 <!-- NO: dec 2019
 cd  mjpg-streamer/plugins/input_uvc
@@ -462,6 +461,72 @@ print pizza
 The function/method/class you're defining after a decorator is just basically passed on as an argument to the 
 function/method immediately after the @ sign.
 <br/><br/>
+
+
+<h2>Adafruit CCS811 Air Quality Sensor</h2>
+https://learn.adafruit.com/adafruit-ccs811-air-quality-sensor?view=all#install-python-software-8-1
+
+<h3>pins</h3>
+<ul>
+<li>SCL - this is the I2C clock pin, connect to your microcontrollers I2C clock line. There is a 10K pullup on this pin and it is level shifted so you can use 3 - 5VDC.</li>
+<li>SDA - this is the I2C data pin, connect to your microcontrollers I2C data line. There is a 10K pullup on this pin and it is level shifted so you can use 3 - 5VDC.</li>
+<li>INT - this is the interrupt-output pin. It is 3V logic and you can use it to detect when a new reading is ready or when a reading gets too high or too low.</li>
+<li>WAKE - this is the wakeup pin for the sensor. It needs to be pulled to ground in order to communicate with the sensor. This pin is level shifted so you can use 3-5VDC logic.</li>
+<li>RST - this is the reset pin. When it is pulled to ground the sensor resets itself. This pin is level shifted so you can use 3-5VDC logic.</li>
+</ul>
+
+
+
+
+
+
+<pre>
+Enable up I2C interface (sudo raspi-config)
+sudo nano /boot/config.txt
+	Add the line
+	dtparam=i2c_baudrate=10000
+	
+Wiring Up Sensor	
+
+sudo apt-get install i2c-tools
+sudo i2cdetect -y 1		//It should show up under it's default address (0x5A)
+
+
+GIT
+----------------------------------------------------------------------
+sudo apt-get install gettext
+wget https://www.kernel.org/pub/software/scm/git/git-2.3.0.tar.xz
+tar -xvf git-2.3.0.tar.xz
+cd git-2.3.0/
+./configure --prefix=/usr --with-gitconfig=/etc/gitconfig
+make
+sudo make install   //FAILS
+---------------------------------------------------------------------
+sudo apt-get install git
+git --version 	//git version 2.20.1
+
+=====================================================================
+git clone https://github.com/adafruit/Adafruit_Python_GPIO.git
+cd Adafruit_Python_GPIO
+sudo python3 setup.py install
+
+
+TEST TVOC
+git clone https://github.com/adafruit/Adafruit_CCS811_python.git
+cd Adafruit_CCS811_python/examples
+sudo python3 CCS811_example.py
+ 
+</pre>
+
+
+<h2>USB cam</h2>
+
+<pre>
+sudo apt install fswebcam
+
+fswebcam -r 1280x720 image2.jpg
+
+</pre>
 </div>  
 
  
