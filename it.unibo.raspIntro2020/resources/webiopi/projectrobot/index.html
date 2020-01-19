@@ -16,6 +16,20 @@
 		button = webiopi().createGPIOButton(17, "Led17");
 		leddisplay.append(button);  
 		       
+		button = webiopi().createMacroButton("macro", "w", "BasicCommand", ["w"]);
+		$("#cw").append(button);  
+
+		button = webiopi().createMacroButton("macro", "s", "BasicCommand", ["s"]);
+		$("#cs").append(button);  
+
+		button = webiopi().createMacroButton("macro", "r", "BasicCommand", ["r"]);
+		$("#cr").append(button);  
+
+		button = webiopi().createMacroButton("macro", "l", "BasicCommand", ["r"]);
+		$("#cl").append(button);  
+		
+		button = webiopi().createMacroButton("macro", "h", "BasicCommand", ["h"]);
+		$("#ch").append(button);  
 		
 		webiopi().refreshGPIO(false);   //false by AN - DO NOT REMOVE!
 	});
@@ -54,9 +68,29 @@
 	</style>
 </head>
 <body>
-<h2>Example of a user-defined application</h2>
 
+<h2>Basic robot commands</h2>
+	<table style="width:50%">
+	<tbody>
+	<tr>
+	<td><div id="cw" align="center"></div></td>
+	<td><div id="cs" align="center"></div></td>
+	</tbody>
+	</tr>
+
+	<tr>
+	<td><div id="cr" align="center"></div></td>
+	<td><div id="cl" align="center"></div></td>
+	</tbody>
+	</tr>
+
+	<tr>
+	<td><div id="ch" align="center"></div></td>
+	<td><div id="led" align="center"></div></td>
+	</tbody>
+	</tr>
 	
-<div id="led" align="center">Control area</div>	 
+	</table>
+	 
 </body>
 </html>

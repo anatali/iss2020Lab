@@ -29,9 +29,9 @@ def setup():
 	    state = not state
 	    # gives CPU some time before looping again
 	    webiopi.sleep(0.5)
-    print("CONNECTING ... ")
-    connect(basicRobotPort)
-    sock.settimeout(60000)
+    #print("CONNECTING ... ")
+    #connect(basicRobotPort)
+    #sock.settimeout(60000)
 
 '''
 # Looped by WebIOPi

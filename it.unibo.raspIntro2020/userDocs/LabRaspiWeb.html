@@ -156,13 +156,24 @@ table, th, td {
 
 <ol>
 <li><a href="#busterlite">Setup Buster Lite</a></li>
-<li><a href="#start">Start</a></li>
-<li><a href="#i2c">Enable I2C</a></li>
-<li><a href="#git">Install GIT</a></li>
-<li><a href="#java">Install Java</a></li> 
-<li><a href="#testcam">Test the camera</a></li>
-<li><a href="#mjpg">Install mjpg-streamer</a></li>
-<li><a href="#webiopi">Install WebIOPi</a></li>
+	<ul>
+		<li><a href="#startconfig">Start Configuration</a></li>
+		<li><a href="#i2c">Enable I2C</a></li>
+		<li><a href="#git">Install GIT</a></li>
+		<li><a href="#java">Install Java</a></li> 
+		<li><a href="#testcam">Test the camera</a></li>
+		<li><a href="#mjpg">Install mjpg-streamer</a></li>
+		<li><a href="#webiopi">Install WebIOPi</a></li>
+		<li><a href="#automate">Automate</a></li>
+	</ul>
+
+
+<li><a href="#launchapp">Launch the built-in application</a></li>	
+<li><a href="#native">Native interaction</a></li>	
+<li><a href="#coap">CoAP interaction</a></li>	
+<li><a href="#userapp">User-defined applications</a></li>
+	
+<li>	
 </ol>
 
 
@@ -172,6 +183,9 @@ table, th, td {
 <tr>
 <td style="width:50%" >
 <h3 id="busterlite">Setup Buster Lite</h3> 
+<pre>
+cat /etc/os-release
+</pre>
 On the RaspberriPi B+ there are pre-installed
 <ul>
 <li>Python 2.7.16</li>
@@ -198,7 +212,7 @@ Create a file <ks>boot/ssh</ks> (no content)
 
 <tr>
 <td style="width:50%" >
-<h3 id="start">Start</h3> 
+<h3 id="startconfig">Start Configuration</h3> 
 On the RaspberriPi B+ pre-Buster Lite, there are pre-installed
 <ul>
 <li>Python 2.7.13</li>
@@ -224,7 +238,7 @@ sudo route add default gw 192.168.1.1 wlan0   <kc>//if required</kc>
 <b>View processes and kill</b>  <br/>
 <pre>
 ps -fA | grep python
-sudo kill -s KILL <process number>
+sudo kill -s KILL &lt;process number>
 </pre>
  
 </td>
@@ -379,7 +393,7 @@ python3 -m webiopi  -h  	<kc>//Test</kc>
 </table>
  <br/><br/>
  
-<h2>The WebIoPi setup script</h2>
+<h2 id=webiopiscript>The WebIoPi setup script</h2>
 
  <br/><br/>
 <table style="width:98%">
@@ -412,8 +426,12 @@ The  script <a href="../resources/webiopi/setup.sh" target="code">
 <li>The display of the WebIoPi usage.</li>
 </ol>
 
-
-
+An important script is 
+<a href="../webiopipython/htdocs/webiopi.js" target="code"><k>htdocs/webiopi.js</k></a>
+that defines most of the behavior of WebIoPi. 
+<div class="remark">
+For a more detailed description see: <a href="LabWebIoPiExplain.html" target="web"><ks>LabWebIoPiExplain.html</ks></a>
+</div>
 
 </td>
 <td>
@@ -435,7 +453,8 @@ sed -i "s/python/$python/g" /usr/bin/webiopi
 chmod 0755 /usr/bin/webiopi
 </pre>
 <m>
-<ks>sed</ks> is a commaned related to the Linux text stream editor. See for example:
+<k>sed</k> is a command related to the Linux text stream editor. <br/>
+See for example:
 <a href="https://www.geeksforgeeks.org/sed-command-in-linux-unix-with-examples/" target="web">Sed Command in Linux/Unix with examples</a>.
 </m>
 </td>
@@ -449,11 +468,7 @@ sudo /etc/init.d/webiopi start
 sudo /etc/init.d/webiopi stop
 </pre>
 
-<h3>AUTOMATIC Service Startup</h3>
-<pre>
-sudo update-rc.d webiopi defaults   <kc>//Startup</kc>
-sudo update-rc.d webiopi remove  	<kc>//Startup remove</kc>
-</pre>
+
 </td>
 <td>
 <h3>Usage</h3>
@@ -466,8 +481,50 @@ pswwd   : raspberry
  </tbody>
 </table>
 
+<h2 id="automate">Automate</h2>
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" >
+<h3>WebIoPi</h3> 
+<pre>
+( sudo /etc/init.d/webiopi start )
+sudo systemctl start webiopi 		<kc>#to start service in background</kc>
+sudo systemctl stop webiopi 		<kc>#to stop</kc>
+sudo systemctl enable webiopi       <kc>#to start at boot</kc>
+sudo systemctl disable webiopi      <kc>#to cancel start at boot </kc>
 
-<h2>Launch the built-in application</h2>
+tail -f -n 50 /var/log/webiopi		<kc>#view running log info</kc>
+
+<!-- does not work on buster
+sudo update-rc.d webiopi defaults   <kc>//Startup</kc>
+sudo update-rc.d webiopi remove  	<kc>//Startup remove</kc>
+-->
+</pre> 
+
+</td>
+<td>
+<h3>Mjpeg</h3>
+<pre>
+nano .../mjpg-streamer.sh
+</pre>
+Add the code in <a href="../resources/mjpg/mjpg-streamer.sh" target="code">mjpg-streamer.sh</a>
+
+<pre>
+<k># Make Executable</k>
+chmod +x .../mjpg-streamer.sh
+
+<kc># Open Cron Job</kc>
+crontab -e
+<kc># Add line</kc>
+@reboot /home/pi/mjpg-streamer.sh start
+</pre> 
+</td>
+</tr>
+ </tbody>
+</table>
+
+<h2 id="launchapp">Launch the built-in application</h2>
 
 <table style="width:98%">
 <tbody>	
@@ -479,7 +536,7 @@ python3 -m webiopi  -h                                  <kc>//TEST</kc>
 </pre>
 
 <div class="remark"><pre><ks>sudo python3 -m webiopi -d -c ./config</ks>   
-<kc>//-d LAUNCH IN DEBUG MODE</kc></pre></div>
+</pre></div>
 <m>The command <k>python3 -m</k> runs a library module as a script. </m>
 
 </td>
@@ -509,7 +566,7 @@ If we click on GPIOList ...
  </tbody>
 </table>
 
-<h2>Native interaction</h2>
+<h2 id="native">Native interaction</h2>
 <table style="width:98%">
 <tbody>	
 <tr>
@@ -592,7 +649,7 @@ for x in range(0, 6):
  </tbody>
 </table>
 
-<h2>CoAP interaction</h2>
+<h2 id="coap">CoAP interaction</h2>
   <br/><br/>
 <table style="width:98%">
 <tbody>	
@@ -627,14 +684,14 @@ for x in range(0, 6): 	<kc>#blink</kc>
     sleep(1.0)
 
 </pre>
-<tt>python3 testgpionativeclient.py</tt>
+<tt>python3 testcoapclient.py</tt>
 </td>
 <td>
-<h3>A test (in /nat/WebIOPi-0.7.1/nathtdocs)</h3>
+<h3>A test </h3>
 
 <ol>
 <li><tt>sudo python3 -m webiopi -d -c ./config</tt></li>
-<li>open a browser on <tt>http://192.168.1.4:8000/app/gpio-list</tt>. <br/>
+<li>open a browser on <tt>http://192.168.x.y:8000/app/gpio-list</tt>. <br/>
 <img src="./img/webiopi/webiopiGpioList.png" alt="webiopiGpioList" width="30%"/><br/>
 and set <kc>pin 17</kc> to the state <ks>IN</ks>.<br/><br/>
 </li>
@@ -646,17 +703,17 @@ and set <kc>pin 17</kc> to the state <ks>IN</ks>.<br/><br/>
  </tbody>
 </table>
 
-<h2>User-defined applications</h2>
+<h2 id="userapp">User-defined applications</h2>
 
 <h3>Prepare</h3>
 <ol>
 <li>Create a new folder on your Pi, for instance <m><ks>/home/pi/nat/project0</ks></m> and include your configuration file, e.g.
-<a href="../resources/webiopi/project0/p0config" target="code">p0config</a> in it.</li>
-<li>Create the folder <m><ks>/home/pi/nat/project0/html</ks></m> and include your 
-<a href="../resources/webiopi/project0/html/index.html"  target="code">index.html</a> in it.</li>
-<li>Create the folder <m><ks>/home/pi/nat/project0/python</ks></m> and include your Led application script (i.e.
-<a href="../resources/webiopi/project0/python/scriptLed17.py" target="code">scriptLed17.py</a> ) in it.
-This file will be loaded and executed by the WebIOPi server (No HTTP boring stuff.).</li>
+<a href="../resources/webiopi/project0/p0Ledconfig" target="code">p0Ledconfig</a> in it.</li>
+<li>Include your 
+<a href="../resources/webiopi/project0/index.html"  target="code">index.html</a> in it.</li>
+<li>Include your Led application script (i.e.
+<a href="../resources/webiopi/project0/scriptLed17Blink.py" target="code">scriptLed17Blink.py</a> ) in it.
+This file will be loaded and executed by the WebIOPi server (No HTTP boring stuff).</li>
 </ol>
 
 <h3>Run</h3>
@@ -664,31 +721,46 @@ This file will be loaded and executed by the WebIOPi server (No HTTP boring stuf
 
 <tbody>	
 <tr>
-<td style="width:50%" >
+<td style="width:25%" >
 Run the application described in the user-defined configuration file 
-<a href="../resources/webiopi/project0/p0config" target="code">p0config</a><br/>
-<img src="./img/webiopi/userdefapp.png" alt="userdefapp" width="30%"/>
+<a href="../resources/webiopi/project0/p0Ledconfig" target="code">p0Ledconfig</a>.<br/><br/>
+<img src="./img/webiopi/userdefapp.png" alt="userdefapp" width="90%"/>
 </td>
 <td>
+The configuration file includes the sentence:
 <pre>
-<ks>sudo python3 -m webiopi</ks> <k>-d -c /home/pi/nat/project0/p0config</k> 
+myscript = /home/pi/nat/project0/scriptLed17Blink.py
+</pre>
+Now, let us give the command:
+<pre>
+<ks>sudo python3 -m webiopi</ks> <k>-d -c /home/pi/nat/project0/p0Ledconfig</k> 
 </pre> 
+At its start-uo, the webiopi application executes the script 
+<a href="../resources/webiopi/project0/scriptLed17Blink" target="code">scriptLed17Blink.js</a> that blinks the led for a while.
+<br/>
+Afterwards, the Led can be turned on/off by clicking on the button. <br/>
+Each click will activate a <ks>HTTP-POST</ks> interaction
+with the server.
+<br/><br/>
+A script file could also include a <k>loop</k> function; in this case the WebIOPi system will repeat the
+execution of that code.
 </td>
 </tr>
 
 
 <tr>
-<td style="width:50%" >
+<td>
 We can also avoid the specification of a script in the configuration file, and specify it when launching the application.
-For example, we could define the configuration <a href="../resources/webiopi/project0/p0confignoscript" target="code">p0confignoscript</a>
-and with the script <a href="../resources/webiopi/project0/python/scriptLed17Blink.py" target="code">scriptLed17Blink.py</a>
-
 </td>
 <td>
+
+For example, we could define the configuration <a href="../resources/webiopi/project0/p0confignoscript" target="code">p0confignoscript</a>
+and specify the script <a href="../resources/webiopi/project0/python/scriptLed17Blink.py" target="code">scriptLed17Blink.py</a>
+in the application start command:
+
 <pre>
-<ks>sudo python3 -m webiopi 
-	-d -c /home/pi/nat/project0/p0confignoscript<ks> 
-	<k>-s /home/pi/nat/project0/python/scriptLed17Blink.py</k>
+<ks>sudo python3 -m webiopi -d -c /home/pi/nat/project0/p0confignoscript<ks> 
+	<k>-s /home/pi/nat/project0/scriptLed17Blink.py</k>
 </pre>
 
 </td>
