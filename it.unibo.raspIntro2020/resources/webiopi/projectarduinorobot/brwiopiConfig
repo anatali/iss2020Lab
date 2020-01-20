@@ -23,12 +23,12 @@
 # name = sourcefile
 #   each sourcefile may have setup, loop and destroy functions and macros
 #myscript = /home/pi/webiopi/examples/scripts/macros/script.py
-myscript = /home/pi/nat/projectrobot/scriptp0.py
+#myscript = /home/pi/nat/projectarduinorobot/scriptpbrwpiopi.py
 
 #------------------------------------------------------------------------#
 
 [HTTP]
-# HTTP Server configuration
+# HTTP Server configuration 
 enabled = true
 port = 8000
 
@@ -41,7 +41,7 @@ prompt = "WebIOPi"
 
 # Use doc-root to change default HTML and resource files location
 #doc-root = /home/pi/webiopi/examples/scripts/macros
-doc-root = /home/pi/nat/projectrobot
+doc-root = /home/pi/nat/projectarduinorobot
 
 # Use welcome-file to change the default "Welcome" file
 #welcome-file = index.html
@@ -75,6 +75,7 @@ multicast = true
 # USB serial adapters
 #usb0 = Serial device:ttyUSB0 baudrate:9600
 #usb1 = Serial device:ttyACM0 baudrate:9600
+uno   = Serial device:ttyUSB0 baudrate:115200
 
 #temp0 = TMP102
 #temp1 = TMP102 slave:0x49
