@@ -25,8 +25,14 @@
 		button = webiopi().createMacroButton("macro", "r", "BasicCommand", ["r"]);
 		$("#cr").append(button);  
 
-		button = webiopi().createMacroButton("macro", "l", "BasicCommand", ["r"]);
+		button = webiopi().createMacroButton("macro", "l", "BasicCommand", ["l"]);
 		$("#cl").append(button);  
+
+		button = webiopi().createMacroButton("macro", "x", "BasicCommand", ["x"]);
+		$("#cx").append(button);  
+
+		button = webiopi().createMacroButton("macro", "z", "BasicCommand", ["z"]);
+		$("#cz").append(button);  
 		
 		button = webiopi().createMacroButton("macro", "h", "BasicCommand", ["h"]);
 		$("#ch").append(button);  
@@ -68,7 +74,8 @@
 	</style>
 </head>
 <body>
-
+Send a command to a basicrobot via <tt>forward</tt> on <tt>localhost:8018</tt>.<br/><br/>
+Each button calls a <tt>BasicCommand</tt> defined in <tt>script0.py</tt>.
 <h2>Basic robot commands</h2>
 	<table style="width:50%">
 	<tbody>
@@ -81,6 +88,12 @@
 	<tr>
 	<td><div id="cr" align="center"></div></td>
 	<td><div id="cl" align="center"></div></td>
+	</tbody>
+	</tr>
+
+	<tr>
+	<td><div id="cx" align="center"></div></td>
+	<td><div id="cz" align="center"></div></td>
 	</tbody>
 	</tr>
 

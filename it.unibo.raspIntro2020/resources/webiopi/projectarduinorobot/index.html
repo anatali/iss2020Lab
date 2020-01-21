@@ -4,18 +4,27 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>WebIOPi | Arduino UI</title>
         <script type="text/javascript" src="/webiopi.js"></script>
+
 <script type="text/javascript">
         // Javascript code will go here
         // declare variable for Serial object
         var serial;
 
         webiopi().ready(init);
-       
-        // defines function passed to webiopi().ready()
+ 
+         // defines function passed to webiopi().ready()
         function init() {
                 // define Serial object, must be configured in /etc/webiopi/config
                 serial = new Serial("uno");
         		//alert("init ..." + serial)
+
+				var leddisplay, button;
+		 		leddisplay = $("#led");	
+		 		               
+				// create a "LED" labeled button for GPIO 17
+				button = webiopi().createGPIOButton(17, "Led");
+				leddisplay.append(button);  
+				webiopi().refreshGPIO(false);   //false by AN - DO NOT REMOVE!
          }
                 
 </script>
@@ -42,7 +51,7 @@
 
  </head>
 <body>
-
+Send a command on the serial line (for Arduino)
 	<table style="width:50%">
 	<tbody>
 	<tr>
@@ -65,13 +74,15 @@
 
 
 	<tr>
-	<td><button type="button" class="button" onclick="serial.write('h') ") >h</button></td>
-	<td><button type="button" class="button" onclick="serial.write('h') ") >h</button></td>
+	<td><button type="button" class="button" onclick="serial.write('h') ")>h</button></td>
+	<td><button type="button" class="button" onclick="serial.write('h') ")>h</button></td>
 	</tbody>
 	</tr>
 	
 	</table>
 
+ 
+<div id="led" align="left"></div>
 
 <h3>Display</h3>
 
