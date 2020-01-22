@@ -7,10 +7,23 @@
 	<meta name="viewport" content = "height = device-height, width = 420, user-scalable = no" /> 
 	<title>BasciRobotCmd</title>
 	<script type="text/javascript" src="/webiopi.js"></script>
+	
 	<script type="text/javascript">
+ 		
+ 	function turnz() {
+ 			//alert("turn_z"); 
+	 		webiopi().callMacro("turn_z");
+	 }
+	 
+	 function stop() {
+	 	//webiopi().callMacro("stop");
+	 	//alert("stop");
+	 }
+
 	webiopi().ready(function() {
 		var leddisplay, button;
  		leddisplay = $("#led");	
+ 
  		               
 		// create a "LED" labeled button for GPIO 17
 		button = webiopi().createGPIOButton(17, "Led17");
@@ -31,13 +44,17 @@
 		button = webiopi().createMacroButton("macro", "x", "BasicCommand", ["x"]);
 		$("#cx").append(button);  
 
-		button = webiopi().createMacroButton("macro", "z", "BasicCommand", ["z"]);
+		//button = webiopi().createMacroButton("macro", "z", "BasicCommand", ["z"]);
+		button = webiopi().createButton("z", "z", turnz, stop);
 		$("#cz").append(button);  
 		
 		button = webiopi().createMacroButton("macro", "h", "BasicCommand", ["h"]);
 		$("#ch").append(button);  
 		
 		webiopi().refreshGPIO(false);   //false by AN - DO NOT REMOVE!
+		
+
+		
 	});
  
 	</script>

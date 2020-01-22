@@ -31,7 +31,8 @@ def setup():
 	    webiopi.sleep(0.5)
     #print("CONNECTING ... ")
     #connect(basicRobotPort)
-    #sock.settimeout(60000)
+    #sock.settimeout(60000)    
+    #uno   = Serial device:ttyUSB0 baudrate:115200
 
 '''
 # Looped by WebIOPi
@@ -52,6 +53,11 @@ def HelloWorld(first, last):
 @webiopi.macro
 def PrintTime():
 	webiopi.debug("PrintTime: " + time.asctime())
+
+# Towrds robot commands
+@webiopi.macro
+def turn_z():
+	print("script0 turn_z"  ) 
 
 
 # destroy function is called at WebIOPi shutdown
@@ -96,8 +102,11 @@ def emit( cmd ) :
 	byt=msg.encode()    #required in Python3
 	sock.send(byt)
     
+
+    
+    
 def doCmd( cmd ) :  
 	print("doCmd  cmd=" ,  cmd   )
-	forward( cmd )
+	#forward( cmd )
 	#emit( cmd )
     

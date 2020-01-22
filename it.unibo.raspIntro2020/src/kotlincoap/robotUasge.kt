@@ -9,6 +9,7 @@ import kotlinx.coroutines.delay
 import it.unibo.kactor.MqttUtils
 import it.unibo.kactor.MsgUtil
 import org.eclipse.californium.core.coap.MediaTypeRegistry
+import kotlinx.coroutines.runBlocking
 
 val ledurl    =  "coap://192.168.1.5:5683/GPIO/17/value"
 val cmdurl    =  "coap://192.168.1.5:5683/devices/uno"
@@ -33,7 +34,7 @@ var v  = 0
 
 
 
-fun main(){
+fun main() {
 		testRobotUsage( )
 //		GlobalScope.launch{
 //			var value = 0

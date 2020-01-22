@@ -9,24 +9,69 @@ import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.auth.AuthScope
 import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.methods.HttpPost
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.delay
+import org.apache.http.client.HttpClient
+import java.io.InputStream
 
+lateinit var client : HttpClient 
 
-fun xxx(){
+fun createClient(){
  val provider    =  BasicCredentialsProvider() //CredentialsProvider
  val credentials =  UsernamePasswordCredentials("webiopi", "raspberry") //UsernamePasswordCredentials
  provider.setCredentials(AuthScope.ANY, credentials)
- val client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build() //HttpClient
-
- val response = client.execute(  HttpGet("http://192.168.1.5:8000/GPIO/17/value")) //HttpResponse
- val statusCode = response.getStatusLine().getStatusCode();
- println("Response Code :"+ statusCode);
-	response.getEntity().getContent().bufferedReader().use {
-	            it.lines().forEach { line ->
-	                println(line)
-	            }
-	        }
-	//println("Response | "+ response.getEntity().getContent() );	
+ client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build() //HttpClient
+ println("client created")
 }
+
+fun testGet(){
+ val path = "GPIO/17/value"
+ val response = client.execute(  HttpGet("http://192.168.1.5:8000/$path") ) //HttpResponse
+ showResponse( "GET $path", response.getEntity().getContent() )
+}
+
+fun testPut( v : Int){
+ val path = "GPIO/17/value/$v"
+ val response = client.execute( HttpPost("http://192.168.1.5:8000/$path")) //HttpResponse
+ showResponse( "PUT $path", response.getEntity().getContent() )
+}
+
+fun testCmd( v : Int){
+ val path = "GPIO/17/value/$v"
+ val response = client.execute( HttpPost("http://192.168.1.5:8000/$path")) //HttpResponse
+ showResponse( "PUT $path", response.getEntity().getContent() )
+}
+
+fun showResponse(  msg : String, inps : InputStream ){
+	inps.bufferedReader().use {
+		val response = StringBuffer()
+		var inputLine = it.readLine()
+		while (inputLine != null) {
+			response.append(inputLine)
+			inputLine = it.readLine()
+		}
+		it.close()
+		println("Response $msg: $response")
+	}	
+}
+
+fun main() = runBlocking {
+	createClient()
+	for( i in 1..5){
+		delay(500)
+		testGet()
+		delay(500)
+		testPut(1)
+		delay(500)
+		testGet()
+		delay(500)
+		testPut(0)
+	}
+}
+
+
+/*
 fun sendGet( userName:String ="webiopi", password:String="raspberry" ) {
 	
 //     var reqParam = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(userName, "UTF-8")
@@ -57,19 +102,7 @@ fun sendGet( userName:String ="webiopi", password:String="raspberry" ) {
     }
 }
 
-fun getResponse(  conn : HttpURLConnection){
-      BufferedReader(InputStreamReader(conn.inputStream)).use {
-                val response = StringBuffer()
 
-                var inputLine = it.readLine()
-                while (inputLine != null) {
-                    response.append(inputLine)
-                    inputLine = it.readLine()
-                }
-                it.close()
-                println("Response : $response")
-      }	
-}
 
 fun sendPost() {
     val url = URL("http:///192.168.1.5:8000/GPIO/17/value")
@@ -86,8 +119,4 @@ fun sendPost() {
         }
     }
 }
-
-fun main(){
-	//sendGet()
-	xxx()
-}
+*/
