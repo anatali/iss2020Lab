@@ -11,9 +11,9 @@ import it.unibo.kactor.MsgUtil
 import org.eclipse.californium.core.coap.MediaTypeRegistry
 import kotlinx.coroutines.runBlocking
 
-val ledurl    =  "coap://192.168.1.5:5683/GPIO/17/value"
-val cmdurl    =  "coap://192.168.1.5:5683/devices/uno"
-val client =  CoapClient( cmdurl )
+val ledurl    =  "coap://192.168.1.8:5683/GPIO/17/value"
+val cmdurl    =  "coap://192.168.1.8:5683/devices/uno"
+val client    =  CoapClient( cmdurl )
  
 fun testRobotUsage(  ){
 var v  = 0
@@ -31,8 +31,6 @@ var v  = 0
 	}
 	println("testRobotUsage BYE"  )
 }
-
-
 
 fun main() {
 		testRobotUsage( )

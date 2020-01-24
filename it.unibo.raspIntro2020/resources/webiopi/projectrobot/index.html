@@ -9,52 +9,39 @@
 	<script type="text/javascript" src="/webiopi.js"></script>
 	
 	<script type="text/javascript">
- 		
- 	function turnz() {
- 			//alert("turn_z"); 
-	 		webiopi().callMacro("turn_z");
-	 }
-	 
-	 function stop() {
-	 	//webiopi().callMacro("stop");
-	 	//alert("stop");
-	 }
 
 	webiopi().ready(function() {
 		var leddisplay, button;
  		leddisplay = $("#led");	
- 
- 		               
-		// create a "LED" labeled button for GPIO 17
+ 		// create a "LED" labeled button for GPIO 17
 		button = webiopi().createGPIOButton(17, "Led17");
 		leddisplay.append(button);  
-		       
-		button = webiopi().createMacroButton("macro", "w", "BasicCommand", ["w"]);
+ 
+/*
+	button = webiopi().createButton("w", "w", callbakBottonDown, callbakBottomUp  )
+*/  
+ 		button = webiopi().createButton("w", "w", function(){webiopi().callMacro("do_w")}  );
 		$("#cw").append(button);  
 
-		button = webiopi().createMacroButton("macro", "s", "BasicCommand", ["s"]);
+		button = webiopi().createButton("s", "s", function(){webiopi().callMacro("do_s")});
 		$("#cs").append(button);  
 
-		button = webiopi().createMacroButton("macro", "r", "BasicCommand", ["r"]);
+		button = webiopi().createButton("r", "r", function(){webiopi().callMacro("do_r")});
 		$("#cr").append(button);  
 
-		button = webiopi().createMacroButton("macro", "l", "BasicCommand", ["l"]);
+ 		button = webiopi().createButton("l", "l", function(){webiopi().callMacro("do_l")});
 		$("#cl").append(button);  
 
-		button = webiopi().createMacroButton("macro", "x", "BasicCommand", ["x"]);
+ 		button = webiopi().createButton("x", "x", function(){webiopi().callMacro("do_x")});
 		$("#cx").append(button);  
 
-		//button = webiopi().createMacroButton("macro", "z", "BasicCommand", ["z"]);
-		button = webiopi().createButton("z", "z", turnz, stop);
+ 		button = webiopi().createButton("z", "z", function(){webiopi().callMacro("do_z")});
 		$("#cz").append(button);  
 		
-		button = webiopi().createMacroButton("macro", "h", "BasicCommand", ["h"]);
+ 		button = webiopi().createButton("h", "h", function(){webiopi().callMacro("do_h")});
 		$("#ch").append(button);  
 		
-		webiopi().refreshGPIO(false);   //false by AN - DO NOT REMOVE!
-		
-
-		
+		webiopi().refreshGPIO(false);   //MANDATORY! - false by AN  
 	});
  
 	</script>
@@ -91,8 +78,8 @@
 	</style>
 </head>
 <body>
-Send a command to a basicrobot via <tt>forward</tt> on <tt>localhost:8018</tt>.<br/><br/>
-Each button calls a <tt>BasicCommand</tt> defined in <tt>script0.py</tt>.
+Send a command to Arduino.<br/><br/>
+Each button calls a <tt>macro</tt> defined in <tt>script0.py</tt>.
 <h2>Basic robot commands</h2>
 	<table style="width:50%">
 	<tbody>

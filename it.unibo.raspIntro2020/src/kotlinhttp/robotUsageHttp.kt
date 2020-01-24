@@ -16,6 +16,7 @@ import org.apache.http.client.HttpClient
 import java.io.InputStream
 
 lateinit var client : HttpClient 
+val hostAddr ="http://192.168.1.8:8000"
 
 fun createClient(){
  val provider    =  BasicCredentialsProvider() //CredentialsProvider
@@ -27,19 +28,19 @@ fun createClient(){
 
 fun testGet(){
  val path = "GPIO/17/value"
- val response = client.execute(  HttpGet("http://192.168.1.5:8000/$path") ) //HttpResponse
+ val response = client.execute(  HttpGet(hostAddr+"/$path") ) //HttpResponse
  showResponse( "GET $path", response.getEntity().getContent() )
 }
 
 fun testPut( v : Int){
  val path = "GPIO/17/value/$v"
- val response = client.execute( HttpPost("http://192.168.1.5:8000/$path")) //HttpResponse
+ val response = client.execute( HttpPost(hostAddr+"/$path")) //HttpResponse
  showResponse( "PUT $path", response.getEntity().getContent() )
 }
 
 fun testCmd( v : Int){
  val path = "GPIO/17/value/$v"
- val response = client.execute( HttpPost("http://192.168.1.5:8000/$path")) //HttpResponse
+ val response = client.execute( HttpPost(hostAddr+"/$path")) //HttpResponse
  showResponse( "PUT $path", response.getEntity().getContent() )
 }
 
@@ -56,8 +57,7 @@ fun showResponse(  msg : String, inps : InputStream ){
 	}	
 }
 
-fun main() = runBlocking {
-	createClient()
+suspend fun testLed(){
 	for( i in 1..5){
 		delay(500)
 		testGet()
@@ -67,7 +67,20 @@ fun main() = runBlocking {
 		testGet()
 		delay(500)
 		testPut(0)
-	}
+	}	
+}
+
+suspend fun testRobotCmd(){
+ var response = client.execute( HttpPost(hostAddr+"/macros/do_r/")) //HttpResponse
+ showResponse( "POST answer=", response.getEntity().getContent() )
+ delay( 1000 )
+ response = client.execute( HttpPost(hostAddr+"/macros/do_l/")) //HttpResponse
+ showResponse( "POST answer=", response.getEntity().getContent() )	
+}
+
+fun main() = runBlocking {
+	createClient()
+	testRobotCmd()
 }
 
 

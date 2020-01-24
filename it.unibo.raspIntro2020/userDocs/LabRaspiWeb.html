@@ -201,12 +201,48 @@ Create a file <ks>boot/wpa_supplicant.conf</ks> with content:
 update_config=1
 country=IT
 network={
-     ssid="TIM-94276267"
-     psk="HkB6gle0LdyRPYE60FzMMYBM"
+     ssid="..."
+     psk="..."
      key_mgmt=WPA-PSK
 }
 </pre>
+See alse <a href="https://www.digikey.com/en/maker/blogs/raspberry-pi-wi-fi-bluetooth-setup-how-to-configure-your-pi-4-model-b-3-model-b" target="web">
+B+ Connectivity</a>. <br/><br/>
 Create a file <ks>boot/ssh</ks> (no content)
+<h3>/ect/network/interfaces</h3>
+<pre>
+auto lo
+iface lo inet loopback
+auto eth0
+iface eth0 inet static
+        address 192.168.137.2
+        netmask 255.255.255.0
+        gateway 192.168.137.1
+        dns-nameservers 8.8.8.8
+allow-hotplug wlan0
+iface wlan0 inet dhcp
+pre-up wpa_supplicant -Dwext -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf  
+iface default inet dhcp
+</pre>
+
+<h3>/usr/local/bin/checkwifi.sh</h3>
+<pre>
+ping -c4 192.168.1.1 > /dev/null
+ 
+if [ $? != 0 ] 
+then
+  echo "No network connection, restarting wlan0"
+  /sbin/ifdown 'wlan0'
+  sleep 5
+  /sbin/ifup --force 'wlan0'
+fi
+
+------------------------------------------------------------------------------
+crontab -e
+*/5 * * * * /usr/bin/sudo -H /usr/local/bin/checkwifi.sh >> /dev/null 2>&1
+------------------------------------------------------------------------------
+sudo chmod 775 /usr/local/bin/checkwifi.sh
+</pre>
 </td>
 </tr>
 
@@ -225,8 +261,9 @@ We will use <ks>pyhton3</ks>.
 </td>
 <td><pre>sudo apt-get update -y
 sudo apt-get upgrade -y   	<kc>or</kc>  sudo apt full-upgrade
+
 sudo raspi-config
-	<k>Enable Cam and I2C</k>
+<div class="remark"><k>Enable Cam, I2C, UART</k></div>
 sudo reboot
 <ks>Install cmake</ks>
 sudo apt-get install cmake
@@ -347,6 +384,15 @@ WebIoPi Device support</a><br/></li>
 WebIoPi Tutorial : Framework basis</a><br/></li>
 <li><a href="http://techcofounderdating.com/raspberry-pi-custom-web-control/" target="web">
 WebIoPi video</a><br/>
+
+<h3>aiocoap</h3>
+<pre>
+https://aiocoap.readthedocs.io/en/latest/
+wget https://files.pythonhosted.org/packages/9c/f6/d839e4b14258d76e74a39810829c13f8dd31de2bfe0915579b2a609d1bbe/aiocoap-0.3.tar.gz
+tar xvzf aiocoap-0.3.tar.gz
+cd aiocoap-0.3
+sudo ./setup.py install
+</pre>
 </li>
 </ol>
 

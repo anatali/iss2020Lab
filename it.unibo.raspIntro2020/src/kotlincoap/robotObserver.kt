@@ -35,6 +35,6 @@ lateinit var path   : String
 }
 
 fun main() {
-	robotObserver.init("coap://192.168.1.5:5683", "GPIO/17/value")	
+	robotObserver.init("coap://192.168.1.8:5683", "GPIO/17/value")	
 	System.`in`.read()
 }
