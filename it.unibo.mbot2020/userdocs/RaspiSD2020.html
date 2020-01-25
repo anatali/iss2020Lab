@@ -355,6 +355,39 @@ sudo ./setup.py install</pre>
 </td>
 </tr>
 
+
+<tr>
+<td>
+<h3 id="aiocoap">Install Node.js</h3> </td>
+<td><pre>
+ 
+sudo apt remove nodejs nodejs-legacy -y
+sudo apt remove npm -y
+sudo apt remove --purge node
+
+//updates our Debian apt package repository to include the NodeSource packages
+curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+sudo apt-get install -y nodejs  // to install Node.js 13.x and npm
+
+node -v				<kc>//v13.7.0</kc>
+npm --version		<kc>//6.13.6</kc>
+
+npm install --save serialport
+</pre>
+</td>
+</tr>
+
+<tr>
+<td>
+<h3 id="aiocoap">Install Samba</h3> </td>
+<td><pre>
+sudo apt install -y samba
+</pre>
+</td>
+</tr>
+
+
+
  </tbody>
 </table>
  <br/><br/>
