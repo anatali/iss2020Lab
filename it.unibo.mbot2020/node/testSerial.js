@@ -1,7 +1,7 @@
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline')
  
-var commands = "a,w,s,d,z,x,r,l,p,t,q";
+var commands = "h,a,w,s,d,z,x,r,l,p,t,q";
 var port  = new SerialPort("/dev/ttyUSB0", { baudRate: 115200  });  //, { autoOpen: false }
 
 const parser = new Readline()
