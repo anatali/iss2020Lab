@@ -155,17 +155,19 @@ The robot <br/>
 <tbody>	
 <tr>
 <td style="width:50%" >
-MBOT (wifi) versione-base:<br/>
+<h3>MBOT (wifi) base</h3>
  
 <a href="https://www.robotstore.it/Makeblock-mBot-S-Explorer-Kit" target="web">https://www.robotstore.it/Makeblock-mBot-S-Explorer-Kit</a>
 <br/> 
-<img src="./img/mbot-S.jpg" alt="mbot-S" width="90%" /> 
+<img src="./img/mbot-S.jpg" alt="mbot-S" width="70%" /> 
  
 
 </td>
 <td>
-<img src="./img/mbot.png" alt="mbot" width="100%" /><br/> <br/> 
-
+<h3>MBOT as an IOT device</h3>
+<a href="https://en.wikipedia.org/wiki/Internet_of_things" target="web">https://en.wikipedia.org/wiki/Internet_of_things</a>
+<br/><br/> 
+<img src="./img/mbot.png" alt="mbot" width="80%" /><br/> <br/> 
 </td>
 </tr>
  </tbody>
@@ -223,9 +225,69 @@ A Python program that allows us to send commands to Arduino using the serial lin
 A NodeJs program that allows us to send commands to Arduino using the serial line:
  <a href="../node/testSerial.js" target="code">testSerial.js</a><br/><br/>
 
- A NodeJs server that allows us to send commands to Arduino using a Web-Gui:
- <a href="../node/server/app.js" target="code">app.js</a><br/><br/>
+ <h2>Remote control</h2>
+ <!-- sudo route add default gw 192.168.1.1 wlan0 -->
+<center>
+<table style="width:85%">
+<tbody>	
+<tr>
+<td style="width:80%" >
+<h3>A NodeJs server</h3>
+ A NodeJs server that allows us to send commands to Arduino using a Web-Gui (<tt>HTTP</tt>):
 
+	<ul>
+	<li><a href="../node/server/package.json" target="code">package.json</a></li>
+	<li><a href="../node/server/app.js" target="code">app.js</a></li>
+	<li><pre>npm install 
+node app.js</pre></li>
+	</ul>
+	
+Usage: 
+<ul>
+<li>Click on a button: send a POST request</li>
+<li>Write on a browser <tt>http://192.168.1.8:3000/r</tt>: sends a GET that movs the robot => 
+<a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST principles</a> violated!</li>
+</ul>
+
+</td>
+<td>
+<img src="./img/probotnode.png" alt="probotnode" width="80%"/>
+</td>
+</tr>
+ </tbody>
+</table>
+</center>
+<br/><br/>
+ <center>
+<table style="width:85%">
+<tbody>	
+<tr>
+<td style="width:80%" >
+<h3>A Python3 server</h3>
+A Python server that allows us to send commands to RaspberryPi-Arduino using 
+    <tt>HTTP</tt>, <tt>CoAP</tt> under <a href="http://webiopi.trouch.com/" target="web">WebIoPi</a>
+	(see also See 
+ <a href="http://htmlpreview.github.io/?https://github.com/anatali/iss2020Lab/blob/master/it.unibo.raspIntro2020/userDocs/LabRaspiWeb.html" target="web">
+ LabRaspiWeb.html</a> in project <i>it.unibo.raspIntro2020</i>):
+	<ul>
+	<li><a href="../python/basicrobotControl/probotconfig" target="code">probotconfig</a></li>
+	<li><a href="../python/basicrobotControl/probotscript.py" target="code">probotscript.py</a></li>
+	<li><pre>sudo python3 -m webiopi -d -c /home/pi/nat/projectrobot/probotconfig</pre></li>
+	</ul>
+</td>
+<td>
+<img src="./img/probot.png" alt="probot" width="80%"/>
+</td>
+</tr>
+ </tbody>
+</table>
+</center>
+ <br/><br/>
+ 
+ 
+ <br/><br/>
+
+ 
  <br/><br/>
 <table style="width:98%">
 <tbody>	
@@ -243,7 +305,20 @@ A NodeJs program that allows us to send commands to Arduino using the serial lin
 </div>  
 
  
+ 
+<tbody>	
+<tr>
+<td style="width:50%" >
+ 
 
+</td>
+<td>
+</td>
+</tr>
+ </tbody>
+</table>
+
+ <br/><br/>
 <div style="background-color:rgba(86, 56, 253, 0.9); width:100%;text-align:center;font-size:small;color:white">
 By AN Unibo-DISI  
 </div> 
