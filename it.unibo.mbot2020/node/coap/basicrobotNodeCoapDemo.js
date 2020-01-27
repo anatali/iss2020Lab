@@ -1,20 +1,22 @@
 var coap        = require('coap')
   , server      = coap.createServer()
-var SerialPort  = require("serialport");
+const SerialPort = require('serialport');
 var arduinoPort = "/dev/ttyUSB0";	//COM6
 
 
 var arduinoSerialPort = new SerialPort(arduinoPort, { baudRate: 115200  });
+
+ 
 arduinoSerialPort.on('open',function() {
   console.log('Serial Port ' + arduinoPort + ' is opened.');
 });
-
+ 
 
 server.on('request', function(req, res) {
   console.log( "server | url=" + req.url )
   var move = req.url.split('/')[1]
   arduinoSerialPort.write( move );
-  res.end('Hello from Coap server to robot move:' + move + '\n')
+  res.end('Coap server to Arduinio move:' + move + '\n')
 })
 
 // the default CoAP port is 5683
@@ -50,9 +52,12 @@ function q( ){
 }
 
 setTimeout( function(){ 
-	console.log('working ...'); 
-	l()
-	r()
+ 
+	console.log('============================================================================='); 
+	console.log('WARNING: this should work alone AFTER Arduino SETUP time'); 
+ 	console.log('============================================================================='); 
+
+setTimeout( function(){ console.log('writing ...'); l() },2000);
 	//q()
 },1000);
 

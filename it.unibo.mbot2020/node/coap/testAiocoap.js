@@ -10,6 +10,10 @@ function sendToServer( ){
 	req.end()
 }
 
+console.log('============================================================================='); 
+console.log('WARNING: please RUN :'); 
+console.log('sudo python3 -m webiopi -d -c /home/pi/nat/aiocoapExamples/basicrobotAiocoapServer.py'); 
+console.log('============================================================================='); 
  
 
 sendToServer( )

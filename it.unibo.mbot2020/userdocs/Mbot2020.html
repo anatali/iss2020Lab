@@ -232,7 +232,7 @@ A NodeJs program that allows us to send commands to Arduino using the serial lin
 <tbody>	
 <tr>
 <td style="width:80%" >
-<h3>A NodeJs server</h3>
+<h3>A NodeJs HTTP server</h3>
  A  <a href="https://www.w3schools.com/nodejs/" target="web">Node.js</a>
 server that allows us to send commands to Arduino using a Web-Gui (<tt>HTTP</tt>):
 
@@ -268,6 +268,11 @@ Usage:
 <h3>CoAP interaction using Python</h3>
 Use <a href="https://aiocoap.readthedocs.io/en/latest/" target="web">aiocoap</a>
  to create a CoAP server and a CoAP client.<!-- txThings is for Python 2.7 -->
+ <ul>
+ <li><a href="../python/coap/basicrobotAiocoapServer.py" target="code">basicrobotAiocoapServer.py<a></li>
+ <li><a href="../python/coap/basicrobotAiocoapClient.py" target="code">basicrobotAiocoapClient.py<a></li>
+ <li></li>
+</ul>
 <br/>
 </td>
 <td>
@@ -278,30 +283,6 @@ Use <a href="https://aiocoap.readthedocs.io/en/latest/" target="web">aiocoap</a>
 </table>
 </center>
 <br/><br/>
- <center>
-<table style="width:85%">
-<tbody>	
-<tr>
-<td style="width:80%" >
-<h3>CoAP interaction (WebIoPi) using Node</h3>
-A <a href="https://www.w3schools.com/nodejs/" target="web">Node.js</a> server that allows us to send commands to RaspberryPi-Arduino using 
-<a href="https://en.wikipedia.org/wiki/Constrained_Application_Protocol" target="web">CoAP</a> (Constrained Application Protocol):
-	<ul>
-	<li><a href="../node/coap/basicrobotCoapClient..js" target="code">basicrobotCoapClient..js</a></li>
-	<li><a href="../src/it/unibo/code/basicrobotCoapClient.java" target="code">basicrobotCoapClient.java</a></li>
-	<li><a href="../src/it/unibo/code/basicrobotCoapClient.kt" target="code">basicrobotCoapClient.kt</a></li>
-	<li><pre></pre></li>
-	</ul>
-	
-TODO: with the CoAP servr written in Python.
-</td>
-<td>
-<!-- <img src="./img/probot.png" alt="probot" width="80%"/> -->
-</td>
-</tr>
- </tbody>
-</table>
-</center>
 
 <br/><br/>
 
@@ -391,6 +372,31 @@ A Python server that allows us to send commands to RaspberryPi-Arduino using
 </center>
 
  <br/><br/>
+ <center>
+<table style="width:85%">
+<tbody>	
+<tr>
+<td style="width:80%" >
+<h3>CoAP interaction (WebIoPi) using Node</h3>
+A <a href="https://www.w3schools.com/nodejs/" target="web">Node.js</a> server that allows us to send commands to RaspberryPi-Arduino using 
+<a href="https://en.wikipedia.org/wiki/Constrained_Application_Protocol" target="web">CoAP</a> (Constrained Application Protocol):
+	<ul>
+	<li><pre>npm install coap</pre></li>
+	<li><a href="../node/coap/basicrobotNodeCoapDemo.js" target="code">basicrobotNodeCoapDemo.js</a></li>
+	<li><a href="../src/it/unibo/code/basicrobotCoapClient.java" target="code">basicrobotCoapClient.java</a></li>
+	<li><a href="../src/it/unibo/code/basicrobotCoapClient.kt" target="code">basicrobotCoapClient.kt</a></li>
+	<li><pre></pre></li>
+	</ul>
+	
+TODO: with the CoAP servr written in Python.
+</td>
+<td>
+<!-- <img src="./img/probot.png" alt="probot" width="80%"/> -->
+</td>
+</tr>
+ </tbody>
+</table>
+</center>
  
  
  <br/><br/>
