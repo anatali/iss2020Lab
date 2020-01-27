@@ -265,15 +265,35 @@ Usage:
 <tbody>	
 <tr>
 <td style="width:80%" >
-<h3>CoAP interaction</h3>
+<h3>CoAP interaction using Python</h3>
+Use <a href="https://aiocoap.readthedocs.io/en/latest/" target="web">aiocoap</a>
+ to create a CoAP server and a CoAP client.<!-- txThings is for Python 2.7 -->
+<br/>
+</td>
+<td>
+<!-- <img src="./img/probot.png" alt="probot" width="80%"/> -->
+</td>
+</tr>
+ </tbody>
+</table>
+</center>
+<br/><br/>
+ <center>
+<table style="width:85%">
+<tbody>	
+<tr>
+<td style="width:80%" >
+<h3>CoAP interaction (WebIoPi) using Node</h3>
 A <a href="https://www.w3schools.com/nodejs/" target="web">Node.js</a> server that allows us to send commands to RaspberryPi-Arduino using 
 <a href="https://en.wikipedia.org/wiki/Constrained_Application_Protocol" target="web">CoAP</a> (Constrained Application Protocol):
 	<ul>
-	<li><a href="../node/coap/basicrobotCoap.js" target="code">basicrobotCoap.js</a></li>
+	<li><a href="../node/coap/basicrobotCoapClient..js" target="code">basicrobotCoapClient..js</a></li>
 	<li><a href="../src/it/unibo/code/basicrobotCoapClient.java" target="code">basicrobotCoapClient.java</a></li>
 	<li><a href="../src/it/unibo/code/basicrobotCoapClient.kt" target="code">basicrobotCoapClient.kt</a></li>
 	<li><pre></pre></li>
 	</ul>
+	
+TODO: with the CoAP servr written in Python.
 </td>
 <td>
 <!-- <img src="./img/probot.png" alt="probot" width="80%"/> -->
@@ -283,13 +303,73 @@ A <a href="https://www.w3schools.com/nodejs/" target="web">Node.js</a> server th
 </table>
 </center>
 
-
 <br/><br/>
+
+<h2>WebIoPi</h2>
  <center>
 <table style="width:85%">
 <tbody>	
 <tr>
-<td style="width:80%" >
+<td style="width:60%" >
+<h3>WebIoPi </h3>
+
+WebIOPi is a REST framework to remote control Raspberry Pi GPIO/I2C/SPI/...
+The Pi is enough powered to handle HTTP requests, but HTTP uses TCP which has its pro and cons.
+Built on top of UDP, CoAP can decrease latency and allows multicast which is a premiere for the Pi !
+
+
+WebIOPi is a software used to materialize the “IoT (Internet of Things)” with Raspberry Pi.
+In WebIOPi’s case, input and output are performed with a browser. 
+You can operate GPIO with a browser button, and likewise acquire values from GPIO and display them quite easily. 
+The appeal in using a browser is that you can even easily modify web pages design with CSS and more!
+
+See 
+
+<ol>
+<li><a href="https://www.deviceplus.com/how-tos/raspberrypi-guide/raspberrypi_entry_030/" target="web">
+Raspberry Pi WebIOPi IOT Part 1 : Operating GPIO With a Browser</a><br/> </li>
+<li><a href="https://www.deviceplus.com/how-tos/raspberrypi-guide/raspberry-pi-webiopi-iot-part-2-making-a-flashing-led-button/" target="web">
+Part 2 – Making a flashing LED button </a><br/> </li>
+<li><a href="https://www.deviceplus.com/how-tos/raspberrypi-guide/raspberry-pi-webiopi-iot-part-3-programming-basics-inputoutput/" target="web">
+Part 3 – Programming Basics (Input/Output) </a><br/> </li>
+<li><a href="https://webiopi.trouch.com/INSTALL.html/" target="web">
+WebIOPi Installation</a><br/> </li>
+<li><a href="https://www.raspberrypi.org/forums/viewtopic.php?t=38740/" target="web">
+WebIOPi now includes a CoAP stack</a><br/> </li>
+ 
+</ol>
+
+<pre>
+# Create a WebIOPi client
+client = PiHttpClient("raspberrypi")   # HTTP only
+#client = PiMixedClient("raspberrypi") # CoAP with HTTP fallback
+#client = PiCoapClient("raspberrypi")  # CoAP only
+#client = PiMulticastClient()          # CoAP Multicast
+
+</pre>
+
+
+The WebIOPi interface uses javascript to control our GPIO from a web page.
+<ol>
+<li><a href="http://webiopi.trouch.com/" target="web">WebIoPi </a><br/> </li>
+<li><a href="https://webiopi.trouch.com/Tutorial_Devices.html" target="web">
+WebIoPi Tutorial : Using devices</a><br/> </li>
+<li><a href="https://webiopi.trouch.com/DEVICES.html" target="web">
+WebIoPi Device support</a><br/></li>
+<li><a href="http://webiopi.trouch.com/Tutorial_Basis.html" target="web">
+WebIoPi Tutorial : Framework basis</a><br/></li>
+<li><a href="http://techcofounderdating.com/raspberry-pi-custom-web-control/" target="web">
+WebIoPi video</a><br
+</li>
+</ol>
+</td>
+<td>
+<img src="./img/webiopi-rest.png" alt="webiopi-rest" width="100%"/>
+</td>
+</tr>
+
+<tr>
+<td >
 <h3>A Python3 server based on WebIoPi </h3>
 A Python server that allows us to send commands to RaspberryPi-Arduino using 
     <tt>HTTP</tt>, <tt>CoAP</tt> under <a href="http://webiopi.trouch.com/" target="web">WebIoPi</a>
