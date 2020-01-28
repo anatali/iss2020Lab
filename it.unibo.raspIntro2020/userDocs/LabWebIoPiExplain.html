@@ -153,13 +153,6 @@ table, th, td {
 <h1>LabWebIoPiExplain | WebIoPi behavior<font size="5"></font> </h1>
 
 
-
-
- 
- 
-
-
-
 <h2>Overview</h2>
 <ol>
 <li>The <a href="../webiopipython/webiopi/__main__.py" target="code">__main__.py</a> starts a 
@@ -171,31 +164,44 @@ table, th, td {
 	<ol>
 	<li>looks at the configuration file <a href="../webiopipython/config" target="code">config</a> and
 configures the GPIO.</li>
-	<li>sets the routes
-into a <tt>RESTHandler</tt> defined in
+	<li>sets the routes into a <tt>RESTHandler</tt> defined in
 <a href="../webiopipython/webiopi/protocols/rest.py" target="code">rest.py</a></li>
-	<li>starts
-(if enabled in the configuration file)
+	<li>starts (if enabled in the configuration file)
 a <a href="../webiopipython/webiopi/protocols/http.py" target="code">HTTP server (http.py)</a>
 and a <a href="../webiopipython/webiopi/protocols/coap.py" target="code">CoAP server (coap.py)</a></li>
  	</ol>
-<br/><br/>
+<br/>
 </li>
 
  
 <li>The <a href="../webiopipython/webiopi/protocols/http.py" target="code">HTTP server</a> 
-handles (see <tt>processRequest</tt>) a <tt>GET/POST</tt> request from the browser by redirecting  it <br/>
-to <tt>do_GET/do_POST</tt> of <a href="../webiopipython/webiopi/protocols/rest.py" target="code">rest.py</a>
+handles (see <tt>processRequest</tt>) a <tt>GET/POST</tt> request from the browser by redirecting  it 
+to <tt>do_GET/do_POST</tt> of <a href="../webiopipython/webiopi/protocols/rest.py" target="code">RESTHandler (in rest.py)</a>
 that implements the action. <br/>
+The HTML page given by the HTTP server usually includes in a script the sentence:
+<center>
+<table style="width:80%">
+<tbody>	
+<tr>
+<td style="width:50%" >
+ <pre>w().refreshGPIO(true);</pre> 
 
+</td>
+<td>
+where <tt>w()</tt> (= <ks>new WebIOPi()</ks>) is defined in <a href="../webiopipython/htdocs/webiopi.js" target="code">htdocs/webiopi.js</a>
+</td>
+</tr>
+ </tbody>
+</table>
+</center>
 
 <br/><br/>
 </li>
+
 <li>The <a href="../webiopipython/webiopi/protocols/coap.py" target="code">CoAP server</a> 
 handles <i>CoAP requests</i> (in <tt>processMessage</tt>) that calls (via a local <tt>COAPHandler</tt> ) 
-<tt>do_GET/do_POST</tt> <br/>
-of 
-<a href="../webiopipython/webiopi/protocols/rest.py" target="code">RESTHandler</a>
+<tt>do_GET/do_POST</tt> 
+of <a href="../webiopipython/webiopi/protocols/rest.py" target="code">RESTHandler</a>
 according to the <tt>request.code</tt>;
 afterwards, it sends the response on the socket.
 <br/><br/>
@@ -429,7 +435,7 @@ rest.py | <ks>getDeviceRoute</ks> deviceName=GPIO
 	method=GET
 rest.py | getDeviceRoute functionName=17/value
 
-rest.py | <k>callDeviceFunction</k> func=&lt;bound method <ks>GPIOPort.digitalRead</ks> of 
+rest.py | <k>callDeviceFunction func=</k>&lt;bound method <ks>GPIOPort.digitalRead</ks> of 
     &lt;<ks>webiopi.devices.digital.gpio.NativeGPIO</ks> object at 0x769907f0>> 
 	args={'channel': 17}
 <k>------------------------------------------------------- Low level</k>	
@@ -454,6 +460,56 @@ Decorators dynamically alter the functionality of a function, method, or class w
 or change the source code of the function being decorated.<br/>
 See <a href="https://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators" target="web">Python Decorators</a>
 -->
+
+ <br/><br/>
+<table style="width:98%">
+<tbody>	
+<tr>
+<td style="width:50%" >
+<h3>HTTP - GET (<tt>http://192.168.1.7:8000/GPIO/17/value</tt>)</h3>
+<pre><m>
+ ............... HTTP processRequest self.command = GET
+ ............... rest  do_GET relativePath =GPIO/17/value
+ ............... rest GPIO/ relativePath=GPIO/17/value
+ ............... rest  callDeviceFunction path =GPIO/17/value
+ ............... rest  callDeviceFunction response =0
+ ............... HTTP response body = 0
+2020-01-28 18:47:18 - HTTP - DEBUG - "GET /GPIO/17/value HTTP/1.1" - 200 OK (Client: ::ffff:192.168.1.6 <Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36>)
+^C2020-01-28 18:49:38 - WebIOPi - INFO - Stopping...
+2020-01-28 18:49:38 - WebIOPi - DEBUG - Closing device GPIO - GPIO
+2020-01-28 18:49:39 - WebIOPi - INFO - CoAP Server stopped
+</m></pre> 
+
+</td>
+<td>
+<h3>CoAP - POST ( <tt>client.sendRequest(COAPPost("coap://192.168.1.7/GPIO/17/value/0"  ))</tt> )</h3>
+<pre><m>
+2020-01-28 18:46:38 - CoAP - DEBUG - "POST /GPIO/17/value/0 CoAP/1.0" - None (Client: ::ffff:192.168.1.7)
+ ............... coap processMessage request.code=2
+ ............... rest  callDeviceFunction path =GPIO/17/value/0
+ ............... rest  callDeviceFunction response =0
+2020-01-28 18:46:38 - CoAP - DEBUG - "POST /GPIO/17/value/0 CoAP/1.0" - 2.04 Changed (Client: ::ffff:192.168.1.7)
+</m></pre>
+
+<h3>CoAP - GET (<tt>client.sendRequest(COAPGet("coap://192.168.1.7/GPIO/17/value" ))</tt>)</h3>
+<pre><m>
+2020-01-28 18:46:38 - CoAP - DEBUG - "GET /GPIO/17/value CoAP/1.0" - None (Client: ::ffff:192.168.1.7)
+ ............... coap processMessage request.code=1
+ ............... coap do_GET
+ ............... rest  do_GET relativePath =GPIO/17/value
+ ............... rest GPIO/ relativePath=GPIO/17/value
+ ............... rest  callDeviceFunction path =GPIO/17/value
+ ............... rest  callDeviceFunction response =0
+ ............... coap do_GET response.payload = 0
+2020-01-28 18:46:38 - CoAP - DEBUG - "GET /GPIO/17/value CoAP/1.0" - 2.05 Content (Client: ::ffff:192.168.1.7)
+</m></pre> 
+
+</td>
+</tr>
+ </tbody>
+</table>
+ <br/><br/>
+ 
 
 
  <br/><br/>
