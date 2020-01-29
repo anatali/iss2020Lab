@@ -226,11 +226,7 @@ A NodeJs program that allows us to send commands to Arduino using the serial lin
  <a href="../node/testSerial.js" target="code">testSerial.js</a><br/><br/>
 
  <h2>Remote control</h2>
- <pre>
-sudo route add default gw 192.168.1.1 wlan0 
-sudo webiopi -d -c /etc/webiopi/config
-</pre>
-<center>
+ <center>
 <table style="width:85%">
 <tbody>	
 <tr>
@@ -240,16 +236,16 @@ sudo webiopi -d -c /etc/webiopi/config
 server that allows us to send commands to Arduino using a Web-Gui (<tt>HTTP</tt>):
 
 	<ul>
-	<li><a href="../node/server/package.json" target="code">package.json</a></li>
-	<li><a href="../node/server/app.js" target="code">app.js</a></li>
+	<li><a href="../node/serverHTTP/package.json" target="code">package.json</a></li>
+	<li><a href="../node/serverHTTP/app.js" target="code">app.js</a></li>
 	<li><pre>npm install 
 node app.js</pre></li>
 	</ul>
 	
 Usage: 
 <ul>
-<li>Click on a button: send a POST request</li>
-<li>Write on a browser <tt>http://192.168.1.8:3000/r</tt>: sends a GET that movs the robot => 
+<li>Click on a button: send a <tt>POST</tt> request</li>
+<li>Write on a browser <tt>http://192.168.1.8:3000/r</tt>: sends a <tt>GET</tt> that movs the robot => 
 <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST principles</a> violated!</li>
 </ul>
 
@@ -270,13 +266,20 @@ Usage:
 <td style="width:80%" >
 <h3>CoAP interaction using Python</h3>
 Use <a href="https://aiocoap.readthedocs.io/en/latest/" target="web">aiocoap</a>
- to create a CoAP server and a CoAP client.<!-- txThings is for Python 2.7 -->
+ to create a <tt>CoAP</tt> server and a <tt>CoAP</tt> client.<!-- txThings is for Python 2.7 -->
  <ul>
- <li><a href="../python/coap/basicrobotAiocoapServer.py" target="code">basicrobotAiocoapServer.py<a></li>
- <li><a href="../python/coap/basicrobotAiocoapClient.py" target="code">basicrobotAiocoapClient.py<a></li>
- <li></li>
+ <li><tt>python3 <a href="../python/coap/basicrobotAiocoapServer.py" target="code">basicrobotAiocoapServer.py<a></tt><br/>
+ 
+ The server provides a resource (<tt>BasicrobotResource</tt>) that implements a <k>PUT</k> request by 
+changing its 'state' and by sending a command to Arduino on the Serial line. 
+</li>
+ <li><tt>python3 <a href="../python/coap/basicrobotAiocoapClient.py" target="code">basicrobotAiocoapClient.py<a></tt><br/>
+ The client provides a simple console to send commands (<tt>w,s,a,d,r,l,z,x</tt>) to the basicrobot.
+ </li>
+
 </ul>
-<br/>
+ 
+ 
 </td>
 <td>
 <!-- <img src="./img/probot.png" alt="probot" width="80%"/> -->
@@ -287,9 +290,26 @@ Use <a href="https://aiocoap.readthedocs.io/en/latest/" target="web">aiocoap</a>
 </center>
 <br/><br/>
 
-<br/><br/>
+<h2>Using HTTP and CoAP together</h2>
+
+<ul>
+<li>WebIoPi solution: the HTTP server redirects POST commands to the same handler used by the CoAP server.
+The Web page given by the HTTP server contains a script that <k>DOES NOT work</k> as a CoAP client observer.
+Rather it performs polling over the resource state to be updated.  <br/><br/></li>
+
+<li>Unibo solution: the HTTP server hanldes a POST command by generating a CoAP request and by sending to the client the same
+answer given by the CoAP server (that interacts with Arduino). The HTTP server works also as an observable CoAP client
+and updates web pages by using <k>socketio</k>.</li>
+</ul>
+ 
+
 
 <h2>WebIoPi</h2>
+<pre>
+sudo route add default gw 192.168.1.1 wlan0 
+sudo webiopi -d -c /etc/webiopi/config
+</pre>
+
  <center>
 <table style="width:85%">
 <tbody>	
