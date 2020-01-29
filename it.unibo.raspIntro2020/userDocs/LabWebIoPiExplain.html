@@ -466,6 +466,10 @@ See <a href="https://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorator
 <tbody>	
 <tr>
 <td style="width:50%" >
+See  <a href="../resources/webiopi/projectrobot/coapUsage.py" target="code">coapUsage.py</a>
+
+ 
+
 <h3>HTTP - GET (<tt>http://192.168.1.7:8000/GPIO/17/value</tt>)</h3>
 <pre><m>
  ............... HTTP processRequest self.command = GET
@@ -504,6 +508,49 @@ See <a href="https://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorator
 2020-01-28 18:46:38 - CoAP - DEBUG - "GET /GPIO/17/value CoAP/1.0" - 2.05 Content (Client: ::ffff:192.168.1.7)
 </m></pre> 
 
+</td>
+</tr>
+<tr>
+<td>
+<pre>
+In /WebIOPi-0.7.1/python:
+ <ks>sudo python3 -m webiopi -d -c /home/pi/nat/basicrobotControl/probotconfig</ks>
+</pre>
+<h3>GPIO initial values</h3>
+ <m><kc>//<a href="../resources/webiopi/projectrobot/webiopi.js" target="code">webiopi.js</a> modified:
+ <k>WebIOPi.prototype.updateValue</k> shows <k>GPIO[gpio].value</k></kc></m>
+<pre><m>webiopi.js:245  updateValue gpio=0 value=1
+webiopi.js:245  updateValue gpio=1 value=1
+webiopi.js:245  updateValue gpio=4 value=1
+webiopi.js:245  updateValue gpio=5 value=1
+webiopi.js:245  updateValue gpio=6 value=1
+webiopi.js:245  updateValue gpio=7 value=1
+webiopi.js:245  updateValue gpio=8 value=1
+webiopi.js:245  updateValue gpio=9 value=0
+webiopi.js:245  updateValue gpio=10 value=0
+webiopi.js:245  updateValue gpio=11 value=0
+webiopi.js:245  updateValue gpio=12 value=0
+webiopi.js:245  updateValue gpio=13 value=0
+webiopi.js:245  updateValue gpio=16 value=0
+webiopi.js:245  updateValue gpio=17 value=0
+webiopi.js:245  updateValue gpio=18 value=0
+webiopi.js:245  updateValue gpio=19 value=0
+webiopi.js:245  updateValue gpio=20 value=0
+webiopi.js:245  updateValue gpio=21 value=0
+webiopi.js:245  updateValue gpio=22 value=0
+webiopi.js:245  updateValue gpio=23 value=0
+webiopi.js:245  updateValue gpio=24 value=0
+webiopi.js:245  updateValue gpio=25 value=0
+webiopi.js:245  updateValue gpio=26 value=0
+webiopi.js:245  updateValue gpio=27 value=0
+webiopi.js:245  updateValue gpio=28 value=1
+webiopi.js:245  updateValue gpio=29 value=0
+webiopi.js:245  updateValue gpio=46 value=1
+webiopi.js:245  updateValue gpio=47 value=1
+</m></pre></td>
+<td>
+
+<img src="./img/probot.png" alt="probot" width="60%"/>
 </td>
 </tr>
  </tbody>

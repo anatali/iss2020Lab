@@ -1,4 +1,4 @@
-from coap import *
+from protocols.coap import *
 #from utils.logger import logToFile
 import time
 
@@ -16,26 +16,26 @@ Requires
 client = COAPClient()
  
 def moveRobot( move ):
-    response = client.sendRequest(COAPPost("coap://192.168.1.8/macros/do_"+move))
+    response = client.sendRequest(COAPPost("coap://192.168.1.7/macros/do_"+move))
     if response:
          print("POST | Received response:\n%s" % response)
 
 def blinckLed():
-    client.sendRequest(COAPPost("coap://192.168.1.8/GPIO/17/function/out"))
+    client.sendRequest(COAPPost("coap://192.168.1.7/GPIO/17/function/out"))
     state = True
-    for x in range(0, 6): 
-        response = client.sendRequest(COAPPost("coap://192.168.1.8/GPIO/17/value/%d" % state))
+    for x in range(0, 2): 
+        response = client.sendRequest(COAPPost("coap://192.168.1.7/GPIO/17/value/%d" % state))
         if response:
             print("POST | Received response:\n%s" % response)
             state = not state
         else:
             print("No response received")
-        response = client.sendRequest(COAPGet("coap://192.168.1.8/GPIO/17/value" ))
+        response = client.sendRequest(COAPGet("coap://192.168.1.7/GPIO/17/value" ))
         if response:
             print("GET | Received response: %s" %  response.payload.decode("utf-8") )
         else:
             print("No response received")
-        sleep(1.0)
+        time.sleep(1.0)
 
 def console() :  
     print("console  STARTS :"   )
@@ -50,4 +50,16 @@ def console() :
         
 #moveRobot('r')   
 #blinckLed()
-console()
+#console()
+response = client.sendRequest(COAPPost("coap://192.168.1.7/GPIO/17/value/0"  ))
+if response:
+	print("POST | Received response:\n%s" % response)
+else:
+	print("POST | No response received")
+
+
+response = client.sendRequest(COAPGet("coap://192.168.1.7/GPIO/17/value" ))
+if response:
+	print("GET | Received response: %s" %  response.payload.decode("utf-8") )
+else:
+	print("GET | No response received")
