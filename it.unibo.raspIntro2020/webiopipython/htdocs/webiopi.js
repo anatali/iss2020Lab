@@ -242,6 +242,7 @@ WebIOPi.prototype.addALT = function (alt, gpio, name) {
 }
 
 WebIOPi.prototype.updateValue = function (gpio, value) {
+	console.log("webiopi.js updateValue gpio=" +gpio + " value="+value);
 	w().GPIO[gpio].value = value;
 	var style = (value == 1) ? "HIGH" : "LOW";
 	$("#gpio"+gpio).attr("class", style);

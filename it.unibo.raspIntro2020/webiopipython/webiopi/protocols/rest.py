@@ -118,6 +118,7 @@ class RESTHandler():
     
     def callDeviceFunction(self, method, path, data=None):
         (func, args) = self.getDeviceRoute(method, path)
+        print(" ............... rest  callDeviceFunction path =" + str( path ) )
         if func == None:
             return (404, args, M_PLAIN)
 
@@ -136,10 +137,12 @@ class RESTHandler():
                     response = func.format % result
             else:
                 response = result
+        print(" ............... rest  callDeviceFunction response =" + str( response ) )
         
         return (200, response, contentType)
         
     def do_GET(self, relativePath, compact=False):
+        print(" ............... rest  do_GET relativePath =" + str( relativePath ) )
         relativePath = self.findRoute(relativePath)
         
         # JSON full state
@@ -163,6 +166,7 @@ class RESTHandler():
 
         # Single GPIO getter
         elif relativePath.startswith("GPIO/"):
+            print(" ............... rest GPIO/ relativePath="+relativePath)		
             return self.callDeviceFunction("GET", relativePath)
         
         elif relativePath == "devices/*":

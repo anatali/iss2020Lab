@@ -456,6 +456,7 @@ class COAPServer(threading.Thread):
                 coapRequest.parseByteArray(requestBytes)
                 coapResponse = COAPResponse()
                 #self.logger.debug("Received Request:\n%s" % coapRequest)
+                self.logger.debug('"%s %s CoAP/%.1f" - %s (Client: %s)' % (coapRequest.CODES[coapRequest.code], coapRequest.uri_path, coapRequest.version, coapResponse.CODES[coapResponse.code], client[0]))
                 self.processMessage(coapRequest, coapResponse)
                 #self.logger.debug("Sending Response:\n%s" % coapResponse)
                 responseBytes = coapResponse.getBytes()
@@ -482,6 +483,7 @@ class COAPServer(threading.Thread):
         self.socket.close()
         
     def processMessage(self, request, response):
+        print(" ............... coap processMessage request.code=" + str(request.code) ) 
         if request.type == COAPMessage.CON:
             response.type = COAPMessage.ACK
         else:
@@ -507,8 +509,9 @@ class COAPHandler():
         self.handler = handler
     
     def do_GET(self, request, response):
+        print(" ............... coap do_GET "  )
         try:
-            (code, body, contentType) = self.handler.do_GET(request.uri_path[1:], True)
+            (code, body, contentType) = self.handler.do_GET(request.uri_path[1:], True)    #see rest.py
             if code == 0:
                 response.code = COAPResponse.NOT_FOUND
             elif code == 200:
@@ -517,6 +520,7 @@ class COAPHandler():
                 response.code =  HTTPCode2CoAPCode(code)
             response.payload = body
             response.content_format = COAPContentFormat.getCode(contentType)
+            print(" ............... coap do_GET response.payload = " + body  )
         except (GPIO.InvalidDirectionException, GPIO.InvalidChannelException, GPIO.SetupException) as e:
             response.code = COAPResponse.FORBIDDEN
             response.payload = "%s" % e

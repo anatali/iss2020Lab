@@ -244,8 +244,9 @@ class HTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
         try:
             result = (None, None, None)
+            print(" ............... HTTP processRequest self.command = " + str( self.command )  )
             if self.command == "GET":
-                result = self.server.handler.do_GET(relativePath, compact)
+                result = self.server.handler.do_GET(relativePath, compact)   ##see rest.py
             elif self.command == "POST":
                 length = 0
                 length_header = 'content-length'
@@ -257,6 +258,7 @@ class HTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 
             (code, body, contentType) = result
             
+            print(" ............... HTTP response  "    )
             if code > 0:
                 self.sendResponse(code, body, contentType)
             else:
