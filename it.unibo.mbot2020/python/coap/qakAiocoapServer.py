@@ -6,7 +6,8 @@ import aiocoap.resource as resource
 import aiocoap
 import serial
 
-ser = serial.Serial('/dev/ttyUSB0', 115200)
+ser      = serial.Serial('/dev/ttyUSB0', 115200)
+commands = ["h","w","s","r","l","a","d","z","x"]    ##
 
 if ser.isOpen():
 	try:
@@ -17,7 +18,6 @@ if ser.isOpen():
 else:
 		print( "cannot open serial port " )
 
-commands = ["h","w","s","r","l","a","d","z","x"]    ##
 
 # ----------------------------------------------------------------------------------
 class BasicrobotResource(resource.Resource):
@@ -36,9 +36,13 @@ class BasicrobotResource(resource.Resource):
 
     async def render_put(self, request):
         payload = request.payload.decode("utf-8")
-        print('PUT payload: %s' % payload)
-        if payload in commands :
-        	self.set_content( request.payload )
+        # msg(cmd,dispatch,kt,basicrobot,w,N)
+        msgArray = payload.split(",")
+        dest = msgArray[3] 
+        move = msgArray[4]  						## get the move
+        print('PUT payload: %s move: %s  dest: %s'   % (payload , move, dest ) )
+        if move in commands :
+        	self.set_content( move.encode("utf-8") )
         	return aiocoap.Message(code=aiocoap.CHANGED, payload=self.content)
         else :
         	return aiocoap.Message(code=aiocoap.CHANGED, payload="unknwon".encode("utf-8"))
@@ -80,6 +84,11 @@ class TimeResource(resource.ObservableResource):
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("coap-server").setLevel(logging.DEBUG)
 
+'''
+	path = contextName / actorName  & payload
+Example	
+	path = ctxRobot / basicrobot  payload=msg(cmd,dispatch,SENDER,basicrobot,MOVE,N)
+'''
 def main():
     # Resource tree creation
     root = resource.Site()
@@ -87,7 +96,7 @@ def main():
     root.add_resource(['.well-known', 'core'],
             resource.WKCResource(root.get_resources_as_linkheader))
     root.add_resource(['time'], TimeResource())
-    root.add_resource(['robot', 'basicrobot'], BasicrobotResource())
+    root.add_resource(['ctxRobot', 'basicrobot'], BasicrobotResource())
   
     asyncio.Task(aiocoap.Context.create_server_context(root))
     asyncio.get_event_loop().run_forever()

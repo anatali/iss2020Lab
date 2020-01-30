@@ -264,7 +264,7 @@ Usage:
 <tbody>	
 <tr>
 <td style="width:80%" >
-<h3>CoAP interaction using Python</h3>
+<h3>CoAP interaction using a Server written in Python </h3>
 Use <a href="https://aiocoap.readthedocs.io/en/latest/" target="web">aiocoap</a>
  to create a <tt>CoAP</tt> server and a <tt>CoAP</tt> client.<!-- txThings is for Python 2.7 -->
  <ul>
@@ -274,7 +274,10 @@ Use <a href="https://aiocoap.readthedocs.io/en/latest/" target="web">aiocoap</a>
 changing its 'state' and by sending a command to Arduino on the Serial line. 
 </li>
  <li><tt>python3 <a href="../python/coap/basicrobotAiocoapClient.py" target="code">basicrobotAiocoapClient.py<a></tt><br/>
- The client provides a simple console to send commands (<tt>w,s,a,d,r,l,z,x</tt>) to the basicrobot.
+ The client provides a simple console to send commands (<tt>w,s,a,d,r,l,z,x</tt>) to the <tt>BasicrobotResource</tt>.
+ </li>
+ <li><tt> <a href="../src/it/unibo/code/basicrobotQakCoapClient.kt" target="code">basicrobotQakCoapClient.kt<a></tt><br/>
+ A client wriiten in Kotlin that provides a simple console to send commands (<tt>w,s,a,d,r,l,z,x</tt>) to the <tt>BasicrobotResource</tt>.
  </li>
 
 </ul>

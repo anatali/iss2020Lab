@@ -6,8 +6,8 @@ from aiocoap import *
 logging.basicConfig(level=logging.INFO)
 
 async def moveRobot( move, context ):
-    payload = move.encode()  
-    request = Message(code=PUT, payload=payload, uri="coap://localhost/robot/basicrobot")
+    payload  = move.encode()  
+    request  = Message(code=PUT, payload=payload, uri="coap://localhost/robot/basicrobot")
     response = await context.request(request).response
     print('Result: %s\n%r'%(response.code, response.payload))
     
