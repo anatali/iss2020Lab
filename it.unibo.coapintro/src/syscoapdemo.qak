@@ -1,0 +1,16 @@
+System syscoapdemo
+
+Dispatch cmd      : cmd(X)
+
+Context ctxcoapdemo ip [ host= "localhost" port= 8022 ]
+
+QActor actor0 context ctxcoapdemo{ 
+	State s0 initial{ 
+[" //val ActorRes = itunibo.coapintro.qak.resourceActor(\"actor0\",myself) 
+
+"] 
+		 run itunibo.coapintro.qak.coapserverforctx.start()
+		 run itunibo.coapintro.qak.coapserverforctx.add( myself )
+		//forward qadummy -m cmd : cmd(r)
+	}
+}

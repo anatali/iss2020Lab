@@ -1,0 +1,466 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <!--
+<link rel="stylesheet" type="text/css" href="../css/issStyle1.css">
+<script type="text/javascript" src="../css/issStyle.js"></script>
+-->
+
+
+<SCRIPT SRC='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></SCRIPT>
+<SCRIPT>MathJax.Hub.Config({ tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}})</SCRIPT>
+<style type="text/css">
+ 
+
+<!--
+
+body
+{
+    margin-left:  30px;
+    margin-right: 30px;
+};
+
+P
+{
+    font-family: Tahoma;
+    font-size: 10pt;
+};
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+}
+
+a:hover {
+    background-color: #cccccc;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #242424;
+    background-color: transparent;
+}
+
+h1, h2, h3 {
+    color: #242424;
+    clear: left;
+    font: 100% Tahoma, Helvetica, Arial, sans-serif;
+    margin: 10;
+    margin-right: 15px;
+    margin-bottom: 0.5em;
+    padding-top: 0.5em;
+    border-bottom: 1px solid #242424;
+}
+
+h1 {
+    font-size: 150%;
+    background-color: #b2c0ff;
+}
+
+h2 {
+    background-color: #d9fbff;
+    font-size: 110%;
+}
+
+h3 {
+	background-color: #e6ccff;
+    font-size: 80%;
+}
+h4 {
+    background-color: #99ffcc;
+    font-size: 100%;
+}
+#i {
+    color: #ff1010;
+}
+tt{
+	font-family: "Arial";
+    font-size: 80%;
+	color: #006600;
+}
+em{
+	font-family: "Arial";
+    font-size: 80%;
+	font-weight: bold;
+	border-style:solid;
+	border-color: #ccffff;
+    color: #0033cc;
+}
+bc{
+	font-family: "Arial";
+	font-size: 80%;
+	font-weight: bold;
+    color: #990000;
+	background-color: #fcf8c7;
+}
+k{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #990000;
+	 
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	 
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	 
+}
+pre{
+	font-family: "Helvetica";
+	font-size: 70%;
+	background-color: #fcf8c7; 
+}
+m{
+	font-family: "Helvetica";
+	line-height: 100%;
+ 	font-size: 75%;
+}
+div.body{
+	width: 800px;
+    font-size: 18px;
+}    
+div.req{
+	background-color: #d9ffb3;
+    font-size: 18px;
+	width: 700px;
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}    
+div.remark{
+	background-color: #FFFC33;     
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}  
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+  -->
+</style>
+    
+<head>
+   
+<title>Lab15ISS</title></head>
+    
+<body>
+
+<div class="body"> 
+
+<h1>QakLanguage | The grammar  </h1> 
+<a href="http://htmlpreview.github.com/?https://github.com/anatali/iss2019Lab/blob/master/LectureBologna1819.html" target="isslm">LabISS-lectures site</a></font> 
+ 
+This section reports the language specification related to the qak metamodel, version <k>1.1.7</k> (January 2020).
+
+
+<h3>Structure</h3>
+   	<center><table style="width:95%">
+	<tbody>	
+	<tr>
+	<td style="width:60%">
+	<h4>System</h4>
+	<pre>
+grammar it.unibo.Qactork with org.eclipse.xtext.common.Terminals
+generate qactork "http://www.unibo.it/Qactork"
+
+QActorSystem: "System" spec=QActorSystemSpec ;
+
+terminal VARID  :  ('A'..'Z'|'_ ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
+QualifiedName : ID ('.' ID)* ;
+
+QActorSystemSpec:
+	 name=ID  
+	( mqttBroker = BrokerSpec)? 
+	( message   += Message   )*
+	( context   += Context   )*
+	( actor     += QActorDeclaration    )*
+;
+BrokerSpec : "mqttBroker" brokerHost=STRING ":" brokerPort=INT ;
+ 
+</pre>
+ 	</td>
+	<td>
+ 	<m>
+	
+ 	</m>
+  	</td>
+	</tr>
+	
+<tr>
+<td>
+<h4>Messages</h4>
+<pre>
+Message :     	    OutOnlyMessage | OutInMessage  ;
+OutOnlyMessage : 	Dispatch |  Event | Signal | Token ; 
+OutInMessage: 		Request  | Invitation ;
+
+Event: 		"Event"      name=ID  ":" msg = PHead  ;
+Signal: 	"Signal"     name=ID  ":" msg = PHead  ;
+Token:		"Token"      name=ID  ":" msg = PHead  ;
+Dispatch: 	"Dispatch"   name=ID  ":" msg = PHead  ;
+Request: 	"Request"    name=ID  ":" msg = PHead  ;
+Invitation:	"Invitation" name=ID  ":" msg = PHead  ;
+</pre>
+</td>
+	<td>
+ 	<m>
+	
+ 	</m>
+  	</td>
+
+</tr>
+
+<tr>
+<td>
+<h4>PROLOG-like syntax</h4>
+<pre>
+PHead :	PAtom | PStruct	| PStructRef ;
+PAtom : PAtomString | Variable | PAtomNum | PAtomic | 
+		VarRef | VarSolRef | VarRefInStr;
+PAtomString : val = STRING ;
+PAtomic     : val = ID ;
+PAtomNum    : val = INT ;
+PStructRef  : "$" struct = PStruct;   
+PStruct     : functor=ID "(" (msgArg += PHead) //at least one arg required
+		("," msgArg += PHead)* ")" ; 
+Variable    : {Variable} varName= VARID ;
+//USING vars (from solve or from code)
+VarRef      : "$" varName= VARID ;	//=> $Curmove in msg payload   
+VarRefInStr : "#" varName= VARID ;	//=> ${getCurSol("M").toString()}        
+VarSolRef   : "@" varName= VARID ;	//=> getCurSol("V").toString()  </pre>
+</pre>
+</td>
+	<td>
+ 	<m>
+	
+ 	</m>
+  	</td>
+
+</tr>
+
+<tr>
+<td>
+<h4>Contexts</h4>
+<pre>
+Context     : "Context" name=ID "ip"  ip = ComponentIP  ( mqtt ?= "-mqtt" )? ;
+ComponentIP : {ComponentIP} "[" "host=" host=STRING "port=" port=INT "]" ; 
+</pre>
+</td>
+	<td>
+ 	<m>
+	
+ 	</m>
+  	</td>
+
+</tr>
+
+<tr>
+<td>
+<h4>Actors</h4>
+<pre>
+QActorDeclaration : QActor | QActorCoded | QActorExternal ;
+QActorExternal    : "ExternalQActor" name=ID "context" context = [ Context ] ;
+QActorCoded       : "CodedQActor" name=ID 
+             "context" context = [ Context ] "className" className = STRING ;
+QActor :
+	"QActor" name=ID "context" context = [ Context ]  	
+    "{"      	
+    	( start = AnyAction )?
+		( states += State )*
+	"}"
+; 
+</pre>
+</td>
+	<td>
+ 	<m>
+	
+ 	</m>
+  	</td>
+</tr>
+
+<tr>
+<td>
+<h4>...</h4>
+<pre>
+
+</pre>
+</td>
+	<td>
+ 	<m>
+	
+ 	</m>
+  	</td>
+
+</tr>
+
+	 </table>
+	</center> 
+
+	
+<!-- MATH	
+	<p>$$
+f'(a) = \lim_{h \to 0} \frac{f(a+h) - f(a)}{h}
+$$</p>
+-->
+
+
+<h3>Behavior</h3>	 
+
+  	<center><table style="width:95%">
+	<tbody>	
+	<tr>
+	<td style="width:60%">
+<h4>State</h4>
+	<pre>
+State :
+	"State" name=ID  ( normal ?= "initial" )?
+	"{" ( actions += <k>ActionInState</k> )*  "}"
+	( transition = Transition )?
+;
+<k>ActionInState :  StateAction | GuardedStateAction | IfSolvedAction ;</k>
+ 	</td>
+	<td>
+ 	<m>From version <kc>1.1.4</kc>.
+	
+ 	</m>
+  	</td>
+	</tr>
+	
+	<tr>
+	<td>
+	<h4>Actions</h4>
+	<pre>
+IfSolvedAction     : "ifSolved" action=ActionSequence 
+	("else" elseaction=ActionSequence )? ;
+GuardedStateAction : "if" guard = STRING action=ActionSequence  
+	("else" elseaction=ActionSequence )? ;
+
+ActionSequence     : {ActionSequence} "{" (actions += ActionInState)* "}" ;
+
+StateAction    : 
+	Print | PrintCurMsg | SolveGoal |			//general
+	Forward | Emit | Delay | MsgCond |	    	//qak kotlin
+	CodeRun | AnyAction	| Exec					//extra code
+; 
+
+PrintCurMsg :  {PrintCurMsg} "printCurrentMessage"  ;
+Print       :  {Print} "println" "(" args=PHead ")"    ; 
+SolveGoal   :  {SolveGoal} "solve" "(" goal=PHead ("," resVar=Variable)? ")";
+
+Delay     : DelayInt | DelayVar | DelayVref | DelaySol ;
+DelayInt  : "delay" time=INT  ;
+DelayVar  : "delayVar"    refvar     = Variable ;
+DelayVref : "delayVarRef" reftime    = VarRef ;
+DelaySol  : "delaySol"    refsoltime = VarSolRef ;
+
+AnyAction :  "[" body=STRING "]"; 
+
+CodeRun   : CodeRunActor | CodeRunSimple  ; 
+CodeRunActor   : "run" item=QualifiedName 
+	"(" "myself" ( "," args+=PHead ("," args+=PHead)* )? ")" ;
+CodeRunSimple  : "run" item=QualifiedName 
+	"(" (args+=PHead ("," args+=PHead)* )? ")";
+ 
+Exec      : "machineExec" action=STRING ; 
+
+	</pre>
+	</td>
+		<td>
+		<m>
+		
+		</m>
+		</td>
+	</tr>
+
+
+	
+	<tr>
+	<td>
+	<h4>Transitions</h4>
+	<pre>
+Transition         :  EmptyTransition | NonEmptyTransition ;
+EmptyTransition    : "Goto" targetState=[State]  
+					 ("if" guard=STRING "else" othertargetState=[State] )?  ;
+
+NonEmptyTransition :  "Transition" name=ID  (duration=Timeout)? 
+					( trans += InputTransition)* ;
+Timeout            : TimeoutInt | TimeoutVar | TimeoutSol ;
+TimeoutInt         : "whenTime"    msec=INT                 
+						"->" targetState = [State]  ;   
+TimeoutVar         : "whenTimeVar"    variable   = Variable    
+						"->" targetState = [State]  ;  
+TimeoutVarRef      : "whenTimeVarRef" refvar     = VarRef      
+						"->" targetState = [State]  ;  
+TimeoutSol         : "whenTimeSol"    refsoltime = VarSolRef   
+						"->" targetState = [State]  ;  
+
+InputTransition    : EventTransSwitch | MsgTransSwitch  ;
+EventTransSwitch   : "whenEvent" message=[Event] ("and"  guard=STRING)?  
+						"->"  targetState=[State]  ;
+MsgTransSwitch     : "whenMsg" message=[Message] ("and"  guard=STRING)?  
+						"->"  targetState=[State]  ;
+
+	</pre>
+	</td>
+		<td>
+		<m>
+		
+		</m>
+		</td>
+	</tr>
+	
+	 </table>
+	</center> 
+
+ <h3>Interaction</h3>	
+
+   	<center><table style="width:95%">
+	<tbody>	
+	<tr>
+	<td style="width:60%">
+	<h4>Send-side</h4>
+	<pre>
+Forward   : "forward" dest=[QActorDeclaration] 
+				"-m" msgref=[Message] ":" val = PHead	;
+Emit      : "emit" msgref=[Event] ":" val = PHead	;
+	</td>
+	<td></td>
+	</tr>
+	
+	<tr>
+	<td>
+	<h4>Receive-side</h4>
+	<pre>
+MsgCond   :	"onMsg" "(" message=[Message] ":" msg = PHead ")" 
+			"{" ( actions += GuardedStateAction )*  "}"
+			("else" ifnot = NoMsgCond )? ;
+NoMsgCond :	{NoMsgCond}  "{" (  actions += GuardedStateAction )*  "}"  ;
+	</pre>
+	</td>
+		<td>
+		<m>
+		
+		</m>
+		</td>
+	</tr>
+
+	 </table>
+	</center> 
+	
+ 	
+</div>
+<div style="background-color:rgba(86, 56, 253, 0.9); width:100%;text-align:center;font-size:small;color:white">
+By AN Unibo-DISI    
+</div> 
+</body>
+</html>
