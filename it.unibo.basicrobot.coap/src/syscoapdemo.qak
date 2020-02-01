@@ -8,20 +8,39 @@ QActor actor0 context ctxcoapdemo{
 	State s0 initial{ 
  		 run itunibo.robot.coap.coapserverforctx.start()   //should be done by the context
  		 run itunibo.robot.coap.coapserverforctx.add( myself )
+ 		 run itunibo.robot.coap.robotSupport.createVirtualRobotSupport( myself )
+ 		 //run itunibo.robot.coap.robotSupport.createMbottSupport( myself )
+ 		 
 // 		 [" //INJECT THE ROBOT SUPPORT into the resource
 //			itunibo.robotMbot.mbotSupport.create( myself  )		 
 //			itunibo.robotMbot.mbotSupport.init(  \"COM20\" )		// /dev/ttyUSB0 
 //			var R = itunibo.robot.coap.coapserverforctx.getResource( myself.name )
 //			if( R != null ) R.setRobotSupport( itunibo.robotMbot.mbotSupport )
 //		  "]
- 		 [" //INJECT THE ROBOT SUPPORT into the resource
-			itunibo.robotVirtual.virtualRobotSupport.create( myself  )		 
-			var R = itunibo.robot.coap.coapserverforctx.getResource( myself.name )
-			if( R != null ) R.setRobotSupport( itunibo.robotVirtual.virtualRobotSupport )
-			itunibo.robotVirtual.virtualRobotSupport.init( \"8999\"  )		 
-		  "]
-		//forward qadummy -m cmd : cmd(r)
+// 		 [" //INJECT THE ROBOT SUPPORT into the resource
+//			itunibo.robotVirtual.virtualRobotSupport.create( myself  )		 
+//			var R = itunibo.robot.coap.coapserverforctx.getResource( myself.name )
+//			if( R != null ) R.setRobotSupport( itunibo.robotVirtual.virtualRobotSupport )
+//			itunibo.robotVirtual.virtualRobotSupport.init( \"8999\"  )		 
+//		  "]
+		//forward actor0 -m cmd : cmd(r)   //to look at impl and do it as CoAP client
+	} 
+	Goto work
+	
+	State work{
+		println("			waiting ...") 		
 	}
+	Transition t0 whenMsg cmd -> handleCmd
+
+	State handleCmd{
+		printCurrentMessage
+		onMsg ( cmd : cmd(MOVE) ) {
+			//run itunibo.robotVirtual.virtualRobotSupport.move( payloadArg(0) )
+			run itunibo.robot.coap.robotSupport.move( payloadArg(0) )
+		} 
+	}
+	Goto work
+	
 }
 /*
  * Each resource implements the resourceactorinterface (???)

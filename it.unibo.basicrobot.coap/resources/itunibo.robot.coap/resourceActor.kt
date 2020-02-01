@@ -12,14 +12,16 @@ import itunibo.robotMbot.mbotSupport
 import itunibo.robotsupport.interfaces.robotsupport
 import itunibo.robotVirtual.virtualRobotSupport
 import itunibo.robotsupport.interfaces.resourceactorinterface
+import it.unibo.kactor.ApplMessage
+import kotlinx.coroutines.launch
 
 
-class resourceActor( name: String,
+class resourceActor( name: String, val owner : ActorBasic,
 	var robot : robotsupport = virtualRobotSupport ) : CoapResource(name), resourceactorinterface {
-//The robot support is INJECTED
-    private var curMove      = "h"
-//    lateinit var robot : robotsupport
-	
+    
+	private var curMsg      = "h"
+	private var answer      = "nothing"
+ 	
     init {
         isObservable = true
         println("Resource $name | created  ")
@@ -29,7 +31,8 @@ class resourceActor( name: String,
     override fun handleGET(exchange: CoapExchange) {
         println("Resource " + name + " | handleGET from:" +
                 exchange.sourceAddress + " arg:" + exchange.requestText)
-        exchange.respond("Resource $name | curMove = $curMove")
+		
+        exchange.respond("Resource $name | answer: $answer")
     }
 
     /*
@@ -52,39 +55,40 @@ class resourceActor( name: String,
  */
 
     override fun handlePUT(exchange: CoapExchange) {
-        val arg = exchange.requestText
-        println("Resource $name | PUT arg=$arg")
-//        if (arg == "inc") counter++
-//        if (arg == "dec") counter--
-		curMove = arg
-		robot.move( curMove ) 
-        changed()    // notify all CoAp observers
-        /*
-    	 * Notifies all CoAP clients that have established an observe relation with
-    	 * this resource that the state has changed by reprocessing their original
-    	 * request that has established the relation. The notification is done by
-    	 * the executor of this resource or on the executor of its parent or
-    	 * transitively ancestor. If no ancestor defines its own executor, the
-    	 * thread that has called this method performs the notification.
-    	 */
-        exchange.respond(CHANGED)
+        val arg = exchange.requestText  //arg = 
+        println("Resource $name | handlePUT arg=$arg")
+		try{
+			val msg = ApplMessage( arg )
+	 		curMsg = arg.toString()
+			answer="$curMsg done"
+			delegateToOwner( msg )  //could change answer (if msg is a request)
+ 		}catch( e : Exception){
+			println("Resource $name | handlePUT ERROR on msg ")
+		}
+        exchange.respond( CHANGED )  
     }
 
     override fun handleDELETE(exchange: CoapExchange) {
         delete()
-        exchange.respond(DELETED)
+        exchange.respond( DELETED )
     }
 
 //-----------------------------------------------------------
 
-	override fun setRobotSupport( rs : robotsupport){
-		println("Resource " + name + " | setRobotSupport " + rs )
-		robot = rs
+ 	
+	fun delegateToOwner( msg : ApplMessage ){
+		owner.scope.launch{
+			owner.autoMsg( msg )
+			
+		}
+		changed()    // notify all CoAp observers
+		/*
+ if the msg is a request, I create a 'caller' actor that waits for the answer
+ from the owner and then sets the var answer 
+ that can be viewed by the coap client
+ 		*/
 	}
-	
-//	override fun getName() : String{
-//		return name
-//	}
+ 
 
 }
 

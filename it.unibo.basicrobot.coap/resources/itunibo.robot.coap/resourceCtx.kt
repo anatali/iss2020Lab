@@ -67,7 +67,7 @@ class resourceCtx(name: String) : CoapResource(name) {
 //-----------------------------------------------------------------------
 	
 fun addActorReource(owner: ActorBasic){
- 	val resource = resourceActor( owner.name  )
+ 	val resource = resourceActor( owner.name, owner  )
 	this.add( resource )
 	actorResources.put( owner.name , resource )
 }

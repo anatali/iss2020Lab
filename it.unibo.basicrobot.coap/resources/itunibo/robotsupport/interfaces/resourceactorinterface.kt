@@ -4,5 +4,5 @@ interface resourceactorinterface{
 	
 	//fun getName() : String
 	
-	fun setRobotSupport( rs : robotsupport)
+	//fun setRobotSupport( rs : robotsupport)
 }

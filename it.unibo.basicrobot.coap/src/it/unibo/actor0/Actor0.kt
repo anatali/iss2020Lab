@@ -20,12 +20,25 @@ class Actor0 ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scop
 					action { //it:State
 						itunibo.robot.coap.coapserverforctx.start(  )
 						itunibo.robot.coap.coapserverforctx.add(myself)
-						 //INJECT THE ROBOT SUPPORT into the resource
-									itunibo.robotVirtual.virtualRobotSupport.create( myself  )		 
-									var R = itunibo.robot.coap.coapserverforctx.getResource( myself.name )
-									if( R != null ) R.setRobotSupport( itunibo.robotVirtual.virtualRobotSupport )
-									itunibo.robotVirtual.virtualRobotSupport.init( "8999"  )		 
+						itunibo.robot.coap.robotSupport.createVirtualRobotSupport(myself)
 					}
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
+				}	 
+				state("work") { //this:State
+					action { //it:State
+						println("			waiting ...")
+					}
+					 transition(edgeName="t00",targetState="handleCmd",cond=whenDispatch("cmd"))
+				}	 
+				state("handleCmd") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+						if( checkMsgContent( Term.createTerm("cmd(X)"), Term.createTerm("cmd(MOVE)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								itunibo.robot.coap.robotSupport.move( payloadArg(0)  )
+						}
+					}
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
 			}
 		}
