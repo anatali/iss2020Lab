@@ -1,4 +1,4 @@
-package itunibo.coapintro.qak
+package itunibo.robot.coap
 
 import org.eclipse.californium.core.coap.CoAP.ResponseCode.CHANGED
 import org.eclipse.californium.core.coap.CoAP.ResponseCode.CREATED
@@ -7,22 +7,23 @@ import org.eclipse.californium.core.CoapResource
 import org.eclipse.californium.core.CoapServer
 import org.eclipse.californium.core.coap.MediaTypeRegistry
 import org.eclipse.californium.core.server.resources.CoapExchange
+import itunibo.robotsupport.interfaces.resourceactorinterface
 import it.unibo.kactor.ActorBasic
 
 
+class resourceCtx(name: String) : CoapResource(name) {
+//    private var counter = 0
+    private val actorResources =  mutableMapOf<String, resourceactorinterface>()
 
-class resourceActor(name: String, owner : ActorBasic) : CoapResource(name) {
-    private var counter      = 0
- 
     init {
         isObservable = true
         println("Resource $name | created  ")
     }
 
     override fun handleGET(exchange: CoapExchange) {
-        println("Resource " + name + " | handleGET from:" +
+        println("resourceCtx " + name + " | handleGET from:" +
                 exchange.sourceAddress + " arg:" + exchange.requestText)
-        exchange.respond("Resource $name | counter = $counter")
+        exchange.respond("Resource $name | actorResources = $actorResources")
     }
 
     /*
@@ -46,10 +47,8 @@ class resourceActor(name: String, owner : ActorBasic) : CoapResource(name) {
 
     override fun handlePUT(exchange: CoapExchange) {
         val arg = exchange.requestText
-        println("Resource $name | PUT arg=$arg")
-        if (arg == "inc") counter++
-        if (arg == "dec") counter--
-         changed()    // notify all CoAp observers
+        println("resourceCtx $name | PUT arg=$arg")
+        changed()    // notify all CoAp observers
         /*
     	 * Notifies all CoAP clients that have established an observe relation with
     	 * this resource that the state has changed by reprocessing their original
@@ -65,19 +64,22 @@ class resourceActor(name: String, owner : ActorBasic) : CoapResource(name) {
         delete()
         exchange.respond(DELETED)
     }
-
-    companion object {
-
-             
-    }
+//-----------------------------------------------------------------------
+	
+fun addActorReource(owner: ActorBasic){
+ 	val resource = resourceActor( owner.name  )
+	this.add( resource )
+	actorResources.put( owner.name , resource )
 }
+	  
+fun getActorResource( name : String ) : resourceactorinterface?{
+	val r = actorResources.get( name )
+	if( r != null ){
+		print("resourceCtx | getActorResource " + (r as CoapResource).name )
+	}
+	return r
+}
+	
 
-// fun main( ) {
-//            val server = CoapServer()
-//            server.add(
-//                    ResourceContext("ctxBasicRobot").add(
-//                            ResourceContext("basicrobot"))
-//            )
-//            server.start()
-// }
 
+ }

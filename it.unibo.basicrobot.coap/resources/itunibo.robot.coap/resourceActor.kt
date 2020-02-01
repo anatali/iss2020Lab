@@ -1,4 +1,4 @@
-package itunibo.coapintro.qak
+package itunibo.robot.coap
 
 import org.eclipse.californium.core.coap.CoAP.ResponseCode.CHANGED
 import org.eclipse.californium.core.coap.CoAP.ResponseCode.CREATED
@@ -8,21 +8,28 @@ import org.eclipse.californium.core.CoapServer
 import org.eclipse.californium.core.coap.MediaTypeRegistry
 import org.eclipse.californium.core.server.resources.CoapExchange
 import it.unibo.kactor.ActorBasic
+import itunibo.robotMbot.mbotSupport
+import itunibo.robotsupport.interfaces.robotsupport
+import itunibo.robotVirtual.virtualRobotSupport
+import itunibo.robotsupport.interfaces.resourceactorinterface
 
 
-
-class resourceActor(name: String, owner : ActorBasic) : CoapResource(name) {
-    private var counter      = 0
- 
+class resourceActor( name: String,
+	var robot : robotsupport = virtualRobotSupport ) : CoapResource(name), resourceactorinterface {
+//The robot support is INJECTED
+    private var curMove      = "h"
+//    lateinit var robot : robotsupport
+	
     init {
         isObservable = true
         println("Resource $name | created  ")
     }
+	
 
     override fun handleGET(exchange: CoapExchange) {
         println("Resource " + name + " | handleGET from:" +
                 exchange.sourceAddress + " arg:" + exchange.requestText)
-        exchange.respond("Resource $name | counter = $counter")
+        exchange.respond("Resource $name | curMove = $curMove")
     }
 
     /*
@@ -47,9 +54,11 @@ class resourceActor(name: String, owner : ActorBasic) : CoapResource(name) {
     override fun handlePUT(exchange: CoapExchange) {
         val arg = exchange.requestText
         println("Resource $name | PUT arg=$arg")
-        if (arg == "inc") counter++
-        if (arg == "dec") counter--
-         changed()    // notify all CoAp observers
+//        if (arg == "inc") counter++
+//        if (arg == "dec") counter--
+		curMove = arg
+		robot.move( curMove ) 
+        changed()    // notify all CoAp observers
         /*
     	 * Notifies all CoAP clients that have established an observe relation with
     	 * this resource that the state has changed by reprocessing their original
@@ -66,18 +75,17 @@ class resourceActor(name: String, owner : ActorBasic) : CoapResource(name) {
         exchange.respond(DELETED)
     }
 
-    companion object {
+//-----------------------------------------------------------
 
-             
-    }
+	override fun setRobotSupport( rs : robotsupport){
+		println("Resource " + name + " | setRobotSupport " + rs )
+		robot = rs
+	}
+	
+//	override fun getName() : String{
+//		return name
+//	}
+
 }
 
-// fun main( ) {
-//            val server = CoapServer()
-//            server.add(
-//                    ResourceContext("ctxBasicRobot").add(
-//                            ResourceContext("basicrobot"))
-//            )
-//            server.start()
-// }
-
+ 
