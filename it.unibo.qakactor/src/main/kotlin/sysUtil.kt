@@ -101,16 +101,17 @@ object sysUtil{
 		val useMqtt = ctxProtocol!!.toLowerCase() == "mqtt"
 		var mqttAddr = ""
 		if( useMqtt ){
-			println("               %%% sysUtil | context $ctx WORKS WITH MQTT")
+			println("               %%% sysUtil | context $ctx WORKS WITH MQTT with port=$portNum")
 			if( mqttBrokerIP != null ) mqttAddr = "tcp://$mqttBrokerIP:$mqttBrokerPort"
 			else{ throw Exception("no MQTT broker declared")  }
 		}
 		//CREATE AND MEMO THE CONTEXT
 		var newctx : QakContext? = null
 		if( ! ctxHost.equals(hostName) ){
+              println("               %%% sysUtil | createTheContext $ctx for DIFFERENT host=$ctxHost} ")
 			  newctx = QakContext( ctx, "$ctxHost", portNum, "", true) //isa ActorBasic
 		}else{
-			 //println("               %%% sysUtil | createTheContext $ctx host=$hostName  ")
+			  println("               %%% sysUtil | createTheContext $ctx FOR host=$hostName  ")
 			  newctx = QakContext( ctx, "$ctxHost", portNum, "") //isa ActorBasic
 		}
 		//val newctx = QakContext( ctx, "$ctxHost", portNum, "") //isa ActorBasic

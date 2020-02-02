@@ -60,7 +60,7 @@ var count = 1;
         when( protocol ){
             Protocol.SERIAL -> println("MsgUtil WARNING: TODO")
             Protocol.TCP , Protocol.UDP -> factoryProtocol =
-                FactoryProtocol(null, "$protocol", "LedFrontEnd")
+                FactoryProtocol(null, "$protocol", "actor")
             else -> println("MsgUtil WARNING: protocol unknown")
         }
         return factoryProtocol

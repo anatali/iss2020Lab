@@ -1,4 +1,4 @@
-package it.unibo.code
+package itunibo.robot.coap
 
 import org.eclipse.californium.core.CoapClient
 import org.eclipse.californium.core.CoapResponse
@@ -22,14 +22,14 @@ object actortQakCoapClient {
 	fun init(){
        val uriStr = "coap://localhost:5683/$context/$destactor"
        client.uri = uriStr
-       client.observe(object : CoapHandler {
-            override fun onLoad(response: CoapResponse) {
-                println("ASYNCH GET RESP-CODE= " + response.code + " content:" + response.responseText)
-            }
-            override fun onError() {
-                println("FAILED")
-            }
-        })		
+//       client.observe(object : CoapHandler {
+//            override fun onLoad(response: CoapResponse) {
+//                println("ASYNCH GET RESP-CODE= " + response.code + " content:" + response.responseText)
+//            }
+//            override fun onError() {
+//                println("FAILED")
+//            }
+//        })		
 	}
 
 	fun sendToServer(move: String) {
@@ -65,9 +65,11 @@ fun console(){
 	System.exit(1)
 }
 
-    fun main( ) = runBlocking  {
+
+
+fun main( ) = runBlocking  {
 		actortQakCoapClient.init()
 		
 		console()
-    }
+}
 

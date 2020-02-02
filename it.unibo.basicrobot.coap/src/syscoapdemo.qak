@@ -1,47 +1,53 @@
 System syscoapdemo
 
 Dispatch cmd      : cmd(X)
+Event    info     : info(X)
 
-Context ctxcoapdemo ip [ host= "localhost" port= 8022 ]
+Context ctxcoapdemo ip [ host= "192.168.1.6"   port= 8022 ]
+//Context ctxother    ip [ host= "192.168.1.6" port= 8033 ]  
 
 QActor actor0 context ctxcoapdemo{ 
 	State s0 initial{ 
- 		 run itunibo.robot.coap.coapserverforctx.start()   //should be done by the context
- 		 run itunibo.robot.coap.coapserverforctx.add( myself )
  		 run itunibo.robot.coap.robotSupport.createVirtualRobotSupport( myself )
- 		 //run itunibo.robot.coap.robotSupport.createMbottSupport( myself )
- 		 
-// 		 [" //INJECT THE ROBOT SUPPORT into the resource
-//			itunibo.robotMbot.mbotSupport.create( myself  )		 
-//			itunibo.robotMbot.mbotSupport.init(  \"COM20\" )		// /dev/ttyUSB0 
-//			var R = itunibo.robot.coap.coapserverforctx.getResource( myself.name )
-//			if( R != null ) R.setRobotSupport( itunibo.robotMbot.mbotSupport )
-//		  "]
-// 		 [" //INJECT THE ROBOT SUPPORT into the resource
-//			itunibo.robotVirtual.virtualRobotSupport.create( myself  )		 
-//			var R = itunibo.robot.coap.coapserverforctx.getResource( myself.name )
-//			if( R != null ) R.setRobotSupport( itunibo.robotVirtual.virtualRobotSupport )
-//			itunibo.robotVirtual.virtualRobotSupport.init( \"8999\"  )		 
-//		  "]
-		//forward actor0 -m cmd : cmd(r)   //to look at impl and do it as CoAP client
 	} 
 	Goto work
 	
 	State work{
-		println("			waiting ...") 		
+		println("			actor0 waiting ...") 		
 	}
 	Transition t0 whenMsg cmd -> handleCmd
 
-	State handleCmd{
+	State handleCmd{ 
 		printCurrentMessage
-		onMsg ( cmd : cmd(MOVE) ) {
-			//run itunibo.robotVirtual.virtualRobotSupport.move( payloadArg(0) )
+		onMsg ( cmd : cmd(MOVE) ) { 
 			run itunibo.robot.coap.robotSupport.move( payloadArg(0) )
+			emit info : info( $payloadArg(0) )
+			["updateCoapResource( \"${payloadArg(0)} done\" )"]
 		} 
 	}
 	Goto work
 	
 }
+
+
+
+QActor actor1 context ctxcoapdemo{ 
+	State s0 initial{ 
+	}
+	Goto work
+	
+	State work{
+		println("			actor1 waiting as an observer ...") 		
+	}
+	Transition t0 whenEvent info -> showInfo
+	
+	State showInfo{
+		printCurrentMessage
+		["updateCoapResource( currentMsg.toString() )"]
+ 	}
+	Goto work
+}
+
 /*
  * Each resource implements the resourceactorinterface (???)
  * Each actor-resource is added as a son to the context-resource

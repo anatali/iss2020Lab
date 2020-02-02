@@ -11,19 +11,28 @@ import org.eclipse.californium.core.coap.MediaTypeRegistry
 import org.eclipse.californium.core.CoapResponse
 import it.unibo.kactor.MsgUtil
  
-class consoleGui : IObserver {
+class consoleGuiCoap : IObserver {
 	
 	companion object{
 		val buttonLabels = arrayOf("h","w", "s", "r", "l", "z", "x", "b", "p", "h")
+		val ctx        = "ctxcoapdemo"
+		val destActor  = "actor0"
+		val path       = "$ctx/$destActor"
  		lateinit var msgId    : String
 		lateinit var client   : CoapClient
 		
 		fun create(   ){
-  			val concreteButton = ButtonAsGui.createButton( buttonLabels )
-            concreteButton.addObserver( consoleGui() )
-			val url = "coap://localhost:5683/ctxcoapdemo/actor0"
+			val url = "coap://localhost:5683/$path"
 			client = CoapClient( url )
 			client.setTimeout( 1000L )
+			initialCmd( )   //to make console more reactive at the first user cmd
+  			val concreteButton = ButtonAsGui.createButton( buttonLabels )
+            concreteButton.addObserver( consoleGuiCoap() )
+		}
+		fun initialCmd( ) {
+		 		val d = MsgUtil.buildDispatch("consoleGuiCoap", "cmd", "cmd(h)", destActor )
+		        val respPut = client.put(d.toString(), MediaTypeRegistry.TEXT_PLAIN)
+		        println("consoleGuiCoap activated. CODE=  ${respPut.code}")
 		}
 	  }
 	
@@ -40,7 +49,8 @@ class consoleGui : IObserver {
     }
 	
 }
+
 fun main(){
-	consoleGui.create(   )
+	consoleGuiCoap.create(   )
 }
  

@@ -26,7 +26,7 @@ class NodeProxy( name: String, val ctx: QakContext, val protocol: Protocol,
                 println("               %%% NodeProxy $name | WAIT/RETRY TO SET PROXY TO $hostName:$portNum ")
                 Thread.sleep(500)
             } else {
-                println("               %%% NodeProxy $name | in ${ctx.name} PROXY $this DONE TO $hostName:$portNum ")
+                println("               %%% NodeProxy $name | in ${ctx.name} PROXY DONE TO $hostName:$portNum ")
                 handleConnection(conn!!)
             }
         }
@@ -34,9 +34,9 @@ class NodeProxy( name: String, val ctx: QakContext, val protocol: Protocol,
 
     //Routes each message to the connected server
     override suspend fun actorBody(msg: ApplMessage) {
-        sysUtil.traceprintln("                %%% NodeProxy $name  | receives $msg conn=$conn ") // conn=$conn"
+        //println("       NodeProxy $name receives $msg conn=$conn ") // conn=$conn"
         try {
-            conn!!.sendALine("$msg")
+            conn?.sendALine("$msg")
         } catch (e: Exception) {
             println("               %%% NodeProxy $name  | sendALine error $e ")
         }
@@ -50,7 +50,7 @@ class NodeProxy( name: String, val ctx: QakContext, val protocol: Protocol,
                 //sysUtil.traceprintln("               %%% NodeProxy $name  | handling new input from :$conn")
                 while (true) {
                     val msg = conn.receiveALine()       //BLOCKING ???
-                    //sysUtil.traceprintln("               %%% NodeProxy $name  | receives: $msg ")
+                    println("               %%% NodeProxy $name  | receives: $msg   !!!!!!!!!!!")
                     if( msg == null ){
                         break
                     }

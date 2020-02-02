@@ -14,40 +14,40 @@ class MqttUtils  {
 
 	fun connect(clientid: String, brokerAddr: String ): Boolean {
 		try {
-  			println("	%%% MqttUtils doing connect for $clientid to $brokerAddr "  );
+  			//println("     %%% MqttUtils doing connect for $clientid to $brokerAddr "  );
 			client = MqttClient(brokerAddr, clientid)
-            //println("	%%% MqttUtils for $clientid connect $brokerAddr client = $client" )
+            //println("     %%% MqttUtils for $clientid connect $brokerAddr client = $client" )
 			val options = MqttConnectOptions()
 			options.setKeepAliveInterval(480)
 			options.setWill("unibo/clienterrors", "crashed".toByteArray(), 2, true)
 			client.connect(options)
-			println("	%%% MqttUtils connect DONE $clientid to $brokerAddr " )//+ " " + client
+			println("       %%% MqttUtils connect DONE $clientid to $brokerAddr " )//+ " " + client
  			return true
 		} catch (e: Exception) {
-			println("	%%% MqttUtils for $clientid connect ERROR for: $brokerAddr" )
+			println("       %%% MqttUtils for $clientid connect ERROR for: $brokerAddr" )
 			return false
 		}
 	}
 
 	fun disconnect() {
 		try {
-			println("	%%% MqttUtils disconnect " + client)
+			println("       %%% MqttUtils disconnect " + client)
 			client.disconnect()
 		} catch (e: Exception) {
-			println("	%%% MqttUtils disconnect ERROR ${e}")
+			println("       %%% MqttUtils disconnect ERROR ${e}")
 		}
 	}
 
 
 	fun subscribe(  actor: ActorBasic, topic: String ) {
-		println("	%%% MqttUtils ${actor.name} subscribe to topic=$topic client=$client "  )
+		//println("	%%% MqttUtils ${actor.name} subscribe to topic=$topic client=$client "  )
 		try {
 			this.workActor = actor
 			//client.setCallback(this)
 			client.setCallback(actor)
 			client.subscribe(topic)
 		}catch( e: Exception ){
-			println("	%%% MqttUtils ${actor.name} subscribe topic=$topic ERROR=$e "  )
+			println("       %%% MqttUtils ${actor.name} subscribe topic=$topic ERROR=$e "  )
 		}
 	}
 
@@ -78,7 +78,7 @@ class MqttUtils  {
 		println("	%%% MqttUtils messageArrived on "+ topic + ": "+msg.toString());
 		sendMsgToWorkActor( msg.toString() )
 	}
-
+gradle
 */
 	/*
          * sends to a tpoic a content of the form
@@ -98,7 +98,7 @@ class MqttUtils  {
 			client.publish(topic, message)
 //			println("			%%% MqttUtils published "+ message + " on topic=" + topic);
 		} catch (e:Exception) {
-			println("	%%% MqttUtils publish ERROR $e topic=$topic msg=$msg"  )
+			println("       %%% MqttUtils publish ERROR $e topic=$topic msg=$msg"  )
  		}
 	}
 
@@ -111,13 +111,13 @@ class MqttUtils  {
 	}
 	
 	fun clearTopic( topic : String )  {
-  		println("	%%%  clearTopic " +  topic );
+  		println("       %%%  MqttUtils clearTopic $topic" );
 		publish( topic, "", 1, true);	//send a retained message !!
 	}
 
-
+/*
 	fun println(msg: String?) {
 		System.out.println(msg)
 	}
-
+*/
 }

@@ -1,4 +1,4 @@
-package itunibo.robot.coap
+package it.unibo.kactor
 
 import org.eclipse.californium.core.coap.CoAP.ResponseCode.CHANGED
 import org.eclipse.californium.core.coap.CoAP.ResponseCode.CREATED
@@ -7,21 +7,20 @@ import org.eclipse.californium.core.CoapResource
 import org.eclipse.californium.core.CoapServer
 import org.eclipse.californium.core.coap.MediaTypeRegistry
 import org.eclipse.californium.core.server.resources.CoapExchange
-import itunibo.robotsupport.interfaces.resourceactorinterface
 import it.unibo.kactor.ActorBasic
 
 
-class resourceCtx(name: String) : CoapResource(name) {
+class CoapResourceCtx(name: String) : CoapResource(name) {
 //    private var counter = 0
-    private val actorResources =  mutableMapOf<String, resourceactorinterface>()
+    private val actorResources =  mutableMapOf<String, ActorBasic>()
 
     init {
         isObservable = true
-        println("Resource $name | created  ")
+        println("               %%% CoapResourceCtx $name | created  ")
     }
 
     override fun handleGET(exchange: CoapExchange) {
-        println("resourceCtx " + name + " | handleGET from:" +
+        println("               %%% CoapResourceCtx " + name + " | handleGET from:" +
                 exchange.sourceAddress + " arg:" + exchange.requestText)
         exchange.respond("Resource $name | actorResources = $actorResources")
     }
@@ -47,7 +46,7 @@ class resourceCtx(name: String) : CoapResource(name) {
 
     override fun handlePUT(exchange: CoapExchange) {
         val arg = exchange.requestText
-        println("resourceCtx $name | PUT arg=$arg")
+        println("               %%% CoapResourceCtx $name | PUT arg=$arg")
         changed()    // notify all CoAp observers
         /*
     	 * Notifies all CoAP clients that have established an observe relation with
@@ -66,19 +65,19 @@ class resourceCtx(name: String) : CoapResource(name) {
     }
 //-----------------------------------------------------------------------
 	
-fun addActorReource(owner: ActorBasic){
- 	val resource = resourceActor( owner.name, owner  )
-	this.add( resource )
-	actorResources.put( owner.name , resource )
-}
-	  
-fun getActorResource( name : String ) : resourceactorinterface?{
-	val r = actorResources.get( name )
-	if( r != null ){
-		print("resourceCtx | getActorResource " + (r as CoapResource).name )
-	}
-	return r
-}
+    fun addActorResource(owner: ActorBasic){
+        this.add( owner )
+        actorResources.put( owner.name , owner )
+        println("               %%% CoapResourceCtx $name | addActorResource ${owner.name}" )
+    }
+
+    fun getActorResource( name : String ) : ActorBasic?{
+        val r = actorResources.get( name )
+        if( r != null ){
+            println("               %%% CoapResourceCtx $name | getActorResource " + (r as CoapResource).name )
+        }
+        return r
+    }
 	
 
 

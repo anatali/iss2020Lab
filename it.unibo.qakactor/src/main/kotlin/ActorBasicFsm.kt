@@ -50,12 +50,12 @@ class State(val stateName : String, val scope: CoroutineScope ) {
 
 /*
 ================================================================
- EDGE
+ Transition
 ================================================================
  */
 class Transition(val edgeName: String, val targetState: String) {
 
-    lateinit var edgeEventHandler: (String) -> Boolean  //MsgId
+    lateinit var edgeEventHandler: ( ApplMessage ) -> Boolean  //MsgId previous: String
     private val actionList = mutableListOf<(Transition) -> Unit>()
 
     fun action(action: (Transition) -> Unit) { //MEALY?
@@ -72,7 +72,7 @@ class Transition(val edgeName: String, val targetState: String) {
 
     fun canHandleMessage(msg: ApplMessage): Boolean {
         //println("Transition  | canHandleMessage: ${msg}  ${msg is Message.Event}" )
-        return edgeEventHandler(msg.msgId())
+        return edgeEventHandler( msg  ) //msg.msgId()
     }
 }
 
@@ -226,7 +226,7 @@ abstract class ActorBasicFsm(  qafsmname:  String,
 
     private fun checkTransition(msg: ApplMessage): State? {
         val trans = currentState.getTransitionForMessage(msg)
-        //sysUtil.traceprintln("$tt ActorBasicFsm $name | checkTransition ENTRY $msg , currentState=${currentState.stateName} ")
+        //sysUtil.traceprintln("$tt ActorBasicFsm $name | checkTransition $trans, $msg, curState=${currentState.stateName}")
         return if (trans != null) {
            trans.enterTransition { getStateByName(it) }
         } else {
@@ -252,14 +252,16 @@ abstract class ActorBasicFsm(  qafsmname:  String,
         return {
             edgeEventHandler = {
                 //println("whenEvent $it - $evName");
-                it == evName } //it.isEvent() && it.msgId() == evName }
+                it.isEvent() && it.msgId() == evName }
+                //it == evName } //it.isEvent() && it.msgId() == evName }
         }
     }
     fun whenEventGuarded(evName: String, guard:()->Boolean ): Transition.() -> Unit {
         return {
             edgeEventHandler = {
                 //println("whenEventGuarded $it - $evName");
-                it == evName && guard()  } //it.isEvent() && it.msgId() == evName }
+                it.isEvent() && it.msgId() == evName && guard() }
+                //it == evName && guard()  } //it.isEvent() && it.msgId() == evName }
         }
     }
 
@@ -267,14 +269,16 @@ abstract class ActorBasicFsm(  qafsmname:  String,
             return {
                 edgeEventHandler = {
                     //println("ActorBasicFsm $name | ${currentState.stateName} whenDispatch $it  $msgName")
-                    it == msgName }  //it.isDispatch() && it.msgId() == msgName }
+                    it.isDispatch() && it.msgId() == msgName }
+                    //it == msgName }  //it.isDispatch() && it.msgId() == msgName }
             }
     }
     fun whenDispatchGuarded(msgName: String, guard:()->Boolean ): Transition.() -> Unit {
         return {
             edgeEventHandler = {
                 //println("whenDispatchGuarded $it - $evName");
-                it == msgName && guard() } //it.isDispatch() && it.msgId() == msgName }
+                it.isDispatch() && it.msgId() == msgName && guard()  }
+                //it == msgName && guard() } //it.isDispatch() && it.msgId() == msgName }
         }
     }
 
@@ -283,28 +287,32 @@ abstract class ActorBasicFsm(  qafsmname:  String,
         return {
             edgeEventHandler = {
                 //sysUtil.traceprintln("$tt ActorBasicFsm $name | ${currentState.stateName} whenRequest $it  $msgName")
-                it == msgName   }  //it.isRequest() && it.msgId() == msgName }
+                it.isRequest() && it.msgId() == msgName }
+                //it == msgName   }  //it.isRequest() && it.msgId() == msgName }
         }
     }
     fun whenRequestGuarded(msgName: String, guard:()->Boolean): Transition.() -> Unit {
         return {
             edgeEventHandler = {
                 //sysUtil.traceprintln("$tt ActorBasicFsm $name | ${currentState.stateName} whenRequestGuarded $it, $msgName")
-                it == msgName   && guard() }  //it.isRequest() && it.msgId() == msgName }
+                it.isRequest() && it.msgId() == msgName && guard()  }
+                //it == msgName   && guard() }  //it.isRequest() && it.msgId() == msgName }
         }
     }
     fun whenReply(msgName: String): Transition.() -> Unit {
         return {
             edgeEventHandler = {
                 //sysUtil.traceprintln("$tt ActorBasicFsm $name | ${currentState.stateName} whenReply $it  $msgName")
-                it == msgName   }  //it.isReply() && it.msgId() == msgName }
+                it.isReply() && it.msgId() == msgName }
+                //it == msgName   }  //it.isReply() && it.msgId() == msgName }
         }
     }
     fun whenReplyGuarded(msgName: String, guard:()->Boolean): Transition.() -> Unit {
         return {
             edgeEventHandler = {
                 //sysUtil.traceprintln("$tt ActorBasicFsm $name | ${currentState.stateName} whenReplyGuarded $it  $msgName")
-                it == msgName  && guard() }  //it.isReply() && it.msgId() == msgName }
+                it.isReply() && it.msgId() == msgName && guard() }
+                //it == msgName  && guard() }  //it.isReply() && it.msgId() == msgName }
         }
     }
 
@@ -312,7 +320,8 @@ abstract class ActorBasicFsm(  qafsmname:  String,
                 return {
                     edgeEventHandler = {
                         //println("whenTimeoutt $it")
-                        it == timerEventName
+                        it.isEvent() && it.msgId() == timerEventName
+                        //it == timerEventName
                     } //it.isEvent() && it.msgId() == timerEventName }
                 }
     }
