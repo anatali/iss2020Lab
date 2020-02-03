@@ -1,4 +1,4 @@
-package consolegui
+package kotlincode
 
 import java.io.Console
 import java.io.Reader

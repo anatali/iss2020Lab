@@ -42,7 +42,7 @@ itunibo.robot.robotSupport.subscribe( forradar )
 "]  
 		println("	basicrobot | starts (with robotadapter in the same context)")
 	}
-	Goto work    
+	Goto work     
 	
 	State work{ println("basicrobot waiting ... ")}
 	Transition t0 
@@ -93,7 +93,7 @@ itunibo.robot.robotSupport.subscribe( forradar )
  * The actor sentinel is introduced for internal work only.
  * It will be removed from final product deployment.
  * The PIPE is still experimental and should be created by the basicrobot
- */
+
  QActor sentinel context ctxBasicRobot{
 	State s0 initial{ 
 		delay 1000 
@@ -126,3 +126,4 @@ itunibo.robot.robotSupport.subscribe( forradar )
  	Transition t0 
 		whenEvent alarm -> handleAlarm
  }
+ */

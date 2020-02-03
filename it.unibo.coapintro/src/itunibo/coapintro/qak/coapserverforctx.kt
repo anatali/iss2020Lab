@@ -5,7 +5,7 @@ import it.unibo.kactor.ActorBasic
 
 object coapserverforctx{
 
-private val server       = CoapServer()
+private val server       =  CoapServer()
 private  val ctxResource =  resourceCtx("ctxcoapdemo")
 
 fun start( ) {
