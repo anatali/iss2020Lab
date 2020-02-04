@@ -18,27 +18,9 @@ class Actor0 ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scop
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						itunibo.robot.coap.robotSupport.createVirtualRobotSupport(myself)
+						 //val ActorRes = itunibo.coapintro.qak.resourceActor("actor0",myself) 
+						
 					}
-					 transition( edgeName="goto",targetState="work", cond=doswitch() )
-				}	 
-				state("work") { //this:State
-					action { //it:State
-						println("			actor0 waiting ...")
-					}
-					 transition(edgeName="t00",targetState="handleCmd",cond=whenDispatch("cmd"))
-				}	 
-				state("handleCmd") { //this:State
-					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						if( checkMsgContent( Term.createTerm("cmd(X)"), Term.createTerm("cmd(MOVE)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								itunibo.robot.coap.robotSupport.move( payloadArg(0)  )
-								emit("info", "info(${payloadArg(0)})" ) 
-								updateCoapResource( "${payloadArg(0)} done" )
-						}
-					}
-					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
 			}
 		}

@@ -29,7 +29,7 @@ async def main():
     await asyncio.sleep(2)
 
     payload = b"r" 
-    request = Message(code=PUT, payload=payload, uri="coap://localhost/robot/basicrobot")
+    request = Message(code=PUT, payload=payload, uri="coap://localhost:5683/robot/basicrobot")
     response = await context.request(request).response
     print('Result: %s\n%r'%(response.code, response.payload))
 
@@ -37,4 +37,19 @@ async def main():
     
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
+
     
+    
+""" 
+    while( len(cmd)==1 and cmd != "q"  ) :
+        print( cmd )
+        req = Message(code=PUT, payload=cmd.encode(), uri="coap://localhost:8018/ctxBasicRobot/basicrobot")
+        try:
+            response = await context.request(req).response
+        except Exception as e:
+            print('Failed to fetch resource:')
+            print(e)
+        else:
+            print('Result: %s\n%r'%(response.code, response.payload))        
+        cmd = str(input() )
+"""         

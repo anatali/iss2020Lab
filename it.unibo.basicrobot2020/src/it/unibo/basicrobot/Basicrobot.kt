@@ -37,6 +37,15 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 					 transition(edgeName="t00",targetState="handleCmd",cond=whenDispatch("cmd"))
 					transition(edgeName="t01",targetState="handleUserCmd",cond=whenEvent("userCmd"))
 					transition(edgeName="t02",targetState="handleObstacle",cond=whenEvent("obstacle"))
+					transition(edgeName="t03",targetState="handleStep",cond=whenRequest("step"))
+				}	 
+				state("handleStep") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+						println("basicrobot reply ... ")
+						answer("step", "stepDone", "stepDone(0)"   )  
+					}
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
 				state("handleCmd") { //this:State
 					action { //it:State

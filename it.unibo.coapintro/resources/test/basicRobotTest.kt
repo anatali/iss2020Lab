@@ -17,24 +17,27 @@ lateinit var host   : String
 	
 	private fun setClientForPath( path : String ){
 		val url = host + "/" + path
-		println("coapSupport | setClientForPath url=$url")
+		println("basicRobotTest | setClientForPath url=$url")
 		client = CoapClient( url )
 		client.setTimeout( 1000L )
 	}
 	
 	fun updateResource(  path: String, msg : String ){
 		setClientForPath( path )
-		println("coapSupport | updateResource $msg $client")
- 		val d = MsgUtil.buildDispatch("test", "cmd", "cmd($msg)", "basicrobot" )
-		val resp : CoapResponse = client.put(d.toString(), MediaTypeRegistry.TEXT_PLAIN)
-		println("coapSupport | updateResource respCode=${resp.getCode()}")
+		println("basicRobotTest | updateResource $msg $client")
+ 		//val d = MsgUtil.buildDispatch("test", "cmd", "cmd($msg)", "basicrobot" )
+ 		val d = MsgUtil.buildRequest("test", "step", "step(100)", "basicrobot" )
+		println("basicRobotTest | updateResource $d  ")
+		val resp = client.put(d.toString(), MediaTypeRegistry.TEXT_PLAIN) //: CoapResponse 
+		//println("basicRobotTest | updateResource respCode=${resp.getCode()}")
+		println("basicRobotTest | updateResource respCode=${resp.getResponseText()}")
 	}
 	
 	fun readResource(   path : String ){
 		setClientForPath( path )
 		val respGet : CoapResponse = client.get( )
 		val v = respGet.getResponseText()
-		println("coapSupport | readResource v=$v  | respGet=$respGet")
+		println("basicRobotTest | readResource v=$v  | respGet=$respGet")
 	}
 }
 

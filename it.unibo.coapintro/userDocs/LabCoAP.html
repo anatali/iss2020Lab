@@ -236,6 +236,35 @@ Therefore, efficiency is very important. CoAP can run on most devices that suppo
 The Internet Engineering Task Force (<ks>IETF</ks>) Constrained RESTful Environments Working Group (<ks>CoRE</ks>) has done the major standardization work for this protocol.
 </m><hr/>
 
+<h3>Codes</h3>
+<pre><m>
++------+------------------------------+-----------+
+| Code | Description                  | Reference |
++------+------------------------------+-----------+
+| 2.01 | Created                      [ [RFC7252] |
+| 2.02 | Deleted                      | [RFC7252] |
+| 2.03 | Valid                        | [RFC7252] |
+| 2.04 | Changed                      | [RFC7252] |
+| 2.05 | Content                      | [RFC7252] |
+| 4.00 | Bad Request                  | [RFC7252] |
+| 4.01 | Unauthorized                 | [RFC7252] |
+| 4.02 | Bad Option                   | [RFC7252] |
+| 4.03 | Forbidden                    | [RFC7252] |
+| 4.04 | Not Found                    | [RFC7252] |
+| 4.05 | Method Not Allowed           | [RFC7252] |
+| 4.06 | Not Acceptable               | [RFC7252] |
+| 4.12 | Precondition Failed          | [RFC7252] |
+| 4.13 | Request Entity Too Large     | [RFC7252] |
+| 4.15 | Unsupported Content-Format   | [RFC7252] |
+| 5.00 | Internal Server Error        | [RFC7252] |
+| 5.01 | Not Implemented              | [RFC7252] |
+| 5.02 | Bad Gateway                  | [RFC7252] |
+| 5.03 | Service Unavailable          | [RFC7252] |
+| 5.04 | Gateway Timeout              | [RFC7252] |
+| 5.05 | Proxying Not Supported       | [RFC7252] |
++------+------------------------------+-----------+
+</m></pre>
+
 <h3>The Californium framework</h3>
 From <a href="https://www.eclipse.org/californium/" target="web">https://www.eclipse.org/californium/</a> we read:
 <hr/><m>
@@ -299,6 +328,8 @@ This library
 <li>Requires the presence in the directory <k>src</k> of the file <a href="../src/log4j.properties" target="code">log4j.properties</a> </li>
 <li>generates (at run-time) the file <ks>log4jInfo.log</ks></li>
 </ul>
+
+
 <br/><br/> 	
 </div>  
 
