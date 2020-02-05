@@ -1,17 +1,22 @@
 package consolegui;
 import java.awt.Font;
-import java.awt.Frame;
+import java.awt.Panel;
 import java.awt.event.ActionListener;
  
 public class ButtonBasic extends java.awt.Button {
-	public ButtonBasic(Frame frame, String label, ActionListener listener){
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public ButtonBasic(Panel p, String label, ActionListener listener){
 		super(label);
 		Font myFont = new Font("Arial", Font.PLAIN, 24);
 		setFont(myFont);
 		this.addActionListener(  listener );
-		frame.add(this); 
-		frame.validate();
-		frame.isVisible();
+		p.add(this); 
+		p.validate();
+		p.isVisible();
 		//System.out.println("BUTTON BASIC CREATED");
 	}
 }

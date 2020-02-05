@@ -24,7 +24,6 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 				state("s0") { //this:State
 					action { //it:State
 						println("smartrobot starts")
-						consolegui.consoleGuiTcp.create(myself)
 						forward("cmd", "cmd(l)" ,"basicrobot" ) 
 						delay(1000) 
 						forward("cmd", "cmd(h)" ,"basicrobot" ) 
@@ -32,16 +31,6 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						delay(1000) 
 						forward("cmd", "cmd(h)" ,"basicrobot" ) 
 						println("smartrobot started")
-					}
-					 transition( edgeName="goto",targetState="activateResource", cond=doswitchGuarded({WithResource}) )
-					transition( edgeName="goto",targetState="work", cond=doswitchGuarded({! WithResource}) )
-				}	 
-				state("activateResource") { //this:State
-					action { //it:State
-						kotlincode.resServer.init(myself)
-						kotlincode.coapSupport.init( "coap://localhost:5683"  )
-						delay(1000) 
-						kotlincode.resourceObserver.init( "coap://localhost:5683", "robot/pos"  )
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 

@@ -48,7 +48,7 @@ var DoStepAnswer = false	//avoid to send answer after a step
 "]  	
 	State s0 initial{
  		println("smartrobot starts")
- 		run consolegui.consoleGuiTcp.create( myself)
+ 		//run consolegui.consoleGuiTcp.create( "localhost", "8018", "basicrobot" )
  		forward basicrobot -m cmd : cmd( l ) 
 		delay 1000
 		forward basicrobot -m cmd : cmd( h )
@@ -59,17 +59,18 @@ var DoStepAnswer = false	//avoid to send answer after a step
 		println("smartrobot started")
 		
 	}
-	Goto activateResource  if "WithResource" else work
+	Goto  work
+//	Goto activateResource  if "WithResource" else work
 	
-	State activateResource{ 
-		run kotlincode.resServer.init(myself)
-		run kotlincode.coapSupport.init("coap://localhost:5683")
-		delay 1000 
-		run kotlincode.resourceObserver.init("coap://localhost:5683","robot/pos")
-		//run kotlincode.coapSupport.readResource(myself, "robot/pos") 
-		//run kotlincode.coapSupport.readResource(myself, "robot/sonar")
-	}
-	Goto work 
+//	State activateResource{ 
+//		run kotlincode.resServer.init(myself)
+//		run kotlincode.coapSupport.init("coap://localhost:5683")
+//		delay 1000 
+//		run kotlincode.resourceObserver.init("coap://localhost:5683","robot/pos")
+//		//run kotlincode.coapSupport.readResource(myself, "robot/pos") 
+//		//run kotlincode.coapSupport.readResource(myself, "robot/sonar")
+//	}
+//	Goto work 
 	
 	State work{	}
 	Transition s0 
