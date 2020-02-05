@@ -173,8 +173,8 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="resources"/>
-	<classpathentry kind="src" path="src-gen"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="src-gen"/>
 	<classpathentry kind="lib" path="C:/Didattica2018Work/iss2019Lab/libs/it.unibo.qakactor-2.0.jar"/>
 	<classpathentry kind="output" path="bin/default"/>
 </classpath>

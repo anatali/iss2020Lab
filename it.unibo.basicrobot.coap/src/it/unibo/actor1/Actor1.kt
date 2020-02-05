@@ -30,7 +30,6 @@ class Actor1 ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scop
 				state("showInfo") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						updateCoapResource( currentMsg.toString() )
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 

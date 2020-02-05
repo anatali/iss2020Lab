@@ -18,7 +18,12 @@ class consoleGuiTcp() : consoleGuiBase() {
 		conn.sendALine( msg.toString()  )		
 	}
 	
-	override fun request(move: String) {
+	override fun request(move: String) { //move == p
+		val msg = MsgUtil.buildRequest("gui", move,"$move(600)", destName)
+		conn.sendALine( msg.toString()  )
+		//Acquire the answer	
+		val answer = conn.receiveALine()
+		println("consoleGuiTcp | answer= $answer")
 	}
 	override fun emit( ev : String ){
 		val msg = MsgUtil.buildEvent("gui",ev,"$ev(0)" )

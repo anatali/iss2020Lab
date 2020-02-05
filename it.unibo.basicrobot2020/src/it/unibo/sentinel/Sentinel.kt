@@ -21,33 +21,19 @@ class Sentinel ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, sc
 						delay(1000) 
 						println("	sentinel | STARTS")
 					}
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
 				state("work") { //this:State
 					action { //it:State
 					}
-					 transition(edgeName="t03",targetState="showTheMsg",cond=whenEvent("sonarRobot"))
-					transition(edgeName="t04",targetState="handleAlarm",cond=whenEvent("alarm"))
+					 transition(edgeName="t05",targetState="showTheMsg",cond=whenEvent("sonarRobot"))
+					transition(edgeName="t06",targetState="showTheMsg",cond=whenEvent("alarm"))
 				}	 
 				state("showTheMsg") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
-				}	 
-				state("handleObstacle") { //this:State
-					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						println("	sentinel | handleObstacle: emits alarm(obstacle) ")
-						emit("alarm", "alarm(obstacle)" ) 
-					}
-					 transition( edgeName="goto",targetState="s0", cond=doswitch() )
-				}	 
-				state("handleAlarm") { //this:State
-					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						println("	sentinel | handleAlarm ")
-					}
-					 transition(edgeName="t05",targetState="handleAlarm",cond=whenEvent("alarm"))
 				}	 
 			}
 		}

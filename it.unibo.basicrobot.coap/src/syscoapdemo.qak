@@ -8,7 +8,7 @@ Context ctxcoapdemo ip [ host= "192.168.1.6"   port= 8022 ]
 
 QActor actor0 context ctxcoapdemo{ 
 	State s0 initial{ 
- 		 run itunibo.robot.coap.robotSupport.createVirtualRobotSupport( myself )
+ 		 //run itunibo.robot.coap.robotSupport.createVirtualRobotSupport( myself )
 	} 
 	Goto work
 	
@@ -22,7 +22,7 @@ QActor actor0 context ctxcoapdemo{
 		onMsg ( cmd : cmd(MOVE) ) { 
 			run itunibo.robot.coap.robotSupport.move( payloadArg(0) )
 			emit info : info( $payloadArg(0) )
-			["updateCoapResource( \"${payloadArg(0)} done\" )"]
+			//["updateCoapResource( \"${payloadArg(0)} done\" )"]
 		} 
 	}
 	Goto work
@@ -41,9 +41,9 @@ QActor actor1 context ctxcoapdemo{
 	}
 	Transition t0 whenEvent info -> showInfo
 	
-	State showInfo{
+	State showInfo{ 
 		printCurrentMessage
-		["updateCoapResource( currentMsg.toString() )"]
+		//["updateCoapResource( currentMsg.toString() )"]
  	}
 	Goto work
 }

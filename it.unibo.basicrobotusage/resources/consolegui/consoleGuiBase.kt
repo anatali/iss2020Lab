@@ -8,8 +8,8 @@ enum class GuiType {
 
 abstract class consoleGuiBase : IObserver {
 	
-   	 companion object{
- 	  val buttonLabels = arrayOf("k","w", "s", "l", "r", "z", "x", "b", "p", "h")
+ companion object{
+ 	  val buttonLabels = arrayOf("e","w", "s", "l", "r", "z", "x", "b", "p", "h")
   	  lateinit var destName     : String
 	  lateinit var guiUsed      : consoleGuiBase
 
@@ -26,11 +26,15 @@ abstract class consoleGuiBase : IObserver {
 				 else -> println("WARNING: protocol unknown")
 		  }
 		 }//createGui
- 	  }//object
+ }//object
 	
 	  fun create(  guiName : String, hostIP : String, port : String  ){
  		  createTheGui( guiName )
 		  createConnection(hostIP, port)
+ 	  }
+	  fun createNoGui(   hostIP : String, port : String, actorName : String   ){
+		  destName = actorName
+ 		  createConnection(hostIP, port)
  	  }
 	  fun createTheGui( guiName : String ){
   			val concreteButton = ButtonAsGui.createButtons( guiName, buttonLabels )
@@ -45,8 +49,8 @@ abstract class consoleGuiBase : IObserver {
 	  override fun update(o: Observable, arg: Any) {	   
    		  var move = arg as String
 		  if( move == "p" ) request("p")
-		  if( move == "k" ) emit("obstacle")
-		  else forward( move ) 		  
+		  else if( move == "e" ) emit("alarm")
+ 		  else forward( move ) 		  
        }//update
 }
 

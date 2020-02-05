@@ -21,7 +21,7 @@ class CoapToActor( name : String, val exchange: CoapExchange,
         //println(" $tt $name | received  $msg "  ) //msg.msgContent() is the answer
         if( msg.isReply() ){    //defensive
             //println(" $tt $name | respond  ${msg.msgContent()} "  ) //msg.msgContent() is the answer
-            exchange.respond( msg.msgContent() )
+            exchange.respond( msg.toString() )
             context!!.removeInternalActor( this )
             println(" $tt $name | ENDS   "  )
         }

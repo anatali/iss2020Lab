@@ -37,13 +37,29 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 					 transition(edgeName="t00",targetState="handleCmd",cond=whenDispatch("cmd"))
 					transition(edgeName="t01",targetState="handleUserCmd",cond=whenEvent("userCmd"))
 					transition(edgeName="t02",targetState="handleObstacle",cond=whenEvent("obstacle"))
-					transition(edgeName="t03",targetState="handleStep",cond=whenRequest("p"))
+					transition(edgeName="t03",targetState="handleAlarm",cond=whenEvent("alarm"))
+					transition(edgeName="t04",targetState="handleRequest",cond=whenRequest("p"))
 				}	 
-				state("handleStep") { //this:State
+				state("handleRequest") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("p(TIME)"), Term.createTerm("p(T)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								val Steptime = payloadArg(0).toLong()
+								forward("cmd", "cmd(w)" ,"robotadapter" ) 
+								delay(Steptime)
+								forward("cmd", "cmd(h)" ,"robotadapter" ) 
+								println("basicrobot | reply ... ")
+								answer("p", "pDone", "pDone(0)"   )  
+						}
+					}
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
+				}	 
+				state("handleAlarm") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("basicrobot reply ... ")
-						answer("p", "pDone", "pDone(0)"   )  
+						forward("cmd", "cmd(r)" ,"robotadapter" ) 
+						delay(800) 
+						forward("cmd", "cmd(r)" ,"robotadapter" ) 
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
