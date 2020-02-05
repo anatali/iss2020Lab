@@ -4,7 +4,9 @@ import alice.tuprolog.*
 import it.unibo.`is`.interfaces.protocols.IConnInteraction
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.actor
+import org.eclipse.californium.core.CoapClient
 import org.eclipse.californium.core.CoapResource
+import org.eclipse.californium.core.CoapResponse
 import org.eclipse.californium.core.server.resources.CoapExchange
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
 import org.eclipse.paho.client.mqttv3.MqttCallback
@@ -12,6 +14,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.eclipse.californium.core.coap.CoAP.ResponseCode.CHANGED
 import org.eclipse.californium.core.coap.CoAP.ResponseCode.CREATED
 import org.eclipse.californium.core.coap.CoAP.ResponseCode.DELETED
+import org.eclipse.californium.core.coap.MediaTypeRegistry
 
 
 /*
@@ -101,18 +104,18 @@ Messaging
             sysUtil.traceprintln("$tt ActorBasic sendMessageToActor |  no QakContext for the current actor")
             return
         }
-        val actor = context!!.hasActor(destName)
-        if( actor is ActorBasic ) {
+        val destactor = context!!.hasActor(destName)
+        if( destactor is ActorBasic ) {
 //DESTINATION LOCAL
-            sysUtil.traceprintln("$tt ActorBasic sendMessageToActor | ${msg.msgId()}  dest=$destName LOCAL IN ${context!!.name}")
-            actor.actor.send( msg )
+            //println("$tt ActorBasic sendMessageToActor | ${msg.msgId()}  dest=$destName LOCAL IN ${context!!.name}")
+            destactor.actor.send( msg )
             return
         }
         val ctx = sysUtil.getActorContext(destName)
         if( ctx == null ) {
-//DESTINATION REMOTE but no context known (e.g. destName is External)
+//DESTINATION REMOTE but no context known
             sysUtil.traceprintln("$tt ActorBasic sendMessageToActor | ${msg.msgId()} dest=$destName REMOTE no context known " )
-            if( conn != null ){ //we are sending an answer
+            if( conn != null ){ //we are sending an answer via TCP to an 'alien'
                 sysUtil.traceprintln("$tt ActorBasic sendMessageToActor | dest=$destName sending answer  ${msg.msgId()} using $conn ")
                 conn.sendALine( "$msg" )
                 return
@@ -125,14 +128,22 @@ Messaging
             }
         }
  //DESTINATION remote, context of dest known and MQTT selected
+        val uri = "coap://${ctx.hostAddr}:${ctx.portNum}/${ctx.name}/$destName"
+        println("$tt ActorBasic sendMessageToActor qak | ${uri} msg=$msg" )
+
         if( attemptToSendViaMqtt(ctx, msg,destName) ) return
-//DESTINATION remote, context of destName known and NO MQTT  => using proxy
+
+        sendCoapMsg( uri, msg.toString() )
+
+ //DESTINATION remote, context of destName known and NO MQTT  => using proxy
+        // REMOVED: Coap 2020
+        /*
         val proxy = context!!.proxyMap.get(ctx.name)
         sysUtil.traceprintln("$tt ActorBasic sendMessageToActor |  ${msg.msgId()} $destName REMOTE with PROXY  " )
         //WARNING: destName must be the original and not the proxy
         if( proxy is ActorBasic ) { proxy.actor.send( msg ) }
         else sysUtil.traceprintln("$tt ActorBasic  sendMessageToActor |  ${msg.msgId()} proxy of $ctx is null ")
-
+        */
     }
 
     fun attemptToSendViaMqtt( ctx : QakContext, msg : ApplMessage, destName : String) : Boolean{
@@ -316,6 +327,12 @@ MQTT
             mqtt.subscribe(this, "unibo/qak/events")
         }
     }
+    fun removeFromMqtt(){
+        if( context!!.mqttAddr.length > 0  ){
+            mqtt.disconnect()
+            mqttConnected = false
+        }
+    }
 
     override fun messageArrived(topic: String, msg: MqttMessage) {
         //sysUtil.traceprintln("$tt ActorBasic $name |  MQTT messageArrived on "+ topic + ": "+msg.toString());
@@ -426,7 +443,9 @@ KNOWLEDGE BASE
     /*
      * POST is NOT idempotent.	Use POST when you want to add a child resource
      */
-    override fun handlePOST(exchange: CoapExchange) {}
+    override fun handlePOST(exchange: CoapExchange) {
+        exchange.respond( "POST not implemented")
+    }
 
 /*
  * PUT method is idempotent. Use PUT when you want to modify
@@ -437,12 +456,12 @@ KNOWLEDGE BASE
         try{
             val msg    = ApplMessage( arg )
             updateCoapResource("$msg redirected")
-            fromPutToMsg( msg )  //could change answer (if msg is a request)
+            fromPutToMsg( msg, exchange )  //could change answer (if msg is a request)
         }catch( e : Exception){
             updateCoapResource("error on msg $arg")
             println("$logo | handlePUT ERROR on msg ")
         }
-        exchange.respond( CHANGED )
+        //exchange.respond( CHANGED )
     }
 
     override fun handleDELETE(exchange: CoapExchange) {
@@ -450,15 +469,31 @@ KNOWLEDGE BASE
         exchange.respond(DELETED)
     }
 
-    fun fromPutToMsg( msg : ApplMessage ) {
-        scope.launch {
-            autoMsg(msg)
+    fun fromPutToMsg( msg : ApplMessage, exchange: CoapExchange ) {
+        println("$logo | fromPutToMsg msg=$msg")
+        if( msg.isDispatch() ) {
+            scope.launch { autoMsg(msg) }
+            exchange.respond( CHANGED )
+            return
         }
-    }
+        if( msg.isRequest() ) {
+            //println("$logo | fromPutToMsg request=$msg")
+            CoapToActor("caoproute${count++}", exchange, this, msg)
+        }
+     }
 
     fun updateCoapResource( v : String){
         applRep = v
         changed()             //DO NOT FORGET!!!
     }
 
+    fun sendCoapMsg(  url : String, msg : String   ){
+        println("$logo |   sendCoapMsg url=${url}")
+        val client = CoapClient(url)
+        val resp = client.put(msg, MediaTypeRegistry.TEXT_PLAIN) //: CoapResponse
+        println("$logo |   sendCoapMsg resp =${resp.getCode()}")
+    }
+
+
 }
+

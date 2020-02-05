@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.eclipse.californium.core.CoapResource
 import java.net.InetAddress
 import org.eclipse.californium.core.CoapServer
 
@@ -13,7 +12,7 @@ open class QakContext(name: String, val hostAddr: String, val portNum: Int, var 
 
     internal val actorMap : MutableMap<String, ActorBasic> = mutableMapOf<String, ActorBasic>()
     internal val proxyMap:  MutableMap<String, NodeProxy> = mutableMapOf<String, NodeProxy>()  //cannot be static
-    private val serverCoap  =  CoapServer()     //CoAP: Jan2020
+    //lateinit private var serverCoap  :  CoapServer      //CoAP: Jan2020
     private var resourceCtx : CoapResourceCtx
     companion object {
         val workTime = 600000L
@@ -43,20 +42,22 @@ open class QakContext(name: String, val hostAddr: String, val portNum: Int, var 
 
     init{
         //OCT2019 --> NOV2019 Create a QakContextServer also when we use MQTT
-        resourceCtx = CoapResourceCtx( name )
+        resourceCtx = CoapResourceCtx( name, this )   //must be ininitialized here
         if( ! external ){
             println("               %%% QakContext |  $hostAddr:$portNum INIT ")
             QakContextServer( this, GlobalScope, "server$name", Protocol.TCP )
             //if( gui ){ }
             //CoAP: Jan2020
-            serverCoap.add(  resourceCtx )
-            try{
-                serverCoap.start()
-                println( "               %%% QakContext $name |  serverCoap started " )
+              try{
+                  val coapPort    =  portNum
+                  val serverCoap  =  CoapServer(coapPort)
+                  serverCoap.add(  resourceCtx )
+                  serverCoap.start()
+                   println( "               %%% QakContext $name |  serverCoap started on port: $coapPort" )
             }catch(e : Exception){
-                println( "               %%% QakContext $name |  serverCoap error (already started) " )
+                println( "               %%% QakContext $name |  serverCoap error: ${e.message}" )
             }
-        }
+         }
      }
 
     override suspend fun actorBody(msg : ApplMessage){
@@ -78,6 +79,15 @@ open class QakContext(name: String, val hostAddr: String, val portNum: Int, var 
         //sysUtil.traceprintln("               %%% QakContext $name | addActor ${actor.name}")
         resourceCtx.addActorResource( actor )             //CoAP: Jan2020
     }
+
+    fun addInternalActor( actor: ActorBasic ) {
+        actor.context = this    //injects the context
+        actorMap.put( actor.name, actor )
+    }
+
+    fun removeInternalActor( actor: ActorBasic ){
+        actorMap.remove( actor.name )
+     }
 
     fun hasActor( actorName: String ) : ActorBasic? {
         return actorMap.get(actorName)

@@ -98,13 +98,15 @@ object sysUtil{
 		//println("               %%% sysUtil | $ctx host=$ctxHost port = $ctxPort protocol=$ctxProtocol")
 		val portNum = Integer.parseInt(ctxPort)
 
-		val useMqtt = ctxProtocol!!.toLowerCase() == "mqtt"
+//		val useMqtt = ctxProtocol!!.toLowerCase() == "mqtt"	//CoAP 2020
 		var mqttAddr = ""
-		if( useMqtt ){
-			println("               %%% sysUtil | context $ctx WORKS WITH MQTT with port=$portNum")
-			if( mqttBrokerIP != null ) mqttAddr = "tcp://$mqttBrokerIP:$mqttBrokerPort"
-			else{ throw Exception("no MQTT broker declared")  }
-		}
+//		if( useMqtt ){	//CoAP 2020
+			if( mqttBrokerIP != null ){
+				mqttAddr = "tcp://$mqttBrokerIP:$mqttBrokerPort"
+				println("               %%% sysUtil | context $ctx WORKS ALSO WITH MQTT mqttAddr=$mqttAddr")
+			}
+			//else{ throw Exception("no MQTT broker declared")  }	//CoAP 2020
+//		}
 		//CREATE AND MEMO THE CONTEXT
 		var newctx : QakContext? = null
 		if( ! ctxHost.equals(hostName) ){

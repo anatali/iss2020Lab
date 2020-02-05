@@ -25,7 +25,7 @@ class QakContextServer(val ctx: QakContext, scope: CoroutineScope,
 
 
     override suspend fun actorBody(msg : ApplMessage){
-        println("               %%% QakContextServer $name | READY TO RECEIVE CONNS on ${ctx.portNum} ")
+        println("               %%% QakContextServer $name | READY TO RECEIVE TCP CONNS on ${ctx.portNum} ")
         waitForConnection()
     }
 

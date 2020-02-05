@@ -8,11 +8,14 @@ import org.eclipse.californium.core.CoapServer
 import org.eclipse.californium.core.coap.MediaTypeRegistry
 import org.eclipse.californium.core.server.resources.CoapExchange
 import it.unibo.kactor.ActorBasic
+import kotlinx.coroutines.launch
 
 
-class CoapResourceCtx(name: String) : CoapResource(name) {
+class CoapResourceCtx(name: String, val ctx : QakContext) : CoapResource(name) {
 //    private var counter = 0
     private val actorResources =  mutableMapOf<String, ActorBasic>()
+    private val logo    = "       CoapResourceCtx $name "
+    private var applRep = "$logo | created  "
 
     init {
         isObservable = true
@@ -22,22 +25,15 @@ class CoapResourceCtx(name: String) : CoapResource(name) {
     override fun handleGET(exchange: CoapExchange) {
         println("               %%% CoapResourceCtx " + name + " | handleGET from:" +
                 exchange.sourceAddress + " arg:" + exchange.requestText)
-        exchange.respond("Resource $name | actorResources = $actorResources")
+        exchange.respond( "$applRep")
     }
 
 /*
  * POST is NOT idempotent.	Use POST when you want to add a child resource
  */
     override fun handlePOST(exchange: CoapExchange) {
-        exchange.accept()
-        if (exchange.requestOptions.isContentFormat(MediaTypeRegistry.TEXT_XML)) {
-            val xml = exchange.requestText
-            exchange.respond(CREATED, xml.toUpperCase())
-
-        } else {
-            // ...
-            exchange.respond(CREATED)
-        }
+        println("               %%% CoapResourceCtx $name | POST not implemented")
+        exchange.respond( "POST not implemented")
     }
 
 /*
@@ -47,15 +43,14 @@ class CoapResourceCtx(name: String) : CoapResource(name) {
     override fun handlePUT(exchange: CoapExchange) {
         val arg = exchange.requestText
         println("               %%% CoapResourceCtx $name | PUT arg=$arg")
-        changed()    // notify all CoAp observers
-        /*
-    	 * Notifies all CoAP clients that have established an observe relation with
-    	 * this resource that the state has changed by reprocessing their original
-    	 * request that has established the relation. The notification is done by
-    	 * the executor of this resource or on the executor of its parent or
-    	 * transitively ancestor. If no ancestor defines its own executor, the
-    	 * thread that has called this method performs the notification.
-    	 */
+        try{
+            val event    = ApplMessage( arg )     //should be an event
+            propagateEvent( event )
+            updateCoapResource("$event redirected")
+          }catch( e : Exception){
+            updateCoapResource("error on msg $arg")
+            //println("$logo | handlePUT ERROR on msg ")
+        }
         exchange.respond(CHANGED)
     }
 
@@ -78,7 +73,23 @@ class CoapResourceCtx(name: String) : CoapResource(name) {
         }
         return r
     }
-	
+
+    fun updateCoapResource( v : String){
+        applRep = v
+        changed()             //DO NOT FORGET!!!
+    }
+
+    fun propagateEvent(event : ApplMessage){
+        ctx.actorMap.forEach{
+            //sysUtil.traceprintln("               %%% CoapResourceCtx $name | in ${ctx.name} propag $event to ${it.key} in ${it.value.context.name}")
+            val a = it.value
+            try{
+                a.scope.launch{ a.actor.send(event) }
+            }catch( e1 : Exception) {
+                println("               %%% CoapResourceCtx $name | propagateEvent WARNING: ${e1.message}")
+            }
+        }
+    }
 
 
  }
