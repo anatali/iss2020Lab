@@ -34,6 +34,12 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						forward("cmd", "cmd(h)" ,"basicrobot" ) 
 						println("smartrobot started")
 					}
+					 transition( edgeName="goto",targetState="activateResource", cond=doswitch() )
+				}	 
+				state("activateResource") { //this:State
+					action { //it:State
+						consolegui.consoleGui.create(  )
+					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 
 				state("work") { //this:State
@@ -60,7 +66,6 @@ class Smartrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 				}	 
 				state("handleCmd") { //this:State
 					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
 						if( checkMsgContent( Term.createTerm("cmd(X)"), Term.createTerm("cmd(X)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								var Move = payloadArg(0)
