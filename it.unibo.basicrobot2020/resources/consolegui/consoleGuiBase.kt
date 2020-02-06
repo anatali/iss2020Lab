@@ -14,7 +14,7 @@ abstract class consoleGuiBase : IObserver {
 	  lateinit var guiUsed      : consoleGuiBase
 
       fun createGui(  guiType: ConnectionType, hostIP : String, port : String, actorName : String ){
-		  println("createGui: $guiType")
+		  println("consoleGuiBase ! create guiType: $guiType")
 		  destName = actorName
 		  when( guiType ){
 				 ConnectionType.MQTT ->

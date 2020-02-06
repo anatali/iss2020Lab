@@ -24,7 +24,10 @@ class consoleGuiCoap() : consoleGuiBase() {
 			client.setTimeout( 1000L )
  			//initialCmd: to make console more reactive at the first user cmd
  		    val respGet  = client.get( ) //CoapResponse
-		    println("consoleGuiCoap | createConnection doing  get | CODE=  ${respGet.code}")
+			if( respGet != null )
+				println("consoleGuiCoap | createConnection doing  get | CODE=  ${respGet.code}")
+			else
+				println("consoleGuiCoap | url=  ${url} FAILURE")
 		}
   	
 	override fun forward(move: String) {

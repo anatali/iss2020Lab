@@ -39,10 +39,11 @@ QActor basicrobot context ctxBasicRobot{
  
 //val filter   = itunibo.robot.rx.sonaractorfilter(\"filter\", myself)  //generates obstacle
 //val logger   = itunibo.robot.rx.Logger(\"logger\")
-val forradar = itunibo.robot.rx.sonarforradar(\"forradar\", myself)  //generates polar
-itunibo.robot.robotSupport.subscribe( forradar ) 
 
-itunibo.robot.httpserver.init(consolegui.ConnectionType.TCP)
+//val forradar = itunibo.robot.rx.sonarforradar(\"forradar\", myself)  //generates polar
+//itunibo.robot.robotSupport.subscribe( forradar ) 
+ 
+itunibo.robot.httpserver.init( \"basicrobot\", 8018, consolegui.ConnectionType.TCP ) //consolegui.ConnectionType.TCP
 "]  
 		//run consolegui.consoleGuiCoap.create(  )
 		println("	basicrobot | starts (with robotadapter in the same context)")

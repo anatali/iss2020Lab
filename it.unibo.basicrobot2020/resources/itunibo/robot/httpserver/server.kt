@@ -15,6 +15,7 @@ import consolegui.consoleGuiBase
 import consolegui.ConnectionType
 import consolegui.consoleGuiCoap
 import consolegui.consoleGuiMqtt
+import java.net.InetAddress
  
  
 /**
@@ -73,21 +74,33 @@ class GetHandlerPdf  : HttpHandler {
 class RobotMoveHandler( val move: String )  : HttpHandler {
      override fun handle( t : HttpExchange )  {
 	   //Forward to the basicrobot
+	   println("RobotMoveHandler move=$move console=$console")
 	   console.forward(move)
 	   answerWithTheGui( t )
      }
   }
 
-fun init( connectionType : ConnectionType=ConnectionType.COAP ){
+fun init( destName : String, portNum : Int, connectionType : ConnectionType=ConnectionType.COAP ){
 	when( connectionType ){
-		ConnectionType.TCP  -> console = consoleGuiTcp()
-		ConnectionType.COAP -> console = consoleGuiCoap()
-		ConnectionType.MQTT -> console = consoleGuiMqtt()
+		ConnectionType.TCP  -> {
+			console = consoleGuiTcp()
+			console.createNoGui("localhost","$portNum",destName)
+		}
+		
+		ConnectionType.COAP -> {
+			console = consoleGuiCoap()
+			console.createNoGui("localhost","$portNum",destName)
+		}  
+		ConnectionType.MQTT -> {
+			console = consoleGuiMqtt()
+			console.createNoGui("localhost","$portNum",destName)
+		}
 	}
-	console.createNoGui("localhost", "8018", "basicrobot")
-	println("httpserver | start") 
-    val server  = HttpServer.create(InetSocketAddress("localhost", 8080), 0)
-
+	//console.createNoGui("localhost", "8018", "basicrobot")  //exclude on Rasp
+	val myhost = InetAddress.getLocalHost()
+	println("httpserver | available on $myhost:8080 console=$console") 
+    val server  = HttpServer.create(InetSocketAddress(8080), 0)
+ 
 	server.setExecutor(null)  						// creates a default executor
 
 	server.createContext("/",   EntryHandler())
@@ -114,5 +127,5 @@ fun init( connectionType : ConnectionType=ConnectionType.COAP ){
 	
 
 fun main( ) {
-    init( ConnectionType.TCP )
+    //init( ConnectionType.TCP )
 }
