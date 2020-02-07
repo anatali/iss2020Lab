@@ -59,20 +59,28 @@ Send a command to the basicrobot
 
 <h3>Display Area</h3>
 
+	<div id="ipaddr" align="left">
+	wait ...
+ 	</div>
+
 	<div id="content" align="left">
+		 
 		<img src=""  id="img_src" alt=""  width="320" height="240"><br/> 
 	</div>
-
- 
+	
 	<script type="text/javascript">
 		 var url = window.location.host;
 	     var len = url.length;
-	     var n= url.indexOf(":");
-	     var j = url.substring(n+1,len);
-	     var ip = url.replace(j,'8899');
+	     var n   = url.indexOf(":");
+	     var j   = url.substring(n+1,len);
+	     //var ip  = url.replace(j,'8899');	 
+		 //ip = "http://" + ip + "/?action=stream";
+		 
+		 var ip  = url.replace(j,'8090');	 
 		 ip = "http://" + ip + "/?action=stream";
+		 document.getElementById("ipaddr").innerHTML  = ip;
 		 //alert("ip="+ip);	 
-	     //document.getElementById("img_src").src = ip;	
+	     document.getElementById("img_src").src = ip;	
 	</script>
  
 	

@@ -211,7 +211,7 @@ Getting started with the Raspberry Pi  Camera Module</a>
 <td> 
 <pre>
 sudo route add default gw 192.168.1.1 wlan0
-
+<!--
 sudo  apt-get  install  rpi.gpio  -y
 mkdir  cam-robot
 cd   cam-robot
@@ -235,7 +235,7 @@ sudo apt-get –purge remove webiopi
 
 sudo   nano  /etc/modules
 add kine bcm2835-v4l2
-
+-->
 
 ===================== su Raspian Buster lite ======================================
 sudo apt-get install build-essential libjpeg8-dev imagemagick libv4l-dev cmake -y
@@ -249,15 +249,16 @@ sudo  nano  input_uvc.c
 "ctrl" + "W" to search V4L2_PIX_FMT_MJPEG
 int width=640, height=480, fps=5, format=V4L2_PIX_FMT_MJPEG,i
 Replace the string V4L2_PIX_FMT_MJPEG with new string V4L2_PIX_FMT_YUYV
--->
+
 --- compile
 cd  cam-robot/mjpg-streamer
 make all
-
+-->
 --- test camera
 ls   /dev/video* 
 the device is on /dev/video0
 
+<!--
 sudo ./start.sh			RUN
 http://192.168.43.170:8899/
 
@@ -273,8 +274,7 @@ doc-root = /home/pi/nat/cam-robot/robot
 sudo webiopi -d -c /etc/webiopi/config
 http://192.168.43.170:8000/
 .....................................................
-
-
+-->
 </pre>
 </td>
 </tr>
@@ -302,8 +302,10 @@ Setup Guide: Raspberry Pi | MJPEG Streamer Install & Setup & FFMpeg Recording</a
 <!-- <img src="./img/raspSonarCoap.png" alt="raspSonarCoap.png" width="100%"  /> -->
 </td>
 <td> 
+See <a href="https://jacobsalmela.com/2014/05/31/raspberry-pi-webcam-using-mjpg-streamer-over-internet/" target="web">Raspberry Pi Webcam Over the Internet Using MJPG-Streamer</a>
 <pre>
 sudo route add default gw 192.168.1.1 wlan0
+
 
 # Update & Install Tools
 sudo apt-get update -y
@@ -313,26 +315,34 @@ sudo apt-get install cmake libjpeg8-dev
 # Clone Repo in /tmp
 cd /tmp
 git clone https://github.com/jacksonliam/mjpg-streamer.git
-cd mjpg-streamer/mjpg-streamer-experimental
 
-# Make
+<ks>cd mjpg-streamer/mjpg-streamer-experimental</ks>
+<kc># Make</kc>
 make
 sudo make install
 
-# RUN
+<kc># RUN</kc>
 export LD_LIBRARY_PATH=.
-./mjpg_streamer -o "output_http.so -w ./www" -i "input_raspicam.so"
- 
-http://192.168.1.10:8080/stream.html 
+./mjpg_streamer -i "input_uvc.so" -o "output_http.so -p 8090 -w /usr/local/share/mjpg-streamer/www"
+
+<kc># TEST</kc>
+http://192.168.1.10:8090/stream.html 
+<!--
+start.sh > /dev/null & 
+------------------------------
+jobs -l
+sudo kill -KILL xxx
+
+<kc># TEST</kc>
+/usr/local/bin/mjpg_streamer -i "input_uvc.so -d /dev/video0" -o "output_http.so"
 
 Oppure, DOPO make install:
 /usr/local/bin/mjpg_streamer 
 	-i "input_uvc.so -r 1280x720 
-	-d /dev/video0 -f 30" 
-	-o "output_http.so -p 8080 
+	-d /dev/video0 -f 30 
+	-o "output_http.so -p 8090 
 	-w /usr/local/share/mjpg-streamer/www"
-
-
+-->
 </pre>
 </td>
 </tr>
