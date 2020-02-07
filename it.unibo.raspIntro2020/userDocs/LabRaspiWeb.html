@@ -358,7 +358,7 @@ Setup Guide: Raspberry Pi | MJPEG Streamer Install & Setup & FFMpeg Recording</a
 <m>sudo apt-get install cmake libjpeg8-dev
 
 git clone https://github.com/jacksonliam/mjpg-streamer.git
-cd mjpg-streamer/mjpg-streamer-experimental
+cd /home/pi/nat/mjpg-streamer/mjpg-streamer-experimental
 make all
 sudo make install
 
@@ -829,19 +829,26 @@ On the Raspberry:
 
 <li><ks>Launch the mjpg streamer</ks>: 
 <pre>
-cd /home/pi/nat/mjpg-streamer
+cd /home/pi/nat/mjpg-streamer/mjpg-streamer-experimental
 
+<!--
 export LD_LIBRARY_PATH=.
 nohup sudo ./start.sh &
+-->
+<kc># RUN</kc>
+export LD_LIBRARY_PATH=.
+./mjpg_streamer -i "input_uvc.so" -o "output_http.so -p 8090 -w /usr/local/share/mjpg-streamer/www" &
 
-http://192.168.1.12:8899
+<kc># TEST</kc>
+http://192.168.1.8:8090/stream.html 
+http://192.168.1.8:8090/?action=stream
 </pre>
 
 </li>
 
 <li><ks>Launch the basic robot application</ks>:  
 <pre>
-cd /nat/basicrobot2020/it.unibo.basicrobot2020-1.0/bin
+ cd /home/pi/nat/it.unibo.basicrobot2020-1.0/bin
 
 nohup  bash  it.unibo.basicrobot2020 &
 

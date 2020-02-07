@@ -42,13 +42,13 @@ QActor basicrobot context ctxBasicRobot{
 
 //val forradar = itunibo.robot.rx.sonarforradar(\"forradar\", myself)  //generates polar
 //itunibo.robot.robotSupport.subscribe( forradar ) 
- 
-itunibo.robot.httpserver.init( \"basicrobot\", 8018, consolegui.ConnectionType.TCP ) //consolegui.ConnectionType.TCP
+  
+httpserver.serverinit( \"basicrobot\", 8018, consolegui.ConnectionType.COAP ) //consolegui.ConnectionType.TCP 
 "]  
 		//run consolegui.consoleGuiCoap.create(  )
 		println("	basicrobot | starts (with robotadapter in the same context)")
  	}
-	Goto work     
+	Goto work        
 	
 	State work{ println("basicrobot waiting ... ")}
 	Transition t0 

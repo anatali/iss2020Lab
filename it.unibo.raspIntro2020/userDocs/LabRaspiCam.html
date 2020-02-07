@@ -316,17 +316,18 @@ sudo apt-get install cmake libjpeg8-dev
 cd /tmp
 git clone https://github.com/jacksonliam/mjpg-streamer.git
 
-<ks>cd mjpg-streamer/mjpg-streamer-experimental</ks>
+<ks>cd /home/pi/nat/mjpg-streamer/mjpg-streamer-experimental</ks>
 <kc># Make</kc>
 make
 sudo make install
 
 <kc># RUN</kc>
 export LD_LIBRARY_PATH=.
-./mjpg_streamer -i "input_uvc.so" -o "output_http.so -p 8090 -w /usr/local/share/mjpg-streamer/www"
+./mjpg_streamer -i "input_uvc.so" -o "output_http.so -p 8090 -w /usr/local/share/mjpg-streamer/www" &
 
 <kc># TEST</kc>
-http://192.168.1.10:8090/stream.html 
+http://192.168.1.8:8090/stream.html 
+http://192.168.1.8:8090/?action=stream
 <!--
 start.sh > /dev/null & 
 ------------------------------
@@ -366,7 +367,15 @@ crontab -e
 </tbody>
 </table> 
  
-
+Web browsers do not provide any JavaScript API for UDP sockets for security reasons.
+<br/><br/>
+If you need an in-browser app to communicate to a device via a CoAP interface, you may need to provide an intermediary service. 
+For example, you could create a web service that is accessible via HTTP, and acts as a translator to CoAP.
+<br/><br/>
+Note that node.js does support UDP connections, and could be used to send CoAP messages. However, it is a server-side technology, 
+and cannot be used in the browser. It could be used to build such a translator service; but would not be required.
+<br/><br/>
+Also, it appears that "Chrome Apps", which are based on HTML5 and JavaScript, but are distinctly different from web pages, do have access to UDP Sockets.
 
 <br/><br/>
 <h2>Opencv</h2>

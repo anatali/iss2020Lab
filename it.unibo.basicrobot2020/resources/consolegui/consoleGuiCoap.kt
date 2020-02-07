@@ -19,6 +19,7 @@ class consoleGuiCoap() : consoleGuiBase() {
 			Utils.showSystemInfo()
 			this.hostIP = hostIP
 			this.port   = port
+			println("consoleGuiCoap | createConnection hostIP=${hostIP} port=${port}")
 			val url = "coap://$hostIP:$port/ctxbasicrobot/$destName"
 			client = CoapClient( url )
 			client.setTimeout( 1000L )

@@ -1,4 +1,4 @@
-package itunibo.robot.httpserver
+package serverhttp
 
 import com.sun.net.httpserver.HttpServer
 import java.io.PrintWriter
@@ -25,7 +25,7 @@ import java.net.InetAddress
  
 
 lateinit var console : consoleGuiBase
-val serverResourcePtah = "./resources/itunibo/robot/httpserver/index.html"
+val serverResourcePath = "./src/serverhttp"
 
 fun answerWithNoPage(t : HttpExchange ){
 	t.sendResponseHeaders( 200, 0L )
@@ -36,7 +36,7 @@ fun answerWithTheGui(t : HttpExchange ){
 		try{
 			val h = t.getResponseHeaders() 			//Headers
 			h.add("Content-Type", "text/html")
- 			val file = File ("./resources/itunibo/robot/httpserver/index.html")
+ 			val file = File ("$serverResourcePath/index.html")
 			val  fis = FileInputStream(file) 		//FileInputStream
 			doResponse( t, BufferedInputStream(fis), file.length() )	
 		}catch( e : Exception){
@@ -69,7 +69,7 @@ class GetHandlerPdf  : HttpHandler {
   		h.add("Content-Type", "application/pdf")
  		// a PDF
 		try{
-			val file = File ("./resources/itunibo/robot/httpserver/TFCE2020.pdf")
+			val file = File ("$serverResourcePath/TFCE2020.pdf")
 			doResponse( t, BufferedInputStream( FileInputStream(file) ), file.length() )
 		}catch( e : Exception){
 			println("httpserver | ERROR=${e.message}")
@@ -94,7 +94,7 @@ class RobotRequestMoveHandler( val move: String )  : HttpHandler {
      }
   }
 
-fun init( destName : String, portNum : Int, connectionType : ConnectionType=ConnectionType.COAP ){
+fun serverinit( destName : String, portNum : Int, connectionType : ConnectionType=ConnectionType.COAP ){
 	when( connectionType ){
 		ConnectionType.TCP  -> {
 			console = consoleGuiTcp()
@@ -108,12 +108,12 @@ fun init( destName : String, portNum : Int, connectionType : ConnectionType=Conn
 		ConnectionType.MQTT -> {
 			console = consoleGuiMqtt()
 			console.createNoGui("localhost","$portNum",destName)
-		}
+		} 
 	}
 	//console.createNoGui("localhost", "8018", "basicrobot")  //exclude on Rasp
 	val myhost = InetAddress.getLocalHost()
 	println("httpserver | available on $myhost:8080 console=$console") 
-    val server  = HttpServer.create(InetSocketAddress(8080), 0)
+    val server  = HttpServer.create(InetSocketAddress(8080), 0)  //InetSocketAddress(8080)
  
 	server.setExecutor(null)  						// creates a default executor
 
