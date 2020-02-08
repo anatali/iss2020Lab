@@ -27,8 +27,10 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 						
 						//val forradar = itunibo.robot.rx.sonarforradar("forradar", myself)  //generates polar
 						//itunibo.robot.robotSupport.subscribe( forradar ) 
-						  
-						httpserver.serverinit( "basicrobot", 8018, consolegui.ConnectionType.COAP ) //consolegui.ConnectionType.TCP 
+						
+						httpserver.serverinit( "basicrobot", 8018  ) //default: consolegui.ConnectionType.COAP 
+						//httpserver.serverinit( "basicrobot", 8018, connQak.ConnectionType.TCP )  
+						//httpserver.serverinit( "basicrobot", 1883, connQak.ConnectionType.MQTT )  
 						println("	basicrobot | starts (with robotadapter in the same context)")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )

@@ -400,7 +400,7 @@ KNOWLEDGE BASE
         //	println("QActorUtils Registering in TuProlog18 ... " + lib );
         val internalName = Struct("" + this.name)
         (lib as alice.tuprolog.lib.OOLibrary).register(internalName, this)
-        //	System.out.println("QActorUtils Registered in TuProlog18 " + internalName );
+        //	println("QActorUtils Registered in TuProlog18 " + internalName );
     }
 
     fun solve( goal: String, rVar: String ="" ) {
@@ -434,7 +434,7 @@ KNOWLEDGE BASE
 
     init{                                   //Coap Jan2020
         isObservable = true
-        logo    = "       ActorBasicResource $name "
+        logo    = "       ActorBasic(Resource) $name "
         applRep = "$logo | created  "
     }
     override fun handleGET(exchange: CoapExchange) {
@@ -453,7 +453,7 @@ KNOWLEDGE BASE
  */
     override fun handlePUT(exchange: CoapExchange) {
         val arg = exchange.requestText  //arg =
-        println("$logo | handlePUT arg=$arg")
+        sysUtil.traceprintln("$logo | handlePUT arg=$arg")
         try{
             val msg    = ApplMessage( arg )
             updateCoapResource("$msg redirected")
@@ -471,7 +471,7 @@ KNOWLEDGE BASE
     }
 
     fun fromPutToMsg( msg : ApplMessage, exchange: CoapExchange ) {
-        println("$logo | fromPutToMsg msg=$msg")
+        sysUtil.traceprintln("$logo | fromPutToMsg msg=$msg")
         if( msg.isDispatch() ) {
             scope.launch { autoMsg(msg) }
             exchange.respond( CHANGED )
@@ -489,10 +489,10 @@ KNOWLEDGE BASE
     }
 
     fun sendCoapMsg(  url : String, msg : String   ){
-        println("$logo |   sendCoapMsg url=${url}")
+        sysUtil.traceprintln("$logo |   sendCoapMsg url=${url}")
         val client = CoapClient(url)
         val resp = client.put(msg, MediaTypeRegistry.TEXT_PLAIN) //: CoapResponse
-        println("$logo |   sendCoapMsg resp =${resp.getCode()}")
+        sysUtil.traceprintln("$logo |   sendCoapMsg resp =${resp.getCode()}")
     }
 
 

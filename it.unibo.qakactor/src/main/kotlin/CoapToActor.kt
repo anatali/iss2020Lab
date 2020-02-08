@@ -5,6 +5,7 @@ import org.eclipse.californium.core.server.resources.CoapExchange
 
 /*
  * ----------------------------------------------------------------------------------------------
+ * Temporary actor that makes a qak request and waits for a reply to a qak request
  * ----------------------------------------------------------------------------------------------
  */
 
@@ -23,7 +24,7 @@ class CoapToActor( name : String, val exchange: CoapExchange,
             //println(" $tt $name | respond  ${msg.msgContent()} "  ) //msg.msgContent() is the answer
             exchange.respond( msg.toString() )
             context!!.removeInternalActor( this )
-            println(" $tt $name | ENDS   "  )
+            //println(" $tt $name | ENDS   "  )
         }
 	}
 }

@@ -11,11 +11,9 @@ import java.io.FileInputStream
 import java.io.BufferedInputStream
 import consolegui.consoleGuiTcp
 import com.sun.net.httpserver.Headers
-import consolegui.consoleGuiBase
-import consolegui.ConnectionType
-import consolegui.consoleGuiCoap
-import consolegui.consoleGuiMqtt
 import java.net.InetAddress
+import connQak.connQakBase
+import connQak.ConnectionType
  
  
 /**
@@ -24,7 +22,7 @@ import java.net.InetAddress
  */
  
 
-lateinit var console : consoleGuiBase
+lateinit var connQakSupport : connQakBase
 val serverResourcePath = "./httpserver"
 
 fun answerWithNoPage(t : HttpExchange ){
@@ -32,13 +30,11 @@ fun answerWithNoPage(t : HttpExchange ){
  		val answer = "done"
 		val h = t.getResponseHeaders() 			//Headers
 		h.add("Content-Type", "text/html")
-		h.add("Content-Length", answer ) 
-	    
-//		t.sendResponseHeaders( 200, answer.length.toLong() )
-		 
-		val os = t.getResponseBody() //OutputStream
-		os.write( answer.toByteArray()  )
-		os.close()
+		h.add("Content-Length", answer )   
+//		t.sendResponseHeaders( 200, answer.length.toLong() )	 
+//		val os = t.getResponseBody() //OutputStream
+//		os.write( answer.toByteArray()  )
+//		os.close()
 	}catch( e : Exception){
 		println("httpserver | answerWithNoPage ERROR=${e.message}")
 	}
@@ -91,8 +87,8 @@ class GetHandlerPdf  : HttpHandler {
 class RobotMoveHandler( val move: String )  : HttpHandler {
      override fun handle( t : HttpExchange )  {
 	   //Forward to the basicrobot
-	   println("RobotMoveHandler move=$move console=$console")
-	   console.forward(move)
+	   //println("RobotMoveHandler move=$move connQakSupport=$connQakSupport")
+	   connQakSupport.forward(move)
 	   //answerWithTheGui( t )
 	   answerWithNoPage(t)
      }
@@ -100,32 +96,18 @@ class RobotMoveHandler( val move: String )  : HttpHandler {
 class RobotRequestMoveHandler( val move: String )  : HttpHandler {
      override fun handle( t : HttpExchange )  {
 	   //Request the basicrobot
-	   println("RobotRequestMoveHandler move=$move console=$console")
-	   console.request(move)
+	   //println("RobotRequestMoveHandler move=$move connQakSupport=$connQakSupport")
+	   connQakSupport.request(move)
 	   //answerWithTheGui( t )
 	   answerWithNoPage( t)     
      }
   }
 
 fun serverinit( destName : String, portNum : Int, connectionType : ConnectionType=ConnectionType.COAP ){
-	when( connectionType ){
-		ConnectionType.TCP  -> {
-			console = consoleGuiTcp()
-			console.createNoGui("localhost","$portNum",destName)
-		}
-		
-		ConnectionType.COAP -> {
-			console = consoleGuiCoap()
-			console.createNoGui("localhost","$portNum",destName)
-		}  
-		ConnectionType.MQTT -> {
-			console = consoleGuiMqtt()
-			console.createNoGui("localhost","$portNum",destName)
-		} 
-	}
-	//console.createNoGui("localhost", "8018", "basicrobot")  //exclude on Rasp
+	connQakSupport = connQakBase.create(connectionType, "localhost","$portNum",destName)
+	connQakSupport.createConnection()
 	val myhost = InetAddress.getLocalHost()
-	println("httpserver | available on $myhost:8080 console=$console") 
+	println("httpserver | available on $myhost:8080 connQakSupport=$connQakSupport") 
     val server  = HttpServer.create(InetSocketAddress(8080), 0)  //InetSocketAddress(8080)
  
 	server.setExecutor(null)  						// creates a default executor

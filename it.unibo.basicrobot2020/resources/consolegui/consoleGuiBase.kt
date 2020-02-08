@@ -34,10 +34,10 @@ abstract class consoleGuiBase : IObserver {
  		  createTheGui( guiName )
 		  createConnection(hostIP, port)
  	  }
-	  fun createNoGui(   hostIP : String, port : String, actorName : String   ){
-		  destName = actorName
- 		  createConnection(hostIP, port)
- 	  }
+//	  fun createNoGui(   hostIP : String, port : String, actorName : String   ){
+//		  destName = actorName
+// 		  createConnection(hostIP, port)
+// 	  }
 	  fun createTheGui( guiName : String ){
   			val concreteButton = ButtonAsGui.createButtons( guiName, buttonLabels )
             concreteButton.addObserver( guiUsed )		  
