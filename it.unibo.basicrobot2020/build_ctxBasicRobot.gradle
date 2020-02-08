@@ -91,6 +91,7 @@ compileTestKotlin {
 sourceSets {
     main.java.srcDirs += 'src'
     main.java.srcDirs += 'resources'
+    main.java.srcDirs += 'httpserver'
 }
  
 mainClassName = 'it.unibo.ctxBasicRobot.MainCtxBasicRobotKt'

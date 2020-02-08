@@ -258,8 +258,8 @@ class HTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 
             (code, body, contentType) = result
             
-            print(" ............... HTTP response  "    )
-            if code > 0:
+            print(" ............... HTTP response code="+ str(code) + " contentType=" +  str(contentType) + " body=" + str(body))
+            if code > 0: 
                 self.sendResponse(code, body, contentType)
             else:
                 if self.command == "GET":

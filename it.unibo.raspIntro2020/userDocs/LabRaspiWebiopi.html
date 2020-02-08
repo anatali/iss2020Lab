@@ -859,12 +859,14 @@ On the Raspberry:
 
 <li><ks>Launch the mjpg streamer</ks>: 
 <pre>
-cd /home/pi/nat/mjpg-streamer
+cd /home/pi/nat/mjpg-streamer/mjpg-streamer-experimental
 
 export LD_LIBRARY_PATH=.
 nohup sudo ./start.sh &
 
-http://192.168.1.12:8899
+<kc># TEST</kc>
+http://192.168.1.8:8090/stream.html 
+http://192.168.1.8:8090/?action=stream
 </pre>
 
 </li>

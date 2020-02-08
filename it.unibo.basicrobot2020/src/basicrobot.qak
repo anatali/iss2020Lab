@@ -46,7 +46,7 @@ QActor basicrobot context ctxBasicRobot{
 httpserver.serverinit( \"basicrobot\", 8018, consolegui.ConnectionType.COAP ) //consolegui.ConnectionType.TCP 
 "]  
 		//run consolegui.consoleGuiCoap.create(  )
-		println("	basicrobot | starts (with robotadapter in the same context)")
+		println("	basicrobot | starts (with robotadapter in the same context)") 
  	}
 	Goto work        
 	

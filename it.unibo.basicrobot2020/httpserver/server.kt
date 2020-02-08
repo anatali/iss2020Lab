@@ -1,4 +1,4 @@
-package serverhttp
+package httpserver
 
 import com.sun.net.httpserver.HttpServer
 import java.io.PrintWriter
@@ -25,13 +25,24 @@ import java.net.InetAddress
  
 
 lateinit var console : consoleGuiBase
-val serverResourcePath = "./src/serverhttp"
+val serverResourcePath = "./httpserver"
 
 fun answerWithNoPage(t : HttpExchange ){
-	t.sendResponseHeaders( 200, 0L )
-	val os = t.getResponseBody() //OutputStream
-	os.close()
-}
+	try{
+ 		val answer = "done"
+		val h = t.getResponseHeaders() 			//Headers
+		h.add("Content-Type", "text/html")
+		h.add("Content-Length", answer ) 
+	    
+//		t.sendResponseHeaders( 200, answer.length.toLong() )
+		 
+		val os = t.getResponseBody() //OutputStream
+		os.write( answer.toByteArray()  )
+		os.close()
+	}catch( e : Exception){
+		println("httpserver | answerWithNoPage ERROR=${e.message}")
+	}
+ }
 fun answerWithTheGui(t : HttpExchange ){
 		try{
 			val h = t.getResponseHeaders() 			//Headers
@@ -82,7 +93,8 @@ class RobotMoveHandler( val move: String )  : HttpHandler {
 	   //Forward to the basicrobot
 	   println("RobotMoveHandler move=$move console=$console")
 	   console.forward(move)
-	   answerWithTheGui( t )	    
+	   //answerWithTheGui( t )
+	   answerWithNoPage(t)
      }
   }
 class RobotRequestMoveHandler( val move: String )  : HttpHandler {
@@ -90,7 +102,8 @@ class RobotRequestMoveHandler( val move: String )  : HttpHandler {
 	   //Request the basicrobot
 	   println("RobotRequestMoveHandler move=$move console=$console")
 	   console.request(move)
-	   answerWithTheGui( t )	    
+	   //answerWithTheGui( t )
+	   answerWithNoPage( t)     
      }
   }
 
