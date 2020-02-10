@@ -21,7 +21,7 @@ lateinit var connQakSupport : connQakBase
 			 when( connType ){
 				 ConnectionType.COAP -> guiName="GUI-COAP"
 				 ConnectionType.MQTT -> guiName="GUI-MQTT"
-				 ConnectionType.TCP  -> guiName="GUI-YTCP"
+				 ConnectionType.TCP  -> guiName="GUI-TCP"
 				 ConnectionType.HTTP -> guiName="GUI-HTTP"
 			 }
 			 createTheGui( guiName )		 
@@ -33,7 +33,7 @@ lateinit var connQakSupport : connQakBase
 	 
 	  override fun update(o: Observable, arg: Any) {	   
    		  var move = arg as String
-		  if( move == "p" ) connQakSupport.request("p")
+		  if( move == "p" ) connQakSupport.request("onestep")
 		  else if( move == "e" ) connQakSupport.emit("alarm")
  		  else connQakSupport.forward( move ) 		  
        }//update
@@ -43,5 +43,4 @@ lateinit var connQakSupport : connQakBase
 
 fun main(){
 	consoleGuiSimple( ConnectionType.COAP, "localhost", "8018", "basicrobot")
-	
 }

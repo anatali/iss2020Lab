@@ -15,22 +15,30 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 	}
 		
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
+		
+		var StepTime      = 0L
+		var Duration      = 0 
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
 						  
-						//The PIPE could be completely created by the robotAdapterQaStream
-						//WARNING: use myself to denote the basicrobot actor, since this refers to the state
-						 
-						//val filter   = itunibo.robot.rx.sonaractorfilter("filter", myself)  //generates obstacle
-						//val logger   = itunibo.robot.rx.Logger("logger")
-						
-						//val forradar = itunibo.robot.rx.sonarforradar("forradar", myself)  //generates polar
-						//itunibo.robot.robotSupport.subscribe( forradar ) 
-						
-						httpserver.serverinit( "basicrobot", 8018  ) //default: consolegui.ConnectionType.COAP 
-						//httpserver.serverinit( "basicrobot", 8018, connQak.ConnectionType.TCP )  
-						//httpserver.serverinit( "basicrobot", 1883, connQak.ConnectionType.MQTT )  
+								//The PIPE IS created by the itunrobotAdapterQaStream
+								//WARNING: use myself to denote the basicrobot actor, since this refers to the state
+								 
+								//val filter = itunibo.robot.rx.sonaractorfilter("filter", myself)  //generates obstacle
+								//val logger = itunibo.robot.rx.Logger("logger")
+								
+								//val forradar = itunibo.robot.rx.sonarforradar("forradar", myself)  //generates polar
+								//itunibo.robot.robotSupport.subscribe( forradar ) 
+								
+								//A server with reference to the current actor:
+								httpserver.serverinit( myself  ) //default: consolegui.ConnectionType.COAP 
+								
+								//A server with reference just to the actor name:
+								httpserver.serverinit( myself.name, 8018  ) //default: consolegui.ConnectionType.COAP 
+								//httpserver.serverinit( myself.name, 8018, connQak.ConnectionType.TCP )  
+								//httpserver.serverinit( myself.name, 1883, connQak.ConnectionType.MQTT )  
+						consolegui.consoleGuiTcp.create( "localhost", "8018", "basicrobot"  )
 						println("	basicrobot | starts (with robotadapter in the same context)")
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
@@ -43,19 +51,35 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 					transition(edgeName="t01",targetState="handleUserCmd",cond=whenEvent("userCmd"))
 					transition(edgeName="t02",targetState="handleObstacle",cond=whenEvent("obstacle"))
 					transition(edgeName="t03",targetState="handleAlarm",cond=whenEvent("alarm"))
-					transition(edgeName="t04",targetState="handleRequest",cond=whenRequest("p"))
+					transition(edgeName="t04",targetState="doStep",cond=whenRequest("onestep"))
 				}	 
-				state("handleRequest") { //this:State
+				state("doStep") { //this:State
 					action { //it:State
-						if( checkMsgContent( Term.createTerm("p(TIME)"), Term.createTerm("p(T)"), 
+						if( checkMsgContent( Term.createTerm("onestep(TIME)"), Term.createTerm("onestep(T)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								val Steptime = payloadArg(0).toLong()
+								StepTime = payloadArg(0).toLong() 
+								 			  startTimer()
+								println("basicrobot | doStep StepTime =$StepTime ")
 								forward("cmd", "cmd(w)" ,"robotadapter" ) 
-								delay(Steptime)
-								forward("cmd", "cmd(h)" ,"robotadapter" ) 
-								println("basicrobot | reply ... ")
-								answer("p", "pDone", "pDone(0)"   )  
 						}
+						stateTimer = TimerActor("timer_doStep", 
+							scope, context!!, "local_tout_basicrobot_doStep", StepTime )
+					}
+					 transition(edgeName="t05",targetState="stepDone",cond=whenTimeout("local_tout_basicrobot_doStep"))   
+					transition(edgeName="t06",targetState="stepFail",cond=whenEvent("virtualobstacle"))
+					transition(edgeName="t07",targetState="stepFail",cond=whenEvent("obstacle"))
+				}	 
+				state("stepDone") { //this:State
+					action { //it:State
+						forward("cmd", "cmd(h)" ,"robotadapter" ) 
+						answer("onestep", "stepdone", "stepdone(ok)"   )  
+					}
+					 transition( edgeName="goto",targetState="work", cond=doswitch() )
+				}	 
+				state("stepFail") { //this:State
+					action { //it:State
+						Duration=getDuration()
+						answer("onestep", "stepfail", "stepfail($Duration,obstacle)"   )  
 					}
 					 transition( edgeName="goto",targetState="work", cond=doswitch() )
 				}	 

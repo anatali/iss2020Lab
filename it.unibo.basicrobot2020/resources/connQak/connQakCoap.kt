@@ -23,14 +23,14 @@ lateinit var client   : CoapClient
 	}
 	
 	override fun forward( move : String ){
- 		val d = MsgUtil.buildDispatch("gui", "cmd", "cmd($move)", destName )
+ 		val d = MsgUtil.buildDispatch("connQakCoap", "cmd", "cmd($move)", destName )
         val respPut = client.put(d.toString(), MediaTypeRegistry.TEXT_PLAIN)
         //println("connQakCoap | PUT forward ${d} RESPONSE CODE=  ${respPut.code}")
 		
 	}
 	
 	override fun request( move : String ){
-		val msg = MsgUtil.buildRequest("gui", move,"$move(600)", destName)
+		val msg = MsgUtil.buildRequest("connQakCoap", move,"$move(600)", destName)
 		val respPut = client.put(msg.toString(), MediaTypeRegistry.TEXT_PLAIN)
   		println("connQakCoap | answer= ${respPut.getResponseText()}")		
 		
@@ -40,7 +40,7 @@ lateinit var client   : CoapClient
 		val url = "coap://$hostIP:$port/ctx$destName"		//TODO
 		client = CoapClient( url )
         //println("PUT emit url=${url} ")		
-		val msg = MsgUtil.buildEvent("gui",ev,"$ev(0)" )
+		val msg = MsgUtil.buildEvent("connQakCoap",ev,"$ev(fire)" )
         val respPut = client.put(msg.toString(), MediaTypeRegistry.TEXT_PLAIN)
         //println("connQakCoap | PUT emit ${msg} RESPONSE CODE=  ${respPut.code}")		
 		

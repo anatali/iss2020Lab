@@ -27,7 +27,7 @@ class connQakTcp( hostIP : String,  port : String,  destName : String ) :
 	}
 	
 	override fun emit( ev : String ){
-		val msg = MsgUtil.buildEvent("gui",ev,"$ev(0)" )
+		val msg = MsgUtil.buildEvent("connQakTcp",ev,"$ev(0)" )
 		conn.sendALine( msg.toString()  )			
 	}	
 }
