@@ -13,7 +13,7 @@ object motorscSupport {
 	lateinit var writer : OutputStreamWriter
 
 	fun create( actor : ActorBasic, todo : String="" ){
-		val p = Runtime.getRuntime().exec("sudo ./Motors")			
+		val p = Runtime.getRuntime().exec("sudo ./Motors")		 	
 		//println("motorscSupport | CREATED  $p  ")
 		writer = OutputStreamWriter(  p.getOutputStream()  )
 		println("motorscSupport | CREATED with writer=$writer")

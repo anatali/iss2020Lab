@@ -73,7 +73,7 @@ class connQakMqtt(hostIP : String,  port : String,  destName : String ) :
 	}
 	
 	override fun emit( ev : String ){
-    	val msg = MsgUtil.buildEvent("gui",ev,"$ev(0)" )
+    	val msg = MsgUtil.buildEvent(clientid,ev,"$ev(0)" )
 		publish(msg.toString(), "unibo/qak/events")		
 	}	
 }

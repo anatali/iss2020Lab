@@ -30,7 +30,7 @@
 		<link>
 			<name>kotlin_bin</name>
 			<type>2</type>
-			<locationURI>org.jetbrains.kotlin.core.filesystem:/it.unibo.robo2020/kotlin_bin</locationURI>
+			<locationURI>org.jetbrains.kotlin.core.filesystem:/it.unibo.robot2020/kotlin_bin</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

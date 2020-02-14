@@ -5,8 +5,6 @@
 <script type="text/javascript" src="../css/issStyle.js"></script>
 -->
 <style type="text/css">
-<!--
-
 body
 {
     margin-left:  30px;
@@ -142,7 +140,6 @@ table, th, td {
   border-collapse: collapse;
 }     
     
-  -->
 </style>
     
 <head>
@@ -180,16 +177,49 @@ table, th, td {
  		<li>Add  a <tt>Terminal</tt> </li>
 		<li>Copy into the directory <k>dropins</k>:
 			<ul>
-			<li><tt>it.unibo.issLabStart\resources\plugins\it.unibo.Qactork_1.1.4.jar</tt></li>
-			<li><tt>it.unibo.issLabStart\resources\plugins\it.unibo.Qactork.ide_1.1.4.jar</tt></li>
-			<li><tt>it.unibo.Qactork.ui_1.1.4.jar</tt></li>
+			<li><tt>it.unibo.issLabStart\resources\plugins\it.unibo.Qactork_x.y.z.jar</tt></li>
+			<li><tt>it.unibo.issLabStart\resources\plugins\it.unibo.Qactork.ide_x.y.z.jar</tt></li>
+			<li><tt>it.unibo.Qactork.ui_x.y.z.jar</tt></li>
 			</ul>
 		</li>
 		<li>restart Eclipse</li>
     </ol>
 
 	
+ <h2>Start a new Kotlin project</h2>
  
+ <ol>
+<li>Open a new, <b>empty</b> directory (e.g. <tt>iss2020</tt>)and work in it.<br/><br/></li>
+<li><tt>gradle init -dsl kotlin</tt> , select <k>8</k>  and give a name to the project (e.g. select the proposed default <tt>prj0</tt>)
+<hr/>
+<img src="./img/gradle0_2020.png" alt="gradle0_2020.png" width="80%" />
+<hr/>
+<br/><br/></li>
+<li>In Eclipse: <tt>Import -> Gradle -> Existing Gradle Project ->  ... prj0</tt>
+<hr/>
+<img src="./img/gradleEclispe_2020.png" alt="gradleEclispe_2020.png" width="80%" />
+<hr/>
+Note the files <tt>.classpath</tt> and <tt>.project</tt>.<br/>
+The file  <k>build.gradle.kts</k> has no proper editor, but can be used. For example,
+we can execute the application by writing (on a terminal) <tt>gradle run</tt>.<br/>
+To execute the application you ca also: i) put the mouse on <tt>App.kt</tt> ii) select <tt>RunAS Kotlin Application</tt>
+
+<br/><br/></li>
+<li>Click the mouse-rigth on the  current working folder (<tt>prj0</tt>) and select
+<i>Open folder as IntelliJ IDEA Community Edition Project</i>.
+
+<hr/>
+<img src="./img/EclipseIntellij_2020.png" alt="EclipseIntellij_2020.png" width="80%" />
+<hr/>
+ 
+The file  <k>build.gradle.kts</k> is now  editable.<br/>
+To run the application by selecting (as in Eclipse) the file <tt>App.kt</tt> you must select
+<tt>Tools -> kotlin -> Configure Kotlin in project</tt>. This action adds a <k>lib</k> directory in the project.
+
+
+<br/><br/></li>
+ 
+ </ol>
 	
 </div>  
 <div style="background-color:rgba(86, 56, 253, 0.9); width:100%;text-align:center;font-size:small;color:white">

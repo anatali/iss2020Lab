@@ -26,8 +26,8 @@ class Sentinel ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, sc
 				state("work") { //this:State
 					action { //it:State
 					}
-					 transition(edgeName="t05",targetState="showTheMsg",cond=whenEvent("sonarRobot"))
-					transition(edgeName="t06",targetState="showTheMsg",cond=whenEvent("alarm"))
+					 transition(edgeName="t08",targetState="showTheMsg",cond=whenEvent("sonarRobot"))
+					transition(edgeName="t09",targetState="showTheMsg",cond=whenEvent("alarm"))
 				}	 
 				state("showTheMsg") { //this:State
 					action { //it:State
