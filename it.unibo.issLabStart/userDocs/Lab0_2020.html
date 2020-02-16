@@ -108,7 +108,7 @@ kc{
 }
 pre{
 	font-family: "Helvetica";
-	font-size: 60%;
+	font-size: 90%;
 	background-color: #fcf8c7;
 	border: 1px solid blue;
 }
@@ -217,10 +217,52 @@ To run the application by selecting (as in Eclipse) the file <tt>App.kt</tt> you
 <tt>Tools -> kotlin -> Configure Kotlin in project</tt>. This action adds a <k>lib</k> directory in the project.
 
 
-<br/><br/></li>
+</li>
  
  </ol>
 	
+	
+<h2>Start a new Spring Boot project</h2>
+See <a href="https://spring.io/quickstart/" target="web">https://spring.io/quickstart</a>. Select <tt>GradleProject, Java and  Spring Web</tt>.<br/><br/>
+
+Projects created by <a href="https://start.spring.io/" target="web"><k>start.spring.io</k></a> contain <a href="https://spring.io/projects/spring-boot"><k>Spring Boot</k></a>, 
+a framework that makes Spring ready to work inside your app, 
+but without much code or configuration required. <tt>Spring Boot</tt> is the quickest and most popular way to start Spring projects.<br/><br/>
+
+Open the project with <tt>IntelliJ</tt> (wait for the downloading of <tt>Gradle</tt> and for the first build).<br/>
+To run execute:
+<pre>gradle bootRun</pre>
+and then open your browser and eneter <tt>http://localhost:8080/hello</tt>.
+<br/><br/>
+In alternative:
+<ol>
+<li>Include in <tt>build.gradle</tt> the bootJar configuration closure:
+<pre>
+bootJar {
+	mainClassName = 'com.example.demo.DemoApplication'
+}
+</pre>
+<li>build the executable jar: <tt>gradle bootJar</tt>. The executable jar will be located in the <tt>build/libs</tt> directory.</li>
+<li>execute the command: <tt>java -jar build/libs/demo-0.0.1-SNAPSHOT.jar</tt></li>
+ 
+</ol>
+To make the project available in Eclipse:
+<ol>
+<li>In <tt>build.gradle</tt>, add
+<pre>
+plugins {
+	...
+	<k>id 'eclipse'</k>		<kc>//ADDED</kc>
+}
+</pre>
+</li>
+<li>Execute <tt>gradle eclipse</tt> to generate the files <k>.classpath</k>  and <k>.project</k>.</li>
+<li>Import the project in a Eclipse workspace and work as usual.</li>
+</ol>
+ 
+
+
+<br/><br/>
 </div>  
 <div style="background-color:rgba(86, 56, 253, 0.9); width:100%;text-align:center;font-size:small;color:white">
 By AN Unibo-DISI    
