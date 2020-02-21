@@ -121,8 +121,9 @@ fun sendToOwner( msg : ApplMessage )  {
 		}
 	}
 }
-fun serverinit( destName : String, portNum : Int, connectionType : ConnectionType=ConnectionType.COAP ){
-	connQakSupport = connQakBase.create(connectionType, "localhost","$portNum",destName)
+fun serverinit( destName : String, portNum : Int,
+				connectionType : ConnectionType=ConnectionType.COAP, host : String = "localhost" ){
+	connQakSupport = connQakBase.create(connectionType, host,"$portNum",destName)
 	connQakSupport.createConnection()
 	val myhost = InetAddress.getLocalHost()
 	println("httpserver | available on $myhost:$portNum connQakSupport=$connQakSupport") 
@@ -161,5 +162,5 @@ fun serverinit( owner: ActorBasic, connectionType : ConnectionType=ConnectionTyp
 }	
 
 fun main( ) {
-    //init( ConnectionType.TCP )
+    serverinit( "basicrobot", 8018,  ConnectionType.TCP, "localhost" )
 }

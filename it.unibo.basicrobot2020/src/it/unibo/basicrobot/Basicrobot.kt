@@ -32,10 +32,10 @@ class Basicrobot ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, 
 								//itunibo.robot.robotSupport.subscribe( forradar ) 
 								
 								//A server with reference to the current actor:
-								httpserver.serverinit( myself  ) //default: consolegui.ConnectionType.COAP 
+						//		httpserver.serverinit( myself  ) //default: consolegui.ConnectionType.COAP 
 								
 								//A server with reference just to the actor name:
-								httpserver.serverinit( myself.name, 8018  ) //default: consolegui.ConnectionType.COAP 
+								//httpserver.serverinit( myself.name, 8018  ) //default: consolegui.ConnectionType.COAP 
 								//httpserver.serverinit( myself.name, 8018, connQak.ConnectionType.TCP )  
 								//httpserver.serverinit( myself.name, 1883, connQak.ConnectionType.MQTT )  
 						consolegui.consoleGuiTcp.create( "localhost", "8018", "basicrobot"  )

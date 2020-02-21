@@ -16,6 +16,7 @@ import it.unibo.kactor.ActorBasic
 import it.unibo.kactor.ActorBasicFsm
 import itunibo.robotVirtual.clientWenvObjTcp
 import itunibo.robot.rx.ApplActorDataStream
+import itunibo.robotMock.mockrobotSupport
  
 object robotSupport{
 	lateinit var robotKind  :  String
@@ -26,11 +27,12 @@ object robotSupport{
 		endPipehandler      =  endPipe
 		println( "		--- robotSupport | CREATED for $robotKind" )
 		when( robotKind ){
+			"mockrobot"  ->  { mockrobotSupport.create(  ) }
 			"virtual"    ->  { clientWenvObjTcp.initClientConn( actor, "localhost", port) }
 			"realmbot"   ->  { itunibo.robotMbot.mbotSupport.create( actor, port  ) }
 			//port="/dev/ttyUSB0"   "COM6"
 			"realnano"   ->  { it.unibo.robotRaspOnly.nanoSupport.create(actor, true ) }
-			else -> println( "		--- robotSupport | robot unknown" )
+			else -> println( "		--- robotSupport | robot $robotKind unknown" )
 		}
 	}
 	
@@ -42,10 +44,11 @@ object robotSupport{
 	fun move( cmd : String ){ //cmd = msg(M) M=w | a | s | d | h
 		//println("robotSupport move cmd=$cmd robotKind=$robotKind" )
 		when( robotKind ){
-			"virtual"  -> { clientWenvObjTcp.sendMsg(  cmd ) }	
-			"realmbot" -> { itunibo.robotMbot.mbotSupport.move( cmd ) }
-			"realnano" -> { it.unibo.robotRaspOnly.nanoSupport.move( cmd ) }
-			else       -> println( "		--- robotSupport | robot unknown" )
+			"mockrobot"  -> { mockrobotSupport.move( cmd ) 					}
+			"virtual"    -> { clientWenvObjTcp.sendMsg(  cmd ) 				}	
+			"realmbot"   -> { itunibo.robotMbot.mbotSupport.move( cmd ) 	}
+			"realnano"   -> { it.unibo.robotRaspOnly.nanoSupport.move( cmd)	}
+			else         -> println( "		--- robotSupport | robot unknown")
 		}		
 	}
 }
