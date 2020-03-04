@@ -29,12 +29,12 @@ var owner : ActorBasic? = null
 
 fun answerNoBody(t : HttpExchange ){
 	try{
- 		println("httpserver | answerWithNoPage  ${t.getHttpContext().getPath()}" )		   
+ 		println("httpserver | answerNoBody  ${t.getHttpContext().getPath()}" )		   
  		t.sendResponseHeaders(200,-1)	
  		val os = t.getResponseBody() //OutputStream
   		os.close()	//the output stream MUST be closed 
 	}catch( e : Exception){
-		println("httpserver | answerWithNoPage ERROR=${e.message}")
+		println("httpserver | answerNoBody ERROR=${e.message}")
 	}
  }
 fun answerWithTheGui(t : HttpExchange ){
@@ -121,6 +121,7 @@ fun sendToOwner( msg : ApplMessage )  {
 		}
 	}
 }
+//TODO: ConnectionType could be to an Actor (e.g. basicrobot) ??!
 fun serverinit( destName : String, portNum : Int,
 				connectionType : ConnectionType=ConnectionType.COAP, host : String = "localhost" ){
 	connQakSupport = connQakBase.create(connectionType, host,"$portNum",destName)

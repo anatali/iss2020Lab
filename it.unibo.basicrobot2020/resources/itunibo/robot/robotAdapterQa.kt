@@ -22,7 +22,7 @@ class robotAdapterQa( name : String ) : ActorBasic( name ){
 				val host =  sol2.getVarValue("R").toString()
 				val port =  sol2.getVarValue("PORT").toString()
 				println("	--- robotAdapterQa | USING $host : $port")
-				itunibo.robot.robotSupport.create( this, host, port )
+				robotSupport.create( this, host, port )
 			}
 		}		  		      
     }
