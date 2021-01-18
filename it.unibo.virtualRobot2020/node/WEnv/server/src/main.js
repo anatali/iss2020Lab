@@ -1,7 +1,7 @@
 const { WebpageServer, isWebpageRead } = require('./WebpageServer')
 const TCPServer = require('./TCPServer')
 
-const portNumber = readPortNumberFromArguments()
+const portNumber = 8999 //readPortNumberFromArguments()
 
 const webpageCallbacks = {
     onWebpageReady: () => server.send( { type: 'webpage-ready', arg: {} } ),

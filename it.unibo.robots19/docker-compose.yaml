@@ -1,0 +1,15 @@
+version: '3'
+services:
+  wenv:
+    image: virtualrobotdisi:1.0
+    ports:
+      - 8090:8090
+      - 8999:8999
+  my-app:
+    #image: ${docker-registry}/jsapp0:1.0
+    image: basicrobot19:1.0
+    ports:
+      - 8010:8010
+    build: ./
+    depends_on:
+      - wenv
