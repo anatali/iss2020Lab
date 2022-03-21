@@ -17,7 +17,7 @@ plugins {
     id 'java'
     id 'eclipse'
     //id 'application'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.21'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.32'
 }
 
 version '1.0'
@@ -27,7 +27,7 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
     flatDir { //grazie Mattia Piretti
-       dirs '/C:/Didattica2018Work/iss2019Lab/libs'	//full path
+       dirs '../unibolibs'	//full path
    }
 }
 
@@ -40,9 +40,11 @@ dependencies {
 //ARDUINO
     // https://mvnrepository.com/artifact/org.scream3r/jssc
     compile group: 'org.scream3r', name: 'jssc', version: '2.8.0'
+
 //MQTT
 // https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.client.mqttv3
     compile group: 'org.eclipse.paho', name: 'org.eclipse.paho.client.mqttv3', version: '1.2.1'
+
 //JSON
     // https://mvnrepository.com/artifact/org.json/json
     compile group: 'org.json', name: 'json', version: '20160810'
@@ -60,7 +62,7 @@ dependencies {
 //CUSTOM
     compile name: 'uniboInterfaces'
     compile name: '2p301'
-    compile name: 'it.unibo.qakactor-1.2'
+    compile name: 'it.unibo.qakactor-2.4'
  
     //For p2p two-way connections (TCP, UDP, BTH, Serial ...)
     compile name: 'unibonoawtsupports'
@@ -94,6 +96,13 @@ sourceSets {
     main.java.srcDirs += 'src'
     main.java.srcDirs += 'resources'
 }
+
+eclipse {
+    classpath {
+        sourceSets -= [sourceSets.main, sourceSets.test]	
+    }	
+ }
+ 
 /*
 mainClassName = 'it.unibo.TODOKt'
 

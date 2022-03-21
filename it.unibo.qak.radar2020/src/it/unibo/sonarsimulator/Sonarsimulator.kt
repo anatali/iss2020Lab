@@ -8,14 +8,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 	
-class Sonarsimulator ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scope){
- 	
+class Sonarsimulator ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope ){
+
 	override fun getInitialState() : String{
 		return "s0"
 	}
-		
+	@kotlinx.coroutines.ObsoleteCoroutinesApi
+	@kotlinx.coroutines.ExperimentalCoroutinesApi			
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
-		 val ResultMap =   hashMapOf( "key1" to "item1" ) 
+		 val ResultMap =   hashMapOf( \"key1\" to \"item1\" )  
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -33,7 +34,7 @@ class Sonarsimulator ( name: String, scope: CoroutineScope ) : ActorBasicFsm( na
 				state("workUsingRequest") { //this:State
 					action { //it:State
 						utils.sonarDataSimulator.sonarValFromUser( ResultMap, "sonarVal"  )
-						 val Result = ResultMap.remove("sonarVal")
+						 val Result = ResultMap.remove(\"sonarVal\")  
 						request("polar", "polar($Result,0)" ,"radargui" )  
 						stateTimer = TimerActor("timer_workUsingRequest", 
 							scope, context!!, "local_tout_sonarsimulator_workUsingRequest", 1000.toLong() )

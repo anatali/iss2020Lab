@@ -8,17 +8,18 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 	
-class Radargui ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, scope){
- 	
+class Radargui ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope ){
+
 	override fun getInitialState() : String{
 		return "s0"
 	}
-		
+	@kotlinx.coroutines.ObsoleteCoroutinesApi
+	@kotlinx.coroutines.ExperimentalCoroutinesApi			
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
-		var DoReply     = false
-		  var DistanceStr = "0"
+		 var DoReply     = false
+		  var DistanceStr = \"0\"
 		  var Distance    = 0
-		  var Angle       = "0"
+		  var Angle       = \"0\"
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -62,10 +63,12 @@ class Radargui ( name: String, scope: CoroutineScope ) : ActorBasicFsm( name, sc
 				}	 
 				state("showSpot") { //this:State
 					action { //it:State
-						if(Distance <= 90 ){ radarPojo.radarSupport.update( DistanceStr, Angle  )
-						if(DoReply){ answer("polar", "fromRadarGui", "fromRadarGui(done($DistanceStr))"   )  
-						 }
-						 }
+						if(  Distance <= 90  
+						 ){radarPojo.radarSupport.update( DistanceStr, Angle  )
+						if(  DoReply  
+						 ){answer("polar", "fromRadarGui", "fromRadarGui(done($DistanceStr))"   )  
+						}
+						}
 					}
 					 transition( edgeName="goto",targetState="waitForDataToShow", cond=doswitch() )
 				}	 
